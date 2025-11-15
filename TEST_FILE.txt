@@ -1,4 +1,0 @@
-This is a test file to demonstrate the snapshot system.
-
-If you can see this file, it means we're in a state AFTER the first snapshot.
-If you restore the first snapshot, this file will disappear.
