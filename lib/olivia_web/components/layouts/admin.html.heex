@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-gray-100">
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <div class="flex-shrink-0 flex items-center">
+            <.link navigate="/" class="text-xl font-semibold text-gray-900">
+              Olivia Gallery
+            </.link>
+          </div>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <.link
+              navigate={~p"/admin"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Dashboard
+            </.link>
+            <.link
+              navigate={~p"/admin/series"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Series
+            </.link>
+            <.link
+              navigate={~p"/admin/artworks"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Artworks
+            </.link>
+            <.link
+              navigate={~p"/admin/exhibitions"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Exhibitions
+            </.link>
+            <.link
+              navigate={~p"/admin/press"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Press
+            </.link>
+            <.link
+              navigate={~p"/admin/projects"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Projects
+            </.link>
+            <.link
+              navigate={~p"/admin/pages"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Pages
+            </.link>
+            <.link
+              navigate={~p"/admin/media"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Media
+            </.link>
+            <.link
+              navigate={~p"/admin/subscribers"}
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Subscribers
+            </.link>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <span class="text-sm text-gray-700 mr-4">
+            <%= @current_scope.user.email %>
+          </span>
+          <.link
+            href={~p"/olivia_web/users/log-out"}
+            method="delete"
+            class="text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            Log out
+          </.link>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="py-10">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <.flash_group flash={@flash} />
+      <%= @inner_content %>
+    </div>
+  </main>
+</div>
