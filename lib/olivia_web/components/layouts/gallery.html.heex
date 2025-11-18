@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-neutral-50">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Olivia's Gallery">
+      <%= assigns[:page_title] || "Olivia's Gallery" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap');
+
+      .gallery-layout {
+        font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      .gallery-heading {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+      }
+
+      .gallery-script {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      .artwork-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .artwork-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .elegant-border {
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-link {
+        position: relative;
+        transition: color 0.2s ease;
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #8b7355;
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .signature {
+        font-family: 'Cormorant Garamond', cursive;
+        font-size: 1.5rem;
+        font-weight: 300;
+        font-style: italic;
+        color: #6b5d54;
+        letter-spacing: 0.05em;
+      }
+    </style>
+  </head>
+  <body style="height: 100%; background: #faf8f5; color: #2c2c2c; font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;">
+    <!-- Elegant Header -->
+    <header style="background: #ffffff; border-bottom: 1px solid #e8e6e3; padding: 2rem 1.5rem;">
+      <div style="max-width: 72rem; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="signature" style="margin-bottom: 0.25rem; color: #8b7355;">Olivia</h1>
+          <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a8a7a;">Artist & Creator</p>
+        </div>
+
+        <nav style="display: none;">
+          <a href="/" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; margin-left: 2rem;">
+            Portfolio
+          </a>
+          <a href="/series" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; margin-left: 2rem;">
+            Collections
+          </a>
+          <a href="/about" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; margin-left: 2rem;">
+            About
+          </a>
+          <a href="/contact" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; margin-left: 2rem;">
+            Contact
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main style="min-height: 100vh; background: #faf8f5;">
+      <div style="max-width: 72rem; margin: 0 auto;">
+        <%= @inner_content %>
+      </div>
+    </main>
+
+    <!-- Elegant Footer -->
+    <footer style="background: #ffffff; border-top: 1px solid #e8e6e3; margin-top: 6rem;">
+      <div style="max-width: 72rem; margin: 0 auto; padding: 3rem 1.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
+          <!-- About Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">About the Artist</h3>
+            <p style="font-size: 0.875rem; color: #6b5d54; line-height: 1.6;">
+              Olivia creates evocative works that explore light, colour, and form.
+              Each piece tells a story of observation and interpretation.
+            </p>
+          </div>
+
+          <!-- Collections Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">Collections</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  All Collections
+                </a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series/still-life" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  Still Life
+                </a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series/landscapes" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  Landscapes
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Connect Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">Connect</h3>
+            <p style="font-size: 0.875rem; color: #6b5d54; margin-bottom: 1rem;">
+              For enquiries about available works or commissions.
+            </p>
+            <a
+              href="/contact"
+              style="display: inline-block; padding: 0.5rem 1.5rem; border: 1px solid #c4b5a0; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; transition: all 0.2s;"
+            >
+              Get in Touch
+            </a>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
+          <p style="font-size: 0.75rem; color: #9a8a7a; text-transform: uppercase; letter-spacing: 0.1em;">
+            © <%= DateTime.utc_now().year %> Olivia. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

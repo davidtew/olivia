@@ -262,16 +262,20 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
 
   @impl true
   def handle_event("save_uploads", _, socket) do
+    require Logger
     user_id = socket.assigns.current_scope.user.id
 
-    uploaded_files =
+    {successful, failed} =
       consume_uploaded_entries(socket, :images, fn %{path: path}, entry ->
         filename = Uploads.generate_filename(entry.client_name)
         key = "media/#{filename}"
         content_type = entry.client_type || "image/jpeg"
 
+        Logger.info("Attempting to upload: #{entry.client_name}")
+
         case Uploads.upload_file(path, key, content_type) do
           {:ok, url} ->
+            Logger.info("File upload successful: #{entry.client_name} -> #{url}")
             alt_text = Map.get(socket.assigns.alt_texts, entry.ref, "")
 
             attrs = %{
@@ -284,17 +288,47 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
             }
 
             case Media.create_media(attrs) do
-              {:ok, media} -> {:ok, media}
-              {:error, _} -> {:postpone, :error}
+              {:ok, media} ->
+                Logger.info("Database insert successful: #{entry.client_name} (ID: #{media.id})")
+                {:ok, media}
+
+              {:error, changeset} ->
+                Logger.error("Database insert failed for #{entry.client_name}: #{inspect(changeset.errors)}")
+                {:postpone, {:db_error, changeset.errors}}
             end
 
-          {:error, _reason} ->
-            {:postpone, :error}
+          {:error, reason} ->
+            Logger.error("File upload failed for #{entry.client_name}: #{inspect(reason)}")
+            {:postpone, {:upload_error, reason}}
         end
+      end)
+      |> Enum.split_with(fn
+        {:ok, _} -> true
+        _ -> false
       end)
 
     media_list = Media.list_media()
     stats = Media.get_stats()
+
+    success_count = length(successful)
+    failed_count = length(failed)
+
+    flash_message =
+      cond do
+        success_count > 0 && failed_count == 0 ->
+          {:info, "Successfully uploaded #{success_count} #{if success_count == 1, do: "image", else: "images"}"}
+
+        success_count > 0 && failed_count > 0 ->
+          {:warning, "Uploaded #{success_count} #{if success_count == 1, do: "image", else: "images"}, but #{failed_count} failed. Check logs for details."}
+
+        failed_count > 0 ->
+          {:error, "All #{failed_count} uploads failed. Check logs for details."}
+
+        true ->
+          {:info, "No files uploaded"}
+      end
+
+    {flash_type, flash_text} = flash_message
 
     {:noreply,
      socket
@@ -302,7 +336,7 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
      |> assign(:stats, stats)
      |> assign(:show_upload_modal, false)
      |> assign(:alt_texts, %{})
-     |> put_flash(:info, "Uploaded #{length(uploaded_files)} #{if length(uploaded_files) == 1, do: "image", else: "images"} successfully")}
+     |> put_flash(flash_type, flash_text)}
   end
 
   @impl true

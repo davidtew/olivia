@@ -199,11 +199,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
      |> assign(:show_media_picker, false)
      |> assign(:selected_media, nil)
      |> assign(:slug_manually_edited, false)
-     |> allow_upload(:image,
-       accept: ~w(.jpg .jpeg .png .webp),
-       max_entries: 1,
-       max_file_size: 10_000_000
-     )
+     |> allow_upload(:image, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, max_file_size: 10_000_000)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -308,12 +304,34 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
     artwork = socket.assigns.artwork
 
     artwork_params =
-      if socket.assigns.selected_media do
-        artwork_params
-        |> Map.put("media_file_id", socket.assigns.selected_media.id)
-        |> Map.put("image_url", socket.assigns.selected_media.url)
-      else
-        maybe_upload_image(socket, artwork_params, artwork.slug)
+      cond do
+        socket.assigns.selected_media ->
+          artwork_params
+          |> Map.put("media_file_id", socket.assigns.selected_media.id)
+          |> Map.put("image_url", socket.assigns.selected_media.url)
+
+        not Enum.empty?(socket.assigns.uploads.image.entries) ->
+          uploaded_file = List.first(consume_uploaded_entries(socket, :image, fn %{path: path}, entry ->
+            filename = Uploads.generate_filename(entry.client_name)
+            key = Uploads.artwork_key("general", filename)
+
+            case Uploads.upload_file(path, key, entry.client_type) do
+              {:ok, url} -> {:ok, url}
+              error -> error
+            end
+          end))
+
+          case uploaded_file do
+            {:ok, url} ->
+              artwork_params
+              |> Map.put("image_url", url)
+              |> Map.delete("media_file_id")
+            _ ->
+              artwork_params
+          end
+
+        true ->
+          artwork_params
       end
 
     if artwork.image_url && artwork_params["image_url"] && artwork.image_url != artwork_params["image_url"] do
@@ -333,15 +351,35 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
   end
 
   defp save_artwork(socket, :new, artwork_params) do
-    temp_slug = Artwork.slugify(artwork_params["title"] || "artwork")
-
     artwork_params =
-      if socket.assigns.selected_media do
-        artwork_params
-        |> Map.put("media_file_id", socket.assigns.selected_media.id)
-        |> Map.put("image_url", socket.assigns.selected_media.url)
-      else
-        maybe_upload_image(socket, artwork_params, temp_slug)
+      cond do
+        socket.assigns.selected_media ->
+          artwork_params
+          |> Map.put("media_file_id", socket.assigns.selected_media.id)
+          |> Map.put("image_url", socket.assigns.selected_media.url)
+
+        not Enum.empty?(socket.assigns.uploads.image.entries) ->
+          uploaded_file = List.first(consume_uploaded_entries(socket, :image, fn %{path: path}, entry ->
+            filename = Uploads.generate_filename(entry.client_name)
+            key = Uploads.artwork_key("general", filename)
+
+            case Uploads.upload_file(path, key, entry.client_type) do
+              {:ok, url} -> {:ok, url}
+              error -> error
+            end
+          end))
+
+          case uploaded_file do
+            {:ok, url} ->
+              artwork_params
+              |> Map.put("image_url", url)
+              |> Map.delete("media_file_id")
+            _ ->
+              artwork_params
+          end
+
+        true ->
+          artwork_params
       end
 
     case Content.create_artwork(artwork_params) do
@@ -353,70 +391,6 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  defp maybe_upload_image(socket, params, slug) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :image, fn %{path: path}, entry ->
-        series_slug = get_series_slug(socket, params)
-        filename = Uploads.generate_filename(entry.client_name)
-        key = Uploads.artwork_key(series_slug || slug, filename)
-
-        content_type = entry.client_type || "image/jpeg"
-
-        case Uploads.upload_file(path, key, content_type) do
-          {:ok, url} ->
-            # Create media library entry with classification
-            artwork_title = params["title"] || socket.assigns.artwork.title || "Untitled"
-
-            media_attrs = %{
-              "filename" => entry.client_name,
-              "url" => url,
-              "content_type" => content_type,
-              "file_size" => entry.client_size,
-              "asset_type" => "artwork",
-              "asset_role" => "artwork_primary",
-              "alt_text" => "Artwork: #{artwork_title}",
-              "metadata" => %{
-                "artwork_slug" => slug,
-                "series_slug" => series_slug,
-                "upload_context" => "artwork_form"
-              }
-            }
-
-            case Media.create_classified_media(media_attrs) do
-              {:ok, media} -> {:ok, {url, media.id}}
-              {:error, _} -> {:ok, {url, nil}}
-            end
-
-          {:error, _reason} -> {:postpone, :error}
-        end
-      end)
-
-    case uploaded_files do
-      [{url, media_id} | _] ->
-        params
-        |> Map.put("image_url", url)
-        |> Map.put("media_file_id", media_id)
-      [] -> params
-    end
-  end
-
-  defp get_series_slug(socket, params) do
-    series_id = params["series_id"]
-
-    cond do
-      series_id && series_id != "" ->
-        series = Content.get_series!(series_id)
-        series.slug
-
-      socket.assigns.artwork && socket.assigns.artwork.series_id ->
-        series = Content.get_series!(socket.assigns.artwork.series_id)
-        series.slug
-
-      true ->
-        nil
     end
   end
 

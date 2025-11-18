@@ -1,0 +1,394 @@
+# Olivia Portfolio Site - LLM Knowledge Manifest
+# This manifest provides structured context about the Olivia site architecture,
+# conventions, and patterns for use by AI assistants via PromptBase.
+
+project:
+  name: "Olivia Portfolio Site"
+  description: "Professional portfolio site for artist Olivia, featuring artworks, series, exhibitions, and press features"
+  stack:
+    phoenix: "1.8.1"
+    liveview: "1.1.17"
+    elixir: "1.19.3"
+    database: "PostgreSQL"
+    orm: "Ecto"
+  otp_app: "olivia"
+  namespaces:
+    domain: "Olivia"
+    web: "OliviaWeb"
+
+core_concepts:
+  - id: "concept.series"
+    name: "Series"
+    description: "A Series is a conceptual grouping of artworks - a themed collection or body of work"
+    domain: "Content"
+    schema: "Olivia.Content.Series"
+    location: "lib/olivia/content/series.ex"
+    table: "series"
+    relationships:
+      has_many:
+        - target: "concept.artwork"
+          name: "artworks"
+      belongs_to:
+        - target: "concept.media_file"
+          name: "media_file"
+          optional: true
+    key_fields:
+      - name: "title"
+        type: "string"
+        required: true
+        description: "Human-readable name of the series"
+      - name: "slug"
+        type: "string"
+        required: true
+        unique: true
+        description: "URL-friendly identifier, auto-generated from title"
+      - name: "published"
+        type: "boolean"
+        default: false
+        description: "Controls public visibility"
+      - name: "position"
+        type: "integer"
+        default: 0
+        description: "Display ordering"
+    invariants:
+      - id: "series.slug.unique"
+        description: "Series slug must be unique across all series"
+        enforcement: "database_constraint"
+      - id: "series.slug.auto_generate"
+        description: "If slug is empty, auto-generate from title during changeset"
+        enforcement: "changeset_logic"
+    admin_ui:
+      location: "lib/olivia_web/live/admin/series_live/"
+      modules:
+        - "OliviaWeb.Admin.SeriesLive.Index"
+        - "OliviaWeb.Admin.SeriesLive.Form"
+      route: "/admin/series"
+
+  - id: "concept.artwork"
+    name: "Artwork"
+    description: "An individual piece of art created by Olivia, optionally part of a series"
+    domain: "Content"
+    schema: "Olivia.Content.Artwork"
+    location: "lib/olivia/content/artwork.ex"
+    table: "artworks"
+    relationships:
+      belongs_to:
+        - target: "concept.series"
+          name: "series"
+          optional: true
+        - target: "concept.media_file"
+          name: "media_file"
+          optional: true
+      has_many:
+        - target: "concept.image"
+          name: "images"
+    key_fields:
+      - name: "title"
+        type: "string"
+        required: true
+      - name: "slug"
+        type: "string"
+        required: true
+        unique: true
+      - name: "status"
+        type: "enum"
+        values: ["available", "sold", "reserved"]
+        default: "available"
+      - name: "published"
+        type: "boolean"
+        default: false
+      - name: "featured"
+        type: "boolean"
+        default: false
+      - name: "year"
+        type: "integer"
+        description: "Year the artwork was created"
+      - name: "medium"
+        type: "string"
+        description: "Materials/techniques used"
+      - name: "dimensions"
+        type: "string"
+        description: "Physical size of the artwork"
+      - name: "price_cents"
+        type: "integer"
+        description: "Price in cents"
+      - name: "currency"
+        type: "string"
+        default: "GBP"
+    invariants:
+      - id: "artwork.slug.unique"
+        description: "Artwork slug must be unique"
+        enforcement: "database_constraint"
+      - id: "artwork.status.valid"
+        description: "Status must be one of: available, sold, reserved"
+        enforcement: "changeset_validation"
+      - id: "artwork.images.publish_requirement"
+        description: "Best practice: artwork should have at least one image before publishing"
+        enforcement: "soft_guideline"
+    admin_ui:
+      location: "lib/olivia_web/live/admin/artwork_live/"
+      route: "/admin/artworks"
+
+  - id: "concept.image"
+    name: "Image"
+    description: "A visual representation of an artwork with multiple size variants"
+    domain: "Media"
+    schema: "Olivia.Media.Image"
+    location: "lib/olivia/media/image.ex"
+    table: "media_images"
+    relationships:
+      belongs_to:
+        - target: "concept.artwork"
+          name: "artwork"
+          required: true
+        - target: "concept.media_file"
+          name: "media_file"
+          optional: true
+    key_fields:
+      - name: "role"
+        type: "enum"
+        values: ["main", "detail", "in_situ"]
+        default: "main"
+        description: "Purpose of the image (main artwork photo, detail shot, or installation view)"
+      - name: "original_url"
+        type: "string"
+        required: true
+        description: "URL to full-resolution image"
+      - name: "large_url"
+        type: "string"
+        description: "Large size variant"
+      - name: "medium_url"
+        type: "string"
+        description: "Medium size variant"
+      - name: "thumb_url"
+        type: "string"
+        description: "Thumbnail variant"
+      - name: "alt_text"
+        type: "string"
+        description: "Accessibility description"
+      - name: "position"
+        type: "integer"
+        default: 0
+        description: "Display order within artwork"
+    invariants:
+      - id: "image.role.valid"
+        description: "Role must be main, detail, or in_situ"
+        enforcement: "changeset_validation"
+      - id: "image.urls.https"
+        description: "All image URLs should use HTTPS"
+        enforcement: "soft_guideline"
+
+  - id: "concept.media_file"
+    name: "MediaFile"
+    description: "Base file upload tracking (used by artworks, series, images)"
+    domain: "Media"
+    schema: "Olivia.Media.MediaFile"
+    location: "lib/olivia/media/media_file.ex"
+    table: "media_files"
+    relationships:
+      has_many:
+        - target: "concept.artwork"
+          name: "artworks"
+        - target: "concept.series"
+          name: "series"
+        - target: "concept.image"
+          name: "images"
+
+  - id: "concept.exhibition"
+    name: "Exhibition"
+    description: "Art exhibition or show where Olivia's work is displayed"
+    domain: "Exhibitions"
+    schema: "Olivia.Exhibitions.Exhibition"
+    location: "lib/olivia/exhibitions/exhibition.ex"
+    table: "exhibitions"
+
+  - id: "concept.press_feature"
+    name: "PressFeature"
+    description: "Media coverage, articles, or press mentions"
+    domain: "Press"
+    schema: "Olivia.Press.PressFeature"
+    location: "lib/olivia/press/press_feature.ex"
+    table: "press_features"
+
+  - id: "concept.enquiry"
+    name: "Enquiry"
+    description: "Contact form submission from site visitors"
+    domain: "Communications"
+    schema: "Olivia.Communications.Enquiry"
+    location: "lib/olivia/communications/enquiry.ex"
+    table: "enquiries"
+
+  - id: "concept.page"
+    name: "Page"
+    description: "CMS-managed content pages"
+    domain: "CMS"
+    schema: "Olivia.CMS.Page"
+    location: "lib/olivia/cms/page.ex"
+    table: "cms_pages"
+
+architectural_decisions:
+  - id: "ADR-001"
+    title: "Use LiveView for all admin interfaces"
+    status: "accepted"
+    rationale: "Provides real-time updates, rich interactions, and server-rendered security without separate JavaScript framework"
+    implications:
+      - "All admin CRUD must be LiveView modules under lib/olivia_web/live/admin/"
+      - "No Phoenix controllers for admin UI"
+      - "Leverage LiveView components for reusable UI"
+    affected_areas: ["admin", "forms", "real-time-updates"]
+
+  - id: "ADR-002"
+    title: "Domain-driven file organization"
+    status: "accepted"
+    rationale: "Group related schemas and contexts by domain (Content, Media, Communications, etc.) for better discoverability"
+    implications:
+      - "Schemas organized under domain folders: lib/olivia/content/, lib/olivia/media/, etc."
+      - "Context modules named after domains: Olivia.Content, Olivia.Media"
+      - "Avoid generic names like 'models' or 'schemas'"
+    affected_areas: ["project-structure", "naming-conventions"]
+
+  - id: "ADR-003"
+    title: "Slug-based public URLs"
+    status: "accepted"
+    rationale: "Human-readable, SEO-friendly URLs for artworks and series"
+    implications:
+      - "All public-facing content must have unique slugs"
+      - "Auto-generate slugs from titles in changesets"
+      - "Public routes use slugs, not database IDs"
+    affected_areas: ["routing", "seo", "urls"]
+
+  - id: "ADR-004"
+    title: "Multi-size image variants"
+    status: "accepted"
+    rationale: "Optimize performance with appropriately-sized images for different contexts"
+    implications:
+      - "Store original_url, large_url, medium_url, thumb_url"
+      - "Use responsive images in templates"
+      - "Consider lazy loading for below-the-fold images"
+    affected_areas: ["performance", "media", "storage"]
+
+coding_conventions:
+  elixir:
+    formatting: "Use mix format before all commits"
+    naming:
+      schemas: "Singular noun (e.g., Olivia.Content.Artwork)"
+      contexts: "Plural or domain name (e.g., Olivia.Content)"
+      liveviews: "Include 'Live' suffix (e.g., ArtworkLive.Index)"
+
+  changesets:
+    slug_generation: "Auto-generate slugs from title if empty, using maybe_generate_slug/1 pattern"
+    validations: "Use validate_required, validate_inclusion, unique_constraint consistently"
+
+  liveview:
+    structure: "Separate Index and Form components for CRUD interfaces"
+    assigns: "Use explicit assign names, prefer :page_title for titles"
+
+common_patterns:
+  - id: "pattern.admin_crud"
+    name: "Admin CRUD Interface"
+    description: "Standard pattern for adding admin management UI for a domain model"
+    applies_to: ["admin", "liveview"]
+    steps:
+      - order: 1
+        title: "Create or update schema"
+        details: "Define Ecto schema under appropriate domain folder (e.g., lib/olivia/content/)"
+        example_file: "lib/olivia/content/series.ex"
+      - order: 2
+        title: "Create migration"
+        details: "Use mix ecto.gen.migration, define table with appropriate fields and constraints"
+      - order: 3
+        title: "Create context functions"
+        details: "Add list/get/create/update/delete functions to domain context module"
+        example_file: "lib/olivia/content.ex"
+      - order: 4
+        title: "Create LiveView Index"
+        details: "Create Index LiveView under admin namespace for listing records"
+        example_file: "lib/olivia_web/live/admin/series_live/index.ex"
+      - order: 5
+        title: "Create LiveView Form component"
+        details: "Create Form LiveView component for create/edit operations"
+        example_file: "lib/olivia_web/live/admin/series_live/form.ex"
+      - order: 6
+        title: "Add routes"
+        details: "Add live routes to router.ex under admin scope"
+        example_file: "lib/olivia_web/router.ex"
+      - order: 7
+        title: "Add navigation"
+        details: "Add link to admin navigation in layout template"
+    reference_implementations:
+      - "Series admin: lib/olivia_web/live/admin/series_live/"
+      - "Artwork admin: lib/olivia_web/live/admin/artwork_live/"
+
+  - id: "pattern.slug_generation"
+    name: "Automatic slug generation"
+    description: "Generate URL-friendly slugs from titles"
+    applies_to: ["changesets", "seo"]
+    implementation: |
+      # In schema changeset:
+      defp maybe_generate_slug(changeset) do
+        slug = get_change(changeset, :slug)
+        case slug do
+          s when s in [nil, ""] ->
+            case get_change(changeset, :title) do
+              nil -> changeset
+              "" -> changeset
+              title -> put_change(changeset, :slug, slugify(title))
+            end
+          _slug -> changeset
+        end
+      end
+
+      defp slugify(str) when is_binary(str) do
+        str
+        |> String.downcase()
+        |> String.replace(~r/[^\w\s-]/, "")
+        |> String.replace(~r/\s+/, "-")
+        |> String.replace(~r/-+/, "-")
+        |> String.trim("-")
+      end
+    reference_implementations:
+      - "lib/olivia/content/artwork.ex"
+      - "lib/olivia/content/series.ex"
+
+prompt_templates:
+  - id: "prompt.add_admin_crud"
+    name: "Add new model with admin interface"
+    description: "Create a new domain model and complete admin CRUD interface"
+    context_needed:
+      - "This manifest (olivia-site.yml)"
+      - "Reference: lib/olivia/content/series.ex"
+      - "Reference: lib/olivia_web/live/admin/series_live/"
+      - "Current database schema"
+    variables:
+      - name: "model_name"
+        description: "Name of the new model (e.g., 'Award', 'Publication')"
+      - name: "domain"
+        description: "Domain context (e.g., 'Press', 'Content')"
+      - name: "fields"
+        description: "List of fields and their types"
+
+  - id: "prompt.add_field"
+    name: "Add field to existing model"
+    description: "Add a new field to an existing schema with migration"
+    context_needed:
+      - "Target schema file"
+      - "This manifest for field naming conventions"
+    variables:
+      - name: "model"
+        description: "Target model name"
+      - name: "field_name"
+        description: "New field name"
+      - name: "field_type"
+        description: "Elixir/Ecto type"
+
+  - id: "prompt.create_relationship"
+    name: "Create relationship between models"
+    description: "Add has_many/belongs_to relationships between existing models"
+    context_needed:
+      - "Both schema files"
+      - "This manifest for relationship patterns"
+    variables:
+      - name: "parent_model"
+      - name: "child_model"
+      - name: "relationship_type"
+        values: ["has_many", "belongs_to", "many_to_many"]

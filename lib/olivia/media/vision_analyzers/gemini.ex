@@ -22,7 +22,7 @@ defmodule Olivia.Media.VisionAnalyzers.Gemini do
   end
 
   @impl true
-  def analyze(media) do
+  def analyze(media, _opts \\ []) do
     if not configured?() do
       {:error, :not_configured}
     else

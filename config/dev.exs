@@ -8,7 +8,10 @@ config :olivia, Olivia.Repo,
   database: "olivia_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 20,
+  # Reduce queue time for better performance
+  queue_target: 50,
+  queue_interval: 1000
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -55,11 +58,14 @@ config :olivia, OliviaWeb.Endpoint,
 # Watch static and templates for browser reloading.
 config :olivia, OliviaWeb.Endpoint,
   live_reload: [
-    web_console_logger: true,
+    # DISABLED: web_console_logger causes severe performance issues (connection pool exhaustion)
+    # web_console_logger: true,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/olivia_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
+      # Only watch application code, not dependencies
+      ~r"lib/olivia_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$",
+      ~r"lib/olivia/(?!.*_test).*\.ex$"
     ]
   ]
 
@@ -82,7 +88,8 @@ config :phoenix_live_view,
   debug_heex_annotations: true,
   debug_attributes: true,
   # Enable helpful, but potentially expensive runtime checks
-  enable_expensive_runtime_checks: true
+  # DISABLED for better performance - re-enable only when debugging LiveView issues
+  enable_expensive_runtime_checks: false
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

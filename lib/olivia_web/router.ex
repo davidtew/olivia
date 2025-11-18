@@ -11,6 +11,7 @@ defmodule OliviaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug OliviaWeb.Plugs.ThemePlug
   end
 
   pipeline :api do
@@ -20,22 +21,28 @@ defmodule OliviaWeb.Router do
   scope "/", OliviaWeb do
     pipe_through :browser
 
-    live "/", HomeLive, :index
+    live_session :public, on_mount: {OliviaWeb.ThemeHook, :default} do
+      live "/", HomeLive, :index
 
-    live "/series", SeriesLive.Index, :index
-    live "/series/:slug", SeriesLive.Show, :show
+      live "/series", SeriesLive.Index, :index
+      live "/series/:slug", SeriesLive.Show, :show
 
-    live "/artworks/:slug", ArtworkLive.Show, :show
+      live "/artworks/:slug", ArtworkLive.Show, :show
 
-    live "/about", PageLive, :show, as: :page
-    live "/collect", PageLive, :show, as: :page
-    live "/hotels-designers", PageLive, :show, as: :page
-    live "/press-projects", PageLive, :show, as: :page
+      live "/about", PageLive, :show, as: :page
+      live "/collect", PageLive, :show, as: :page
+      live "/hotels-designers", PageLive, :show, as: :page
+      live "/press-projects", PageLive, :show, as: :page
 
-    live "/contact", ContactLive, :index
+      live "/contact", ContactLive, :index
+    end
 
     get "/sitemap.xml", SitemapController, :index
+    get "/set-theme/:theme", ThemeController, :set_theme
+    get "/toggle-theme", ThemeController, :toggle
+    get "/gallery", ThemeController, :set_gallery
   end
+
 
   ## Admin routes
   scope "/admin", OliviaWeb.Admin, as: :admin do
@@ -45,7 +52,6 @@ defmodule OliviaWeb.Router do
       live "/", DashboardLive, :index
 
       live "/series", SeriesLive.Index, :index
-      live "/series/new", SeriesLive.Form, :new
       live "/series/:id/edit", SeriesLive.Form, :edit
       live "/series/:id", SeriesLive.Show, :show
 
@@ -81,8 +87,11 @@ defmodule OliviaWeb.Router do
       live "/enquiries", EnquiryLive.Index, :index
       live "/enquiries/:id", EnquiryLive.Show, :show
 
-      live "/media", MediaLive.Index, :index
+      live "/media", MediaLive.Workspace, :index
+      live "/media/spatial", MediaLive.Spatial, :index
       live "/media/:id/edit", MediaLive.Edit, :edit
+
+      live "/prompt-base", PromptBaseLive.Index, :index
     end
   end
 

@@ -8,11 +8,18 @@ defmodule Olivia.Uploads do
 
   alias ExAws.S3
 
-  @storage_type System.get_env("UPLOADS_STORAGE") || "s3"
-  @bucket Application.compile_env(:olivia, :uploads)[:bucket] || "olivia-gallery"
-  @public_url Application.compile_env(:olivia, :uploads)[:public_url] ||
-                "https://fly.storage.tigris.dev/olivia-gallery"
+  @storage_type System.get_env("UPLOADS_STORAGE") ||
+    if Mix.env() == :dev, do: "local", else: "s3"
   @local_upload_dir "priv/static/uploads"
+
+  defp bucket do
+    Application.get_env(:olivia, :uploads)[:bucket] || "olivia-gallery"
+  end
+
+  defp public_url do
+    Application.get_env(:olivia, :uploads)[:public_url] ||
+      "https://fly.storage.tigris.dev/olivia-gallery"
+  end
 
   @doc """
   Uploads a file and returns the public URL.
@@ -49,7 +56,7 @@ defmodule Olivia.Uploads do
   defp upload_file_s3(file_path, key, content_type) do
     file_path
     |> S3.Upload.stream_file()
-    |> S3.upload(@bucket, key,
+    |> S3.upload(bucket(), key,
       acl: :public_read,
       content_type: content_type
     )
@@ -77,7 +84,7 @@ defmodule Olivia.Uploads do
   """
   def upload_binary(binary, key, content_type \\ "image/jpeg") do
     binary
-    |> S3.put_object(@bucket, key,
+    |> S3.put_object(bucket(), key,
       acl: :public_read,
       content_type: content_type
     )
@@ -119,7 +126,7 @@ defmodule Olivia.Uploads do
 
   defp delete_file_s3(key) do
     key
-    |> S3.delete_object(@bucket)
+    |> S3.delete_object(bucket())
     |> ExAws.request()
     |> case do
       {:ok, _response} -> :ok
@@ -167,7 +174,7 @@ defmodule Olivia.Uploads do
   end
 
   defp build_public_url(key) do
-    "#{@public_url}/#{key}"
+    "#{public_url()}/#{key}"
   end
 
   defp extract_key_from_url(url) do
@@ -178,8 +185,8 @@ defmodule Olivia.Uploads do
         {:ok, key}
 
       # S3 URL
-      String.starts_with?(url, @public_url <> "/") ->
-        key = String.replace_prefix(url, @public_url <> "/", "")
+      String.starts_with?(url, public_url() <> "/") ->
+        key = String.replace_prefix(url, public_url() <> "/", "")
         {:ok, key}
 
       true ->

@@ -1,0 +1,42 @@
+# There are over 400 node_modules files. This will speed up the build.
+**/node_modules/
+
+# Ignore git, but keep git HEAD and refs to access current commit hash if needed:
+.git
+.gitignore
+.gitattributes
+!.git/HEAD
+!.git/refs
+
+# Common development/test artifacts
+/cover/
+/deps/
+/doc/
+/_build/
+.elixir_ls
+
+# Mix artifacts
+erl_crash.dump
+*.ez
+
+# Environment configuration
+.env
+.env.*
+
+# Editor/IDE artifacts
+.idea
+.vscode
+
+# Generated files
+/priv/static/assets/
+/priv/static/cache_manifest.json
+
+# Local uploads (use S3 in production)
+/priv/static/uploads
+
+# Documentation
+README.md
+CHANGELOG.md
+
+# Fly.io
+.fly

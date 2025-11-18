@@ -72,6 +72,7 @@ defmodule Olivia.MixProject do
       {:ex_aws_s3, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
       {:hackney, "~> 1.20"},
+      {:yaml_elixir, "~> 2.9"},
       {:tidewave, "~> 0.5", only: :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]

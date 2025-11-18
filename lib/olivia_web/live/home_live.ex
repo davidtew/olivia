@@ -6,6 +6,211 @@ defmodule OliviaWeb.HomeLive do
 
   @impl true
   def render(assigns) do
+    cond do
+      assigns[:theme] == "cottage" -> render_cottage(assigns)
+      assigns[:theme] == "gallery" -> render_gallery(assigns)
+      true -> render_default(assigns)
+    end
+  end
+
+  defp render_cottage(assigns) do
+    ~H"""
+    <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 1rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem;">
+          <%= @sections["hero_title"] %>
+        </h1>
+        <p class="cottage-body" style="font-size: 1.25rem; color: var(--cottage-text-medium); max-width: 42rem; margin: 0 auto;">
+          <%= @sections["hero_subtitle"] %>
+        </p>
+      </div>
+
+      <div style="max-width: 48rem; margin: 0 auto 4rem;">
+        <div class="cottage-body" style="text-align: center; font-size: 1.125rem; line-height: 1.75;">
+          <%= raw(Earmark.as_html!(@sections["intro"] || "")) %>
+        </div>
+      </div>
+
+      <div :if={length(@featured_artworks) > 0} style="margin-top: 4rem;">
+        <h2 class="cottage-heading" style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">
+          Featured Works
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+          <article :for={artwork <- @featured_artworks} style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
+            <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
+              <div :if={artwork.image_url} style="overflow: hidden;">
+                <.artwork_image
+                  src={artwork.image_url}
+                  alt={artwork.title}
+                  aspect="aspect-[4/5]"
+                  style="width: 100%; display: block; transition: transform 0.3s ease;"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div
+                :if={!artwork.image_url}
+                style="aspect-ratio: 4/5; background: var(--cottage-beige); display: flex; align-items: center; justify-content: center;"
+              >
+                <span class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">No image</span>
+              </div>
+            </.link>
+            <div style="padding: 1.5rem; background: white;">
+              <h3 class="cottage-heading" style="font-size: 1.25rem; margin-bottom: 0.5rem;">
+                <.link navigate={~p"/artworks/#{artwork.slug}"} style="text-decoration: none; color: inherit;">
+                  <%= artwork.title %>
+                </.link>
+              </h3>
+              <p class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-medium); margin: 0;">
+                <%= artwork.year %> · <%= artwork.medium %>
+              </p>
+              <p :if={artwork.series} class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light); margin-top: 0.25rem;">
+                <%= artwork.series.title %>
+              </p>
+            </div>
+          </article>
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+          <.link
+            navigate={~p"/series"}
+            class="cottage-button"
+            style="display: inline-block; padding: 0.75rem 2rem; text-decoration: none;"
+          >
+            View All Collections
+          </.link>
+        </div>
+      </div>
+
+      <div style="margin-top: 6rem; padding: 3rem; background: white; border: 1px solid var(--cottage-taupe); border-radius: 8px;">
+        <div style="max-width: 36rem; margin: 0 auto; text-align: center;">
+          <h2 class="cottage-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+            Stay Updated
+          </h2>
+          <p class="cottage-body" style="color: var(--cottage-text-medium); margin-bottom: 1.5rem;">
+            <%= @sections["newsletter_blurb"] %>
+          </p>
+          <form phx-submit="subscribe" style="display: flex; gap: 0.75rem; flex-direction: column;">
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
+              placeholder="Your email"
+            />
+            <button
+              type="submit"
+              class="cottage-button"
+              style="padding: 0.75rem 1.5rem; width: 100%;"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_gallery(assigns) do
+    ~H"""
+    <!-- Gallery-styled Hero -->
+    <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
+      <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
+        <%= @sections["hero_title"] %>
+      </h1>
+      <p class="gallery-script" style="font-size: 1.25rem; color: #6b5d54; max-width: 42rem; margin: 0 auto;">
+        <%= @sections["hero_subtitle"] %>
+      </p>
+    </div>
+
+    <!-- Intro Section -->
+    <div style="max-width: 48rem; margin: 0 auto; padding: 3rem 1.5rem;">
+      <div style="color: #4a4034; text-align: center; font-size: 1.125rem; line-height: 1.75;">
+        <%= raw(Earmark.as_html!(@sections["intro"] || "")) %>
+      </div>
+    </div>
+
+    <!-- Featured Artworks -->
+    <div :if={length(@featured_artworks) > 0} style="padding: 4rem 1.5rem; border-top: 1px solid #e8e6e3;">
+      <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; text-align: center; margin-bottom: 3rem;">
+        Featured Works
+      </h2>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; max-width: 80rem; margin: 0 auto;">
+        <article :for={artwork <- @featured_artworks} class="artwork-card" style="display: block;">
+          <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
+            <div :if={artwork.image_url} class="elegant-border" style="overflow: hidden; margin-bottom: 1rem;">
+              <.artwork_image
+                src={artwork.image_url}
+                alt={artwork.title}
+                aspect="aspect-[4/5]"
+                style="width: 100%; display: block;"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div
+              :if={!artwork.image_url}
+              class="elegant-border"
+              style="aspect-ratio: 4/5; background: #fafafa; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;"
+            >
+              <span style="font-size: 0.875rem; color: #999;">No image</span>
+            </div>
+          </.link>
+          <div style="text-align: center;">
+            <h3 class="gallery-heading" style="font-size: 1.25rem; color: #2c2416; margin-bottom: 0.5rem;">
+              <.link navigate={~p"/artworks/#{artwork.slug}"} style="text-decoration: none; color: inherit;">
+                <%= artwork.title %>
+              </.link>
+            </h3>
+            <p style="font-size: 0.875rem; color: #6b5d54; margin: 0;">
+              <%= artwork.year %> · <%= artwork.medium %>
+            </p>
+            <p :if={artwork.series} style="font-size: 0.875rem; color: #9a8a7a; margin-top: 0.25rem;">
+              <%= artwork.series.title %>
+            </p>
+          </div>
+        </article>
+      </div>
+      <div style="text-align: center; margin-top: 3rem;">
+        <.link
+          navigate={~p"/series"}
+          style="display: inline-block; padding: 0.5rem 1.5rem; border: 1px solid #c4b5a0; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; color: #6b5d54; transition: all 0.2s; background: transparent;"
+        >
+          View All Collections
+        </.link>
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div style="padding: 4rem 1.5rem; margin-top: 4rem; background: #ffffff; border-top: 1px solid #e8e6e3;">
+      <div style="max-width: 36rem; margin: 0 auto; text-align: center;">
+        <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 1rem;">Stay Updated</h2>
+        <p style="color: #6b5d54; margin-bottom: 1.5rem;">
+          <%= @sections["newsletter_blurb"] %>
+        </p>
+        <form phx-submit="subscribe" style="display: flex; gap: 0.75rem;">
+          <input
+            id="email-address"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            style="flex: 1; padding: 0.5rem 1rem; border: 1px solid #c4b5a0; outline: none; font-size: 1rem; background: #faf8f5;"
+            placeholder="Your email"
+          />
+          <button
+            type="submit"
+            style="padding: 0.5rem 1.5rem; background: #6b5d54; color: #faf8f5; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; border: none; cursor: pointer; transition: background-color 0.2s;"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_default(assigns) do
     ~H"""
     <div class="min-h-screen">
       <!-- Hero Section -->
@@ -160,6 +365,11 @@ defmodule OliviaWeb.HomeLive do
      |> assign(:page_title, "Olivia Tew - Contemporary Painter")
      |> assign(:sections, sections)
      |> assign(:featured_artworks, featured_artworks)}
+  end
+
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
   end
 
   @impl true

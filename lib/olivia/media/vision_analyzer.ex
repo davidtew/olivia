@@ -22,8 +22,12 @@ defmodule Olivia.Media.VisionAnalyzer do
 
   @doc """
   Analyzes a media file and returns structured metadata.
+
+  Options:
+    - :user_context - Artist's notes/context for this analysis iteration
+    - :previous_analyses - List of previous analysis structs for iterative refinement
   """
-  @callback analyze(media) :: {:ok, analysis_result} | {:error, term()}
+  @callback analyze(media, keyword()) :: {:ok, analysis_result} | {:error, term()}
 
   @doc """
   Returns true if the analyzer is configured and ready to use.

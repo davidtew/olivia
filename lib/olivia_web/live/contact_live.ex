@@ -6,6 +6,169 @@ defmodule OliviaWeb.ContactLive do
 
   @impl true
   def render(assigns) do
+    cond do
+      assigns[:theme] == "cottage" -> render_cottage(assigns)
+      assigns[:theme] == "gallery" -> render_gallery(assigns)
+      true -> render_default(assigns)
+    end
+  end
+
+  defp render_cottage(assigns) do
+    ~H"""
+    <div style="max-width: 600px; margin: 0 auto; padding: 4rem 1rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="cottage-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+          Get in Touch
+        </h1>
+        <p class="cottage-body" style="font-size: 1.125rem; color: var(--cottage-text-medium); max-width: 48rem; margin: 0 auto;">
+          Whether you're interested in purchasing artwork, commissioning a piece, or have a project in mind, I'd love to hear from you.
+        </p>
+      </div>
+
+      <.form
+        for={@form}
+        id="contact-form"
+        phx-change="validate"
+        phx-submit="submit"
+        class="cottage-form"
+      >
+        <div style="display: grid; gap: 1.5rem;">
+          <div>
+            <.input
+              field={@form[:type]}
+              type="select"
+              label="I'm interested in"
+              options={[
+                {"Purchasing artwork", "artwork"},
+                {"Commissioning a piece", "commission"},
+                {"A project collaboration", "project"},
+                {"General enquiry", "general"}
+              ]}
+            />
+          </div>
+
+          <div>
+            <.input field={@form[:name]} type="text" label="Your name" required />
+          </div>
+
+          <div>
+            <.input field={@form[:email]} type="email" label="Email address" required />
+          </div>
+
+          <div>
+            <.input
+              field={@form[:message]}
+              type="textarea"
+              label="Message"
+              rows="6"
+              required
+              placeholder="Tell me about your enquiry..."
+            />
+          </div>
+        </div>
+
+        <div style="margin-top: 2.5rem;">
+          <button
+            type="submit"
+            phx-disable-with="Sending..."
+            class="cottage-button"
+            style="width: 100%; padding: 1rem 2rem;"
+          >
+            Send Message
+          </button>
+        </div>
+      </.form>
+
+      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--cottage-taupe); text-align: center;">
+        <.link
+          navigate={~p"/"}
+          class="cottage-body"
+          style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;"
+        >
+          ← Back to home
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_gallery(assigns) do
+    ~H"""
+    <!-- Gallery Hero -->
+    <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
+      <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
+        Get in Touch
+      </h1>
+      <p class="gallery-script" style="font-size: 1.25rem; color: #6b5d54; max-width: 48rem; margin: 0 auto;">
+        Whether you're interested in purchasing artwork, commissioning a piece, or have a project in mind, I'd love to hear from you.
+      </p>
+    </div>
+
+    <!-- Contact Form -->
+    <div style="max-width: 42rem; margin: 0 auto; padding: 4rem 1.5rem;">
+      <.form
+        for={@form}
+        id="contact-form"
+        phx-change="validate"
+        phx-submit="submit"
+        class="gallery-form"
+      >
+        <div style="display: grid; gap: 1.5rem;">
+          <div>
+            <.input
+              field={@form[:type]}
+              type="select"
+              label="I'm interested in"
+              options={[
+                {"Purchasing artwork", "artwork"},
+                {"Commissioning a piece", "commission"},
+                {"A project collaboration", "project"},
+                {"General enquiry", "general"}
+              ]}
+            />
+          </div>
+
+          <div>
+            <.input field={@form[:name]} type="text" label="Your name" required />
+          </div>
+
+          <div>
+            <.input field={@form[:email]} type="email" label="Email address" required />
+          </div>
+
+          <div>
+            <.input
+              field={@form[:message]}
+              type="textarea"
+              label="Message"
+              rows="6"
+              required
+              placeholder="Tell me about your enquiry..."
+            />
+          </div>
+        </div>
+
+        <div style="margin-top: 2.5rem;">
+          <button
+            type="submit"
+            phx-disable-with="Sending..."
+            style="width: 100%; padding: 1rem 2rem; background: #6b5d54; color: #faf8f5; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s;"
+          >
+            Send Message
+          </button>
+        </div>
+      </.form>
+
+      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
+        <.link navigate={~p"/"} style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border-bottom: 1px solid #c4b5a0; padding-bottom: 0.25rem;">
+          ← Back to home
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_default(assigns) do
     ~H"""
     <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div class="mx-auto max-w-2xl">

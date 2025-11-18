@@ -1,0 +1,37 @@
+# fly.toml app configuration file generated for olivia-art-portfolio on 2025-11-17T11:18:26Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'olivia-art-portfolio'
+primary_region = 'lhr'
+kill_signal = 'SIGTERM'
+
+[build]
+
+[deploy]
+  release_command = '/app/bin/migrate'
+
+[env]
+  AWS_REGION = 'auto'
+  PHX_HOST = 'olivia-art-portfolio.fly.dev'
+  PORT = '8080'
+  S3_HOST = 'fly.storage.tigris.dev'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 1000
+    soft_limit = 1000
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

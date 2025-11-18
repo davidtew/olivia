@@ -156,6 +156,7 @@ defmodule OliviaWeb.Layouts do
   Renders the main navigation header for public pages.
   """
   attr :current_scope, :map, default: nil
+  attr :theme, :string, default: "original"
 
   def navigation(assigns) do
     ~H"""
@@ -205,6 +206,32 @@ defmodule OliviaWeb.Layouts do
             >
               Contact
             </.link>
+            <div class="relative">
+              <button
+                id="theme-dropdown-toggle"
+                onclick="document.getElementById('theme-dropdown-menu').classList.toggle('hidden')"
+                class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium border border-gray-300 rounded-md flex items-center gap-1"
+              >
+                Theme
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                </svg>
+              </button>
+              <div
+                id="theme-dropdown-menu"
+                class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+              >
+                <a href="/set-theme/original" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                  Original
+                </a>
+                <a href="/set-theme/gallery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                  Gallery
+                </a>
+                <a href="/set-theme/cottage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  Cottage
+                </a>
+              </div>
+            </div>
             <%= if @current_scope do %>
               <.link
                 navigate={~p"/admin"}
@@ -278,6 +305,31 @@ defmodule OliviaWeb.Layouts do
           >
             Contact
           </.link>
+
+          <div class="px-3 py-2">
+            <div class="text-sm font-semibold text-gray-500 mb-2">Theme</div>
+            <div class="space-y-1">
+              <a
+                href="/set-theme/original"
+                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Original
+              </a>
+              <a
+                href="/set-theme/gallery"
+                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Gallery
+              </a>
+              <a
+                href="/set-theme/cottage"
+                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Cottage
+              </a>
+            </div>
+          </div>
+
           <%= if @current_scope do %>
             <.link
               navigate={~p"/admin"}

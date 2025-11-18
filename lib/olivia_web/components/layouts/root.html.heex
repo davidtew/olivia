@@ -1,3 +1,758 @@
+<%= cond do %>
+<% assigns[:theme] == "cottage" -> %>
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Olivia Tew">
+      <%= assigns[:page_title] || "Olivia Tew - Visual Artist" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&family=Montserrat:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+      :root {
+        --cottage-cream: #FAF7F5;
+        --cottage-beige: #F5F1ED;
+        --cottage-taupe: #E8E3DD;
+        --cottage-wisteria: #C8A7D8;
+        --cottage-lavender: #B89AC5;
+        --cottage-wisteria-light: #D4B5E0;
+        --cottage-wisteria-deep: #A88AB7;
+        --cottage-sage: #9FB8A3;
+        --cottage-garden: #7A9B7E;
+        --cottage-text-dark: #4A3F4B;
+        --cottage-text-medium: #6B5D66;
+        --cottage-text-light: #8B7E87;
+      }
+
+      .cottage-heading {
+        font-family: 'Newsreader', Georgia, serif;
+        font-weight: 300;
+        letter-spacing: 0.03em;
+        color: var(--cottage-text-dark);
+        line-height: 1.3;
+      }
+
+      .cottage-subheading {
+        font-family: 'Newsreader', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: var(--cottage-text-dark);
+      }
+
+      .cottage-body {
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        letter-spacing: 0.01em;
+        color: var(--cottage-text-medium);
+        line-height: 1.7;
+      }
+
+      .cottage-accent {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-weight: 300;
+        color: var(--cottage-text-light);
+      }
+
+      .cottage-card {
+        border: 1px solid var(--cottage-taupe);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .cottage-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(200, 167, 216, 0.12);
+      }
+
+      .cottage-button {
+        padding: 0.75rem 1.5rem;
+        background: var(--cottage-wisteria);
+        color: var(--cottage-cream);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .cottage-button:hover {
+        background: var(--cottage-wisteria-deep);
+      }
+
+      .cottage-link {
+        color: var(--cottage-wisteria);
+        text-decoration: none;
+        border-bottom: 1px solid var(--cottage-lavender);
+        transition: all 0.2s ease;
+        padding-bottom: 0.125rem;
+      }
+
+      .cottage-link:hover {
+        color: var(--cottage-wisteria-deep);
+        border-bottom-color: var(--cottage-wisteria-deep);
+      }
+
+      .cottage-nav-link {
+        position: relative;
+        color: var(--cottage-text-medium);
+        text-decoration: none;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: color 0.2s ease;
+      }
+
+      .cottage-nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--cottage-wisteria);
+        transition: width 0.3s ease;
+      }
+
+      .cottage-nav-link:hover {
+        color: var(--cottage-wisteria);
+      }
+
+      .cottage-nav-link:hover::after {
+        width: 100%;
+      }
+
+      .cottage-divider {
+        height: 1px;
+        background: linear-gradient(90deg,
+          transparent 0%,
+          var(--cottage-wisteria) 50%,
+          transparent 100%);
+        margin: 3rem auto;
+        max-width: 200px;
+      }
+
+      /* Cottage Form Styling */
+      .cottage-form input[type="text"],
+      .cottage-form input[type="email"],
+      .cottage-form select,
+      .cottage-form textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--cottage-taupe);
+        border-radius: 6px;
+        background: var(--cottage-cream);
+        color: var(--cottage-text-dark);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .cottage-form input:focus,
+      .cottage-form select:focus,
+      .cottage-form textarea:focus {
+        border-color: var(--cottage-wisteria);
+        box-shadow: 0 0 0 3px rgba(200, 167, 216, 0.1);
+      }
+
+      .cottage-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--cottage-text-medium);
+        font-weight: 500;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      /* Cottage Markdown Content Styling */
+      main h1, main h2, main h3, main h4, main h5, main h6 {
+        font-family: 'Newsreader', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: var(--cottage-text-dark);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      main h1 {
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+        font-weight: 300;
+      }
+
+      main h2 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+      }
+
+      main h3 {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+
+      main p {
+        margin-bottom: 1.25rem;
+      }
+
+      main a {
+        color: var(--cottage-wisteria);
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+
+      main a:hover {
+        color: var(--cottage-wisteria-deep);
+      }
+
+      main strong {
+        font-weight: 600;
+        color: var(--cottage-text-dark);
+      }
+
+      main em {
+        font-style: italic;
+      }
+
+      /* Theme Dropdown */
+      .theme-dropdown-btn {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--cottage-wisteria);
+        border: 1px solid var(--cottage-lavender);
+        padding: 0.375rem 0.875rem;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+      }
+
+      .theme-dropdown-btn:hover {
+        background: var(--cottage-wisteria-light);
+        color: white;
+      }
+
+      .theme-dropdown-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 0.5rem;
+        background: white;
+        border: 1px solid var(--cottage-taupe);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        min-width: 140px;
+        z-index: 50;
+      }
+
+      .theme-dropdown-menu a {
+        display: block;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--cottage-text-medium);
+        text-decoration: none;
+        border-bottom: 1px solid var(--cottage-taupe);
+        transition: background 0.2s;
+      }
+
+      .theme-dropdown-menu a:last-child {
+        border-bottom: none;
+      }
+
+      .theme-dropdown-menu a:hover {
+        background: var(--cottage-beige);
+      }
+
+      .theme-dropdown-menu a.active {
+        background: var(--cottage-wisteria-light);
+        color: white;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+    <script>
+      document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('cottage-theme-menu');
+        const toggle = document.getElementById('cottage-theme-toggle');
+        if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    </script>
+  </head>
+  <body style="min-height: 100vh; background: var(--cottage-cream); color: var(--cottage-text-medium); font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif; display: flex; flex-direction: column;">
+    <!-- Cottage Header -->
+    <header style="background: white; border-bottom: 1px solid var(--cottage-taupe); padding: 2rem 1.5rem;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h1 class="cottage-heading" style="font-size: 2rem; margin-bottom: 0.25rem; color: var(--cottage-text-dark);">
+              <a href="/" style="text-decoration: none; color: inherit;">Olivia Tew</a>
+            </h1>
+            <p class="cottage-body" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-text-light);">Visual Artist</p>
+          </div>
+
+          <nav style="display: none; gap: 2rem; align-items: center;" class="md:flex">
+            <a href="/series" class="cottage-nav-link">Collections</a>
+            <a href="/about" class="cottage-nav-link">About</a>
+            <a href="/contact" class="cottage-nav-link">Contact</a>
+            <div style="position: relative;">
+              <button
+                id="cottage-theme-toggle"
+                onclick="document.getElementById('cottage-theme-menu').classList.toggle('hidden')"
+                class="theme-dropdown-btn"
+              >
+                Theme
+                <svg style="width: 12px; height: 12px; fill: currentColor;" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                </svg>
+              </button>
+              <div id="cottage-theme-menu" class="hidden theme-dropdown-menu">
+                <a href="/set-theme/original">Original</a>
+                <a href="/set-theme/gallery">Gallery</a>
+                <a href="/set-theme/cottage" class="active">Cottage</a>
+              </div>
+            </div>
+          </nav>
+
+          <button
+            id="cottage-mobile-menu-toggle"
+            onclick="document.getElementById('cottage-mobile-menu').classList.toggle('hidden')"
+            style="display: block; padding: 0.5rem; color: var(--cottage-text-dark); background: transparent; border: 1px solid var(--cottage-taupe); border-radius: 6px; cursor: pointer;"
+            class="md:hidden"
+          >
+            <svg style="width: 24px; height: 24px; stroke: currentColor; fill: none;" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="cottage-mobile-menu" class="hidden md:hidden" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--cottage-taupe);">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="/series" class="cottage-body" style="padding: 0.75rem; border-radius: 6px; text-decoration: none; color: var(--cottage-text-dark); transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Collections</a>
+            <a href="/about" class="cottage-body" style="padding: 0.75rem; border-radius: 6px; text-decoration: none; color: var(--cottage-text-dark); transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">About</a>
+            <a href="/contact" class="cottage-body" style="padding: 0.75rem; border-radius: 6px; text-decoration: none; color: var(--cottage-text-dark); transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Contact</a>
+
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--cottage-taupe);">
+              <div class="cottage-body" style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-text-light); margin-bottom: 0.5rem;">Theme</div>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <a href="/set-theme/original" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Original</a>
+                <a href="/set-theme/gallery" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Gallery</a>
+                <a href="/set-theme/cottage" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-wisteria); border-radius: 6px; font-weight: 500; background: var(--cottage-wisteria-light); background: rgba(200, 167, 216, 0.1);">Cottage</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="flex: 1; background: var(--cottage-cream);">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        {@inner_content}
+      </div>
+    </main>
+
+    <!-- Cottage Footer -->
+    <footer style="background: white; border-top: 1px solid var(--cottage-taupe); margin-top: 6rem; padding: 3rem 1.5rem;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+          <div>
+            <h3 class="cottage-subheading" style="font-size: 1.125rem; margin-bottom: 1rem;">About</h3>
+            <p class="cottage-body" style="font-size: 0.875rem; line-height: 1.6;">
+              Creating expressive oil paintings from a cottage garden studio in Devon, exploring light, colour, and the beauty of everyday moments.
+            </p>
+          </div>
+          <div>
+            <h3 class="cottage-subheading" style="font-size: 1.125rem; margin-bottom: 1rem;">Explore</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series" class="cottage-link" style="font-size: 0.875rem;">Collections</a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/about" class="cottage-link" style="font-size: 0.875rem;">About the Artist</a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/contact" class="cottage-link" style="font-size: 0.875rem;">Get in Touch</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="cottage-subheading" style="font-size: 1.125rem; margin-bottom: 1rem;">Connect</h3>
+            <p class="cottage-body" style="font-size: 0.875rem; margin-bottom: 1rem;">
+              For enquiries about available works or commissions.
+            </p>
+            <a href="/contact" class="cottage-button" style="font-size: 0.75rem;">Contact Me</a>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--cottage-taupe); padding-top: 2rem; text-align: center;">
+          <p class="cottage-body" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-text-light);">
+            © <%= DateTime.utc_now().year %> Olivia Tew. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<% assigns[:theme] == "gallery" -> %>
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-neutral-50">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Olivia's Gallery">
+      <%= assigns[:page_title] || "Olivia's Gallery" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap');
+
+      .gallery-layout {
+        font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      .gallery-heading {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+      }
+
+      .gallery-script {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      .artwork-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .artwork-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .elegant-border {
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-link {
+        position: relative;
+        transition: color 0.2s ease;
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #8b7355;
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .signature {
+        font-family: 'Cormorant Garamond', cursive;
+        font-size: 1.5rem;
+        font-weight: 300;
+        font-style: italic;
+        color: #6b5d54;
+        letter-spacing: 0.05em;
+      }
+
+      /* Gallery Form Styling */
+      .gallery-form input[type="text"],
+      .gallery-form input[type="email"],
+      .gallery-form select,
+      .gallery-form textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #c4b5a0;
+        background: #faf8f5;
+        color: #2c2c2c;
+        font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .gallery-form input[type="text"]:focus,
+      .gallery-form input[type="email"]:focus,
+      .gallery-form select:focus,
+      .gallery-form textarea:focus {
+        border-color: #8b7355;
+      }
+
+      .gallery-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b5d54;
+        font-weight: 500;
+      }
+
+      .gallery-form .field-error {
+        color: #8b4513;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+
+      /* Gallery Markdown Content Styling */
+      main h1, main h2, main h3, main h4, main h5, main h6 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: #2c2416;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      main h1 {
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+      }
+
+      main h2 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+      }
+
+      main h3 {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+
+      main p {
+        margin-bottom: 1.25rem;
+      }
+
+      main ul, main ol {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+      }
+
+      main li {
+        margin-bottom: 0.5rem;
+      }
+
+      main a {
+        color: #8b7355;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+
+      main a:hover {
+        color: #6b5d54;
+      }
+
+      main strong {
+        font-weight: 600;
+        color: #2c2416;
+      }
+
+      main em {
+        font-style: italic;
+      }
+
+      /* Theme Dropdown Styles */
+      .theme-dropdown a:hover {
+        background: #f5f1ed !important;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+    <script>
+      // Close theme dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('theme-menu');
+        const toggle = document.getElementById('theme-toggle');
+        if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    </script>
+  </head>
+  <body style="height: 100%; background: #faf8f5; color: #2c2c2c; font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;">
+    <!-- Elegant Header -->
+    <header style="background: #ffffff; border-bottom: 1px solid #e8e6e3; padding: 2rem 1.5rem;">
+      <div style="max-width: 72rem; margin: 0 auto;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h1 class="signature" style="margin-bottom: 0.25rem; color: #8b7355;">Olivia</h1>
+            <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a8a7a;">Artist & Creator</p>
+          </div>
+
+          <nav style="display: none; gap: 2rem; align-items: center;" class="md:flex">
+            <a href="/series" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none;">
+              Collections
+            </a>
+            <a href="/about" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none;">
+              About
+            </a>
+            <a href="/contact" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none;">
+              Contact
+            </a>
+            <div class="theme-dropdown" style="position: relative;">
+              <button
+                id="theme-toggle"
+                onclick="document.getElementById('theme-menu').classList.toggle('hidden')"
+                style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border: 1px solid #c4b5a0; padding: 0.25rem 0.75rem; border-radius: 4px; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+              >
+                Theme
+                <svg style="width: 12px; height: 12px; fill: currentColor;" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                </svg>
+              </button>
+              <div
+                id="theme-menu"
+                class="hidden"
+                style="position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: #ffffff; border: 1px solid #c4b5a0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 140px; z-index: 50;"
+              >
+                <a href="/set-theme/original" style="display: block; padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-bottom: 1px solid #e8e6e3; transition: background 0.2s;">
+                  Original
+                </a>
+                <a href="/set-theme/gallery" style="display: block; padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-bottom: 1px solid #e8e6e3; transition: background 0.2s; background: #faf8f5;">
+                  Gallery
+                </a>
+                <a href="/set-theme/cottage" style="display: block; padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: background 0.2s;">
+                  Cottage
+                </a>
+              </div>
+            </div>
+          </nav>
+
+          <button
+            id="gallery-mobile-menu-toggle"
+            onclick="document.getElementById('gallery-mobile-menu').classList.toggle('hidden')"
+            style="display: block; padding: 0.5rem; color: #6b5d54; background: transparent; border: 1px solid #c4b5a0; border-radius: 4px; cursor: pointer;"
+            class="md:hidden"
+          >
+            <svg style="width: 24px; height: 24px; stroke: currentColor; fill: none;" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="gallery-mobile-menu" class="hidden md:hidden" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e8e6e3;">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="/series" style="padding: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Collections</a>
+            <a href="/about" style="padding: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">About</a>
+            <a href="/contact" style="padding: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Contact</a>
+
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e8e6e3;">
+              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9a8a7a; margin-bottom: 0.5rem; padding-left: 0.75rem;">Theme</div>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <a href="/set-theme/original" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Original</a>
+                <a href="/set-theme/gallery" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #8b7355; text-decoration: none; border-radius: 4px; font-weight: 500; background: #faf8f5;">Gallery</a>
+                <a href="/set-theme/cottage" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Cottage</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main style="min-height: 100vh; background: #faf8f5;">
+      <div style="max-width: 72rem; margin: 0 auto;">
+        {@inner_content}
+      </div>
+    </main>
+
+    <!-- Elegant Footer -->
+    <footer style="background: #ffffff; border-top: 1px solid #e8e6e3; margin-top: 6rem;">
+      <div style="max-width: 72rem; margin: 0 auto; padding: 3rem 1.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
+          <!-- About Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">About the Artist</h3>
+            <p style="font-size: 0.875rem; color: #6b5d54; line-height: 1.6;">
+              Olivia creates evocative works that explore light, colour, and form.
+              Each piece tells a story of observation and interpretation.
+            </p>
+          </div>
+
+          <!-- Collections Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">Collections</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  All Collections
+                </a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series/still-life" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  Still Life
+                </a>
+              </li>
+              <li style="margin-bottom: 0.5rem;">
+                <a href="/series/landscapes" style="font-size: 0.875rem; color: #6b5d54; text-decoration: none; transition: color 0.2s;">
+                  Landscapes
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Connect Column -->
+          <div>
+            <h3 class="gallery-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #2c2416;">Connect</h3>
+            <p style="font-size: 0.875rem; color: #6b5d54; margin-bottom: 1rem;">
+              For enquiries about available works or commissions.
+            </p>
+            <a
+              href="/contact"
+              style="display: inline-block; padding: 0.5rem 1.5rem; border: 1px solid #c4b5a0; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none; transition: all 0.2s;"
+            >
+              Get in Touch
+            </a>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
+          <p style="font-size: 0.75rem; color: #9a8a7a; text-transform: uppercase; letter-spacing: 0.1em;">
+            © <%= DateTime.utc_now().year %> Olivia. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<% true -> %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -67,14 +822,24 @@
           setTheme(localStorage.getItem("phx:theme") || "system");
         }
         window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
-        
+
         window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
       })();
+
+      // Close theme dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('theme-dropdown-menu');
+        const toggle = document.getElementById('theme-dropdown-toggle');
+        if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
     </script>
   </head>
   <body class="bg-white antialiased">
-    <OliviaWeb.Layouts.navigation current_scope={@current_scope} />
+    <OliviaWeb.Layouts.navigation current_scope={@current_scope} theme={assigns[:theme]} />
     {@inner_content}
     <OliviaWeb.Layouts.footer />
   </body>
 </html>
+<% end %>

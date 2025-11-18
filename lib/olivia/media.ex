@@ -5,16 +5,27 @@ defmodule Olivia.Media do
 
   import Ecto.Query, warn: false
   alias Olivia.Repo
-  alias Olivia.Media.MediaFile
+  alias Olivia.Media.{MediaFile, Analysis, Events}
 
   @doc """
   Returns the list of media files.
+
+  Options:
+    - :status - Filter by status (quarantine, approved, archived)
+    - :tags - Filter by tags
+    - :order_by - Tuple of {direction, field}, e.g. {:desc, :inserted_at}
+    - :limit - Limit number of results
+    - :offset - Offset for pagination
+    - :preload - Associations to preload
   """
   def list_media(opts \\ []) do
-    query = from m in MediaFile, order_by: [desc: m.inserted_at]
+    query = from m in MediaFile
 
     query
+    |> maybe_filter_by_status(opts[:status])
     |> maybe_filter_by_tags(opts[:tags])
+    |> apply_ordering(opts[:order_by])
+    |> apply_pagination(opts[:limit], opts[:offset])
     |> maybe_preload(opts[:preload])
     |> Repo.all()
   end
@@ -90,11 +101,27 @@ defmodule Olivia.Media do
     Repo.one(query) || %{total_count: 0, total_size: 0}
   end
 
+  defp maybe_filter_by_status(query, nil), do: query
+  defp maybe_filter_by_status(query, status) when is_binary(status) do
+    from m in query, where: m.status == ^status
+  end
+
   defp maybe_filter_by_tags(query, nil), do: query
   defp maybe_filter_by_tags(query, []), do: query
   defp maybe_filter_by_tags(query, tags) when is_list(tags) do
     from m in query,
       where: fragment("? && ?", m.tags, ^tags)
+  end
+
+  defp apply_ordering(query, nil), do: from(m in query, order_by: [desc: m.inserted_at])
+  defp apply_ordering(query, {direction, field}) do
+    from m in query, order_by: [{^direction, ^field}]
+  end
+
+  defp apply_pagination(query, nil, _offset), do: query
+  defp apply_pagination(query, limit, nil), do: from(m in query, limit: ^limit)
+  defp apply_pagination(query, limit, offset) do
+    from m in query, limit: ^limit, offset: ^offset
   end
 
   defp maybe_preload(query, nil), do: query
@@ -115,18 +142,9 @@ defmodule Olivia.Media do
     |> tap(&maybe_broadcast_upload/1)
   end
 
-  @doc """
-  Creates a media file with classification, auto-approving if metadata is complete.
-  Used when context is known (e.g., artwork upload).
-  """
-  def create_classified_media(attrs \\ %{}) do
-    create_media(attrs)
-    |> tap(&maybe_broadcast_upload/1)
-  end
-
   defp maybe_broadcast_upload({:ok, media}) do
     context = Map.get(media.metadata || %{}, "upload_context", "unknown")
-    Olivia.Media.Events.broadcast_media_uploaded(media, %{source: context})
+    Events.broadcast_media_uploaded(media, %{source: context})
   end
 
   defp maybe_broadcast_upload({:error, _}), do: :ok
@@ -232,10 +250,107 @@ defmodule Olivia.Media do
     Enum.map(quarantine_media, &analyze_media/1)
   end
 
+  @doc """
+  Creates a new analysis iteration for a media file.
+  """
+  def create_analysis(attrs \\ %{}) do
+    %Analysis{}
+    |> Analysis.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Lists all analysis iterations for a media file, ordered by iteration number.
+  """
+  def list_analyses(media_file_id) do
+    from(a in Analysis,
+      where: a.media_file_id == ^media_file_id,
+      order_by: [asc: a.iteration]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets the latest analysis for a media file.
+  """
+  def get_latest_analysis(media_file_id) do
+    from(a in Analysis,
+      where: a.media_file_id == ^media_file_id,
+      order_by: [desc: a.iteration],
+      limit: 1
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets the next iteration number for a media file's analyses.
+  """
+  def get_next_iteration(media_file_id) do
+    case get_latest_analysis(media_file_id) do
+      nil -> 1
+      analysis -> analysis.iteration + 1
+    end
+  end
+
+  @doc """
+  Analyzes media with user context and previous analyses for iterative refinement.
+
+  This is the new preferred method for analysis that supports the iterative
+  dialogue workflow between artist and AI.
+  """
+  def analyze_with_context(media_id, user_context \\ nil) do
+    media = get_media!(media_id)
+    previous_analyses = list_analyses(media_id)
+    iteration = get_next_iteration(media_id)
+
+    analyzer = get_configured_analyzer()
+
+    case analyzer.analyze(media, user_context: user_context, previous_analyses: previous_analyses) do
+      {:ok, analysis_result} ->
+        attrs = %{
+          media_file_id: media_id,
+          iteration: iteration,
+          user_context: user_context,
+          llm_response: analysis_result.raw_response["full_response"] || %{},
+          model_used: analysis_result.raw_response[:model] || "unknown"
+        }
+
+        case create_analysis(attrs) do
+          {:ok, analysis} ->
+            case update_media_from_analysis(media, analysis_result) do
+              {:ok, updated_media} ->
+                Events.broadcast_media_analyzed(updated_media, analysis_result)
+                {:ok, {updated_media, analysis}}
+
+              {:error, reason} ->
+                {:error, reason}
+            end
+
+          {:error, reason} ->
+            {:error, reason}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp update_media_from_analysis(media, analysis_result) do
+    attrs = %{
+      asset_type: analysis_result.asset_type,
+      asset_role: analysis_result.asset_role,
+      alt_text: analysis_result.alt_text || media.alt_text,
+      tags: analysis_result.tags || media.tags,
+      metadata: Map.merge(media.metadata || %{}, analysis_result.metadata || %{})
+    }
+
+    update_media(media, attrs)
+  end
+
   # Returns the configured vision analyzer module
   defp get_configured_analyzer do
-    # Check which analyzer is configured
-    # Using Claude for demonstration until Gemini API key is configured
-    Application.get_env(:olivia, :vision_analyzer, Olivia.Media.VisionAnalyzers.Claude)
+    # Use Tidewave Claude by default (no API key required)
+    # Fall back to regular Claude if Tidewave not available
+    Application.get_env(:olivia, :vision_analyzer, Olivia.Media.VisionAnalyzers.TidewaveClaude)
   end
 end

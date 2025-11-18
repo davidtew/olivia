@@ -24,6 +24,11 @@ config :olivia,
   ecto_repos: [Olivia.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+# S3/Tigris uploads configuration (can be overridden at runtime)
+config :olivia, :uploads,
+  bucket: "falling-sky-1523",
+  public_url: "https://fly.storage.tigris.dev/falling-sky-1523"
+
 # Configures the endpoint
 config :olivia, OliviaWeb.Endpoint,
   url: [host: "localhost"],

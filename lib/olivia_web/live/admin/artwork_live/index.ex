@@ -10,11 +10,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Index do
     ~H"""
     <.header>
       Listing Artworks
-      <:actions>
-        <.link navigate={~p"/admin/artworks/new"}>
-          <.button>New Artwork</.button>
-        </.link>
-      </:actions>
+      <:subtitle>Manage your artwork metadata and publishing status</:subtitle>
     </.header>
 
     <.table

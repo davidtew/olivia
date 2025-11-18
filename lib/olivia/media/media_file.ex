@@ -26,6 +26,7 @@ defmodule Olivia.Media.MediaFile do
     has_many :artworks, Olivia.Content.Artwork
     has_many :series, Olivia.Content.Series
     has_many :images, Olivia.Media.Image
+    has_many :analyses, Olivia.Media.Analysis, foreign_key: :media_file_id
 
     timestamps(type: :utc_datetime)
   end
@@ -52,21 +53,6 @@ defmodule Olivia.Media.MediaFile do
     |> validate_required([:filename, :url])
     |> validate_length(:alt_text, max: 255)
     |> validate_inclusion(:status, @statuses)
-    |> maybe_auto_approve()
-  end
-
-  # Auto-approve if sufficient metadata is provided
-  defp maybe_auto_approve(changeset) do
-    status = get_field(changeset, :status)
-    asset_type = get_field(changeset, :asset_type)
-    alt_text = get_field(changeset, :alt_text)
-
-    # If asset_type and alt_text are present, auto-approve
-    if status == "quarantine" && asset_type && alt_text do
-      put_change(changeset, :status, "approved")
-    else
-      changeset
-    end
   end
 
   def statuses, do: @statuses

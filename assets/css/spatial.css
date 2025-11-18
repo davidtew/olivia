@@ -1,0 +1,35 @@
+/* Spatial Organizer Styles */
+
+/* Drag-over state for canvas */
+#cytoscape-canvas.drag-over {
+  border-color: #4F46E5 !important;
+  border-style: solid !important;
+  background-color: #EEF2FF !important;
+}
+
+/* Draggable cursor states */
+[data-media-id] {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+[data-media-id]:active {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+}
+
+/* Smooth transitions for hover states */
+.group img {
+  transition: transform 0.2s ease;
+}
+
+.group:hover img {
+  transform: scale(1.05);
+}
+
+/* Alpine.js x-show directive support */
+[x-cloak] {
+  display: none !important;
+}

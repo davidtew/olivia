@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict pnNeHZdijrgrQiwnTR40UHDLmZY9qZVUmvX9LPnTXcgQTqlJvWIcjYpO1L4rwwT
+\restrict UTBlKsmDf4Q3GFfpjBAAXXLBOXyOzNGSgX5ZWJlT7meGdI6ewG4Pr8S6LEUzPml
 
 -- Dumped from database version 17.7 (Homebrew)
 -- Dumped by pg_dump version 17.7 (Homebrew)
@@ -1174,7 +1174,7 @@ ALTER TABLE ONLY public.users_tokens
 -- PostgreSQL database dump complete
 --
 
-\unrestrict pnNeHZdijrgrQiwnTR40UHDLmZY9qZVUmvX9LPnTXcgQTqlJvWIcjYpO1L4rwwT
+\unrestrict UTBlKsmDf4Q3GFfpjBAAXXLBOXyOzNGSgX5ZWJlT7meGdI6ewG4Pr8S6LEUzPml
 
 INSERT INTO public."schema_migrations" (version) VALUES (20251114204733);
 INSERT INTO public."schema_migrations" (version) VALUES (20251114204951);

@@ -5,6 +5,139 @@ defmodule OliviaWeb.PageLive do
 
   @impl true
   def render(assigns) do
+    cond do
+      assigns[:theme] == "cottage" -> render_cottage(assigns)
+      assigns[:theme] == "gallery" -> render_gallery(assigns)
+      true -> render_default(assigns)
+    end
+  end
+
+  defp render_cottage(assigns) do
+    ~H"""
+    <div style="max-width: 800px; margin: 0 auto; padding: 4rem 1rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem;">
+          <%= @page.title %>
+        </h1>
+      </div>
+
+      <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
+        <div class="cottage-body" style="font-size: 1.125rem; line-height: 1.75;">
+          <%= raw(Earmark.as_html!(section.content_md || "")) %>
+        </div>
+      </div>
+
+      <div
+        :if={@page.slug in ["about", "collect"]}
+        style="margin-top: 4rem; padding: 3rem; background: white; border: 1px solid var(--cottage-taupe); border-radius: 8px;"
+      >
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h2 class="cottage-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+            Stay in Touch
+          </h2>
+          <p class="cottage-body" style="color: var(--cottage-text-medium);">
+            Subscribe to hear about new work and exhibitions.
+          </p>
+        </div>
+        <form
+          phx-submit="subscribe"
+          style="max-width: 28rem; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;"
+        >
+          <input
+            id="email-address"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
+            placeholder="Your email"
+          />
+          <button
+            type="submit"
+            class="cottage-button"
+            style="padding: 0.75rem 1.5rem; width: 100%;"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+
+      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--cottage-taupe); text-align: center;">
+        <.link
+          navigate={~p"/"}
+          class="cottage-body"
+          style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;"
+        >
+          ← Back to home
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_gallery(assigns) do
+    ~H"""
+    <!-- Gallery Hero -->
+    <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
+      <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
+        <%= @page.title %>
+      </h1>
+    </div>
+
+    <!-- Page Content -->
+    <div style="max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem;">
+      <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
+        <div style="color: #4a4034; font-size: 1.125rem; line-height: 1.75;">
+          <%= raw(Earmark.as_html!(section.content_md || "")) %>
+        </div>
+      </div>
+
+      <!-- Newsletter signup for specific pages -->
+      <div
+        :if={@page.slug in ["about", "collect"]}
+        style="margin-top: 4rem; padding-top: 4rem; border-top: 1px solid #e8e6e3;"
+      >
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 1rem;">
+            Stay in Touch
+          </h2>
+          <p class="gallery-script" style="font-size: 1.125rem; color: #6b5d54;">
+            Subscribe to hear about new work and exhibitions.
+          </p>
+        </div>
+        <form
+          phx-submit="subscribe"
+          style="max-width: 28rem; margin: 0 auto; display: flex; gap: 0.75rem;"
+        >
+          <input
+            id="email-address"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            style="flex: 1; padding: 0.5rem 1rem; border: 1px solid #c4b5a0; outline: none; font-size: 1rem; background: #faf8f5;"
+            placeholder="Your email"
+          />
+          <button
+            type="submit"
+            style="padding: 0.5rem 1.5rem; background: #6b5d54; color: #faf8f5; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; border: none; cursor: pointer; transition: background-color 0.2s;"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+
+      <!-- Back to home -->
+      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
+        <.link navigate={~p"/"} style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border-bottom: 1px solid #c4b5a0; padding-bottom: 0.25rem;">
+          ← Back to home
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_default(assigns) do
     ~H"""
     <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">

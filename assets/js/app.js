@@ -22,14 +22,29 @@ import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
-import {hooks as colocatedHooks} from "phoenix-colocated/olivia"
 import topbar from "../vendor/topbar"
+
+// Import Alpine.js for interactive components
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+Alpine.start()
+
+// Import PromptBase hooks
+import { PromptBaseGraph } from "./hooks/prompt_base_graph"
+import { CopyToClipboard } from "./hooks/copy_to_clipboard"
+import { SpatialCanvas } from "./hooks/spatial_canvas"
+import { DraggableMedia } from "./hooks/draggable_media"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {
+    PromptBaseGraph,
+    CopyToClipboard,
+    SpatialCanvas,
+    DraggableMedia
+  }
 })
 
 // Show progress bar on live navigation and form submits
@@ -56,7 +71,8 @@ if (process.env.NODE_ENV === "development") {
   window.addEventListener("phx:live_reload:attached", ({detail: reloader}) => {
     // Enable server log streaming to client.
     // Disable with reloader.disableServerLogs()
-    reloader.enableServerLogs()
+    // DISABLED: This causes massive performance issues by streaming all logs to browser
+    // reloader.enableServerLogs()
 
     // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
     //

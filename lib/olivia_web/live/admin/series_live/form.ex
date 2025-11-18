@@ -139,11 +139,6 @@ defmodule OliviaWeb.Admin.SeriesLive.Form do
      |> assign(:show_media_picker, false)
      |> assign(:selected_media, nil)
      |> assign(:slug_manually_edited, false)
-     |> allow_upload(:cover_image,
-       accept: ~w(.jpg .jpeg .png .webp),
-       max_entries: 1,
-       max_file_size: 10_000_000
-     )
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -253,7 +248,7 @@ defmodule OliviaWeb.Admin.SeriesLive.Form do
         |> Map.put("media_file_id", socket.assigns.selected_media.id)
         |> Map.put("cover_image_url", socket.assigns.selected_media.url)
       else
-        maybe_upload_cover_image(socket, series_params, series.slug)
+        series_params
       end
 
     if series.cover_image_url && series_params["cover_image_url"] &&
@@ -274,15 +269,13 @@ defmodule OliviaWeb.Admin.SeriesLive.Form do
   end
 
   defp save_series(socket, :new, series_params) do
-    temp_slug = Series.slugify(series_params["title"] || "series")
-
     series_params =
       if socket.assigns.selected_media do
         series_params
         |> Map.put("media_file_id", socket.assigns.selected_media.id)
         |> Map.put("cover_image_url", socket.assigns.selected_media.url)
       else
-        maybe_upload_cover_image(socket, series_params, temp_slug)
+        series_params
       end
 
     case Content.create_series(series_params) do
@@ -297,24 +290,6 @@ defmodule OliviaWeb.Admin.SeriesLive.Form do
     end
   end
 
-  defp maybe_upload_cover_image(socket, params, slug) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :cover_image, fn %{path: path}, entry ->
-        filename = Uploads.generate_filename(entry.client_name)
-        key = Uploads.series_key(slug, filename)
-        content_type = entry.client_type || "image/jpeg"
-
-        case Uploads.upload_file(path, key, content_type) do
-          {:ok, url} -> {:ok, url}
-          {:error, _reason} -> {:postpone, :error}
-        end
-      end)
-
-    case uploaded_files do
-      [url | _] -> Map.put(params, "cover_image_url", url)
-      [] -> params
-    end
-  end
 
   defp error_to_string(:too_large), do: "File is too large (max 10MB)"
   defp error_to_string(:not_accepted), do: "File type not accepted (use JPG, PNG, or WEBP)"
