@@ -161,100 +161,231 @@ defmodule OliviaWeb.HomeLive do
 
   defp render_cottage(assigns) do
     ~H"""
-    <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 1rem;">
-      <div style="text-align: center; margin-bottom: 4rem;">
-        <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem;">
-          <%= @sections["hero_title"] %>
-        </h1>
-        <p class="cottage-body" style="font-size: 1.25rem; color: var(--cottage-text-medium); max-width: 42rem; margin: 0 auto;">
-          <%= @sections["hero_subtitle"] %>
-        </p>
-      </div>
-
-      <div style="max-width: 48rem; margin: 0 auto 4rem;">
-        <div class="cottage-body" style="text-align: center; font-size: 1.125rem; line-height: 1.75;">
-          <%= raw(Earmark.as_html!(@sections["intro"] || "")) %>
+    <!-- Hero Section -->
+    <section style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem; background: var(--cottage-cream);">
+      <!-- Hero Artwork - Marilyn in garden light -->
+      <div style="max-width: 500px; width: 100%; margin-bottom: 3rem;">
+        <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(200, 167, 216, 0.12);">
+          <img
+            src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+            alt="Marilyn - Vibrant floral painting with white daffodils and blue hydrangea against golden ochre ground"
+            style="width: 100%; height: auto; display: block;"
+          />
         </div>
       </div>
 
-      <div :if={length(@featured_artworks) > 0} style="margin-top: 4rem;">
-        <h2 class="cottage-heading" style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">
-          Featured Works
-        </h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
-          <article :for={artwork <- @featured_artworks} style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
-            <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
-              <div :if={artwork.image_url} style="overflow: hidden;">
-                <.artwork_image
-                  src={artwork.image_url}
-                  alt={artwork.title}
-                  aspect="aspect-[4/5]"
-                  style="width: 100%; display: block; transition: transform 0.3s ease;"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div
-                :if={!artwork.image_url}
-                style="aspect-ratio: 4/5; background: var(--cottage-beige); display: flex; align-items: center; justify-content: center;"
-              >
-                <span class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">No image</span>
-              </div>
-            </.link>
-            <div style="padding: 1.5rem; background: white;">
-              <h3 class="cottage-heading" style="font-size: 1.25rem; margin-bottom: 0.5rem;">
-                <.link navigate={~p"/artworks/#{artwork.slug}"} style="text-decoration: none; color: inherit;">
-                  <%= artwork.title %>
-                </.link>
-              </h3>
-              <p class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-medium); margin: 0;">
-                <%= artwork.year %> · <%= artwork.medium %>
-              </p>
-              <p :if={artwork.series} class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light); margin-top: 0.25rem;">
-                <%= artwork.series.title %>
-              </p>
+      <!-- Hero Text -->
+      <div style="text-align: center; max-width: 600px;">
+        <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 0.5rem; color: var(--cottage-text-dark);">
+          Olivia Tew
+        </h1>
+        <p class="cottage-accent" style="font-size: 1.125rem; color: var(--cottage-wisteria); margin-bottom: 2rem;">
+          Romantic. Expressive. Uplifting.
+        </p>
+        <p class="cottage-body" style="font-size: 1.125rem; color: var(--cottage-text-medium); line-height: 1.8; margin-bottom: 2rem;">
+          Oil paintings from a cottage garden studio in Devon. Bold colour, gestural mark-making, and heavy impasto surfaces that celebrate the beauty found in transformation.
+        </p>
+        <a href="/work" class="cottage-button" style="display: inline-block; padding: 0.875rem 2.5rem;">
+          View the Collection
+        </a>
+      </div>
+    </section>
+
+    <!-- Three Bodies of Work -->
+    <section style="padding: 6rem 1rem; background: white;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 4rem;">
+          <h2 class="cottage-heading" style="font-size: 2rem; margin-bottom: 1rem; color: var(--cottage-text-dark);">
+            The Collection
+          </h2>
+          <div class="cottage-divider"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+          <!-- Becoming - Figures -->
+          <a href="/work#becoming" style="text-decoration: none; display: block;">
+            <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
+              <img
+                src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                alt="Changes - expressionistic figure study of seated nude in blue"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
             </div>
-          </article>
+            <h3 class="cottage-heading" style="font-size: 1.25rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Becoming
+            </h3>
+            <p class="cottage-accent" style="font-size: 0.875rem; color: var(--cottage-text-medium);">
+              Figure works exploring emergence and transformation
+            </p>
+          </a>
+
+          <!-- Abundance - Florals -->
+          <a href="/work#abundance" style="text-decoration: none; display: block;">
+            <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
+              <img
+                src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                alt="Floral still life with abundant mixed flowers in patterned vase against coral-red ground"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
+            </div>
+            <h3 class="cottage-heading" style="font-size: 1.25rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Abundance
+            </h3>
+            <p class="cottage-accent" style="font-size: 0.875rem; color: var(--cottage-text-medium);">
+              Floral celebrations of colour and joy
+            </p>
+          </a>
+
+          <!-- Shifting - Landscapes -->
+          <a href="/work#shifting" style="text-decoration: none; display: block;">
+            <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
+              <img
+                src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                alt="Shifting Part 1 - expressionist landscape with pink wall and dense garden vegetation"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
+            </div>
+            <h3 class="cottage-heading" style="font-size: 1.25rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Shifting
+            </h3>
+            <p class="cottage-accent" style="font-size: 0.875rem; color: var(--cottage-text-medium);">
+              Landscapes in perpetual transformation
+            </p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Artist Statement Quote -->
+    <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
+      <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+        <blockquote class="cottage-accent" style="font-size: 1.5rem; line-height: 1.6; color: var(--cottage-text-dark); margin-bottom: 2rem;">
+          "Each painting asks us to witness without intruding—the universal experience of weathering change, of the body as vessel for emotional experience."
+        </blockquote>
+        <div class="cottage-divider"></div>
+        <p class="cottage-body" style="margin-top: 2rem; color: var(--cottage-text-medium); line-height: 1.8;">
+          Working in oil, Olivia builds surfaces through heavy impasto that gives form weight and permanence. Her gestural brushwork refuses prettiness—each stroke visible, urgent, yet the cumulative effect is deeply tender.
+        </p>
+        <div style="margin-top: 2rem;">
+          <a href="/about" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;">
+            About the Artist
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Works Grid -->
+    <section style="padding: 6rem 1rem; background: white;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 3rem; text-align: center;">
+          Selected Works
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+          <div style="aspect-ratio: 1; overflow: hidden; border-radius: 8px;">
+            <img
+              src="/uploads/media/1763483281_a84d8a1756abb807.JPG"
+              alt="She Lays Down - reclining figure in warm flesh tones"
+              style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s;"
+            />
+          </div>
+          <div style="aspect-ratio: 1; overflow: hidden; border-radius: 8px;">
+            <img
+              src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+              alt="Ecstatic - floral still life above Georgian fireplace"
+              style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s;"
+            />
+          </div>
+          <div style="aspect-ratio: 1; overflow: hidden; border-radius: 8px;">
+            <img
+              src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+              alt="Shifting - expressionist landscape diptych"
+              style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s;"
+            />
+          </div>
+          <div style="aspect-ratio: 1; overflow: hidden; border-radius: 8px;">
+            <img
+              src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+              alt="A Becoming - figure emerging from gestural brushwork"
+              style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s;"
+            />
+          </div>
         </div>
         <div style="text-align: center; margin-top: 3rem;">
-          <.link
-            navigate={~p"/series"}
-            class="cottage-button"
-            style="display: inline-block; padding: 0.75rem 2rem; text-decoration: none;"
-          >
-            View All Collections
-          </.link>
+          <a href="/work" class="cottage-button" style="display: inline-block; padding: 0.875rem 2.5rem;">
+            View Full Collection
+          </a>
         </div>
       </div>
+    </section>
 
-      <div style="margin-top: 6rem; padding: 3rem; background: white; border: 1px solid var(--cottage-taupe); border-radius: 8px;">
-        <div style="max-width: 36rem; margin: 0 auto; text-align: center;">
-          <h2 class="cottage-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
-            Stay Updated
+    <!-- For Collectors & Designers -->
+    <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
+      <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+        <div>
+          <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 1.5rem;">
+            For Collectors & Designers
           </h2>
-          <p class="cottage-body" style="color: var(--cottage-text-medium); margin-bottom: 1.5rem;">
-            <%= @sections["newsletter_blurb"] %>
+          <p class="cottage-body" style="font-size: 1rem; color: var(--cottage-text-medium); line-height: 1.8; margin-bottom: 1.5rem;">
+            Olivia works with interior designers, hotels, and private collectors on commissions and art consultancy. Her paintings bring warmth, energy, and emotional depth to residential and hospitality spaces.
           </p>
-          <form phx-submit="subscribe" style="display: flex; gap: 0.75rem; flex-direction: column;">
-            <input
-              id="email-address"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
-              placeholder="Your email"
-            />
-            <button
-              type="submit"
-              class="cottage-button"
-              style="padding: 0.75rem 1.5rem; width: 100%;"
-            >
-              Subscribe
-            </button>
-          </form>
+          <a href="/hotels-designers" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;">
+            Learn More
+          </a>
+        </div>
+        <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(200, 167, 216, 0.1);">
+          <img
+            src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+            alt="I Love Three Times triptych installed in domestic interior"
+            style="width: 100%; display: block;"
+          />
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section style="padding: 5rem 1rem; background: white;">
+      <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+        <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
+          Stay Updated
+        </h2>
+        <p class="cottage-body" style="color: var(--cottage-text-medium); margin-bottom: 2rem;">
+          Subscribe for news about new work, exhibitions, and studio updates.
+        </p>
+        <form phx-submit="subscribe" style="display: flex; gap: 0.75rem; flex-direction: column;">
+          <input
+            id="email-address"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
+            placeholder="Your email"
+          />
+          <button
+            type="submit"
+            class="cottage-button"
+            style="padding: 0.75rem 1.5rem; width: 100%;"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section style="padding: 4rem 1rem; background: var(--cottage-wisteria-deep); text-align: center;">
+      <div style="max-width: 500px; margin: 0 auto;">
+        <h3 class="cottage-heading" style="font-size: 1.5rem; color: white; margin-bottom: 1rem;">
+          Interested in a piece?
+        </h3>
+        <p style="color: rgba(255, 255, 255, 0.85); margin-bottom: 2rem;">
+          Get in touch for availability, pricing, and commissions.
+        </p>
+        <a href="/contact" style="display: inline-block; padding: 0.875rem 2.5rem; border: 1px solid white; border-radius: 6px; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; color: white; transition: all 0.3s;">
+          Contact
+        </a>
+      </div>
+    </section>
     """
   end
 

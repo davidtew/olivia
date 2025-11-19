@@ -124,64 +124,201 @@ defmodule OliviaWeb.PageLive do
 
   defp render_cottage(assigns) do
     ~H"""
-    <div style="max-width: 800px; margin: 0 auto; padding: 4rem 1rem;">
-      <div style="text-align: center; margin-bottom: 4rem;">
-        <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem;">
-          <%= @page.title %>
-        </h1>
-      </div>
+    <%= if @page.slug == "about" do %>
+      <!-- About Page Special Layout -->
+      <!-- Hero with Portrait and Bio -->
+      <section style="background: var(--cottage-cream);">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; padding: 5rem 1rem; align-items: center;">
+          <!-- Artist Portrait -->
+          <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(200, 167, 216, 0.1);">
+            <img
+              src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+              alt="Olivia Tew standing beside her expressionistic figure painting in gallery setting"
+              style="width: 100%; display: block;"
+            />
+          </div>
 
-      <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
-        <div class="cottage-body" style="font-size: 1.125rem; line-height: 1.75;">
-          <%= raw(Earmark.as_html!(section.content_md || "")) %>
+          <!-- Bio Text -->
+          <div>
+            <h1 class="cottage-heading" style="font-size: 2.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
+              About the Artist
+            </h1>
+            <div class="cottage-divider" style="margin: 0 0 2rem;"></div>
+            <div class="cottage-body" style="color: var(--cottage-text-medium); line-height: 1.9; font-size: 1rem;">
+              <p style="margin-bottom: 1.5rem;">
+                Olivia Tew is a contemporary expressionist painter working primarily in oil from her cottage garden studio in Devon. Her practice spans figure studies, floral still lifes, and landscapes—all united by bold colour, gestural mark-making, and heavy impasto surfaces that give form weight and permanence.
+              </p>
+              <p style="margin-bottom: 1.5rem;">
+                Her figure work captures moments of profound introspection—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience. The gestural brushwork refuses prettiness or idealisation; each stroke is visible, urgent, yet the cumulative effect is deeply tender.
+              </p>
+              <p>
+                Her floral still lifes are maximalist celebrations of colour and abundance. Working with saturated grounds—coral reds, golden ochres—she creates paintings that demand attention, project outward, and perform their beauty with confidence.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div
-        :if={@page.slug in ["about", "collect"]}
-        style="margin-top: 4rem; padding: 3rem; background: white; border: 1px solid var(--cottage-taupe); border-radius: 8px;"
-      >
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <h2 class="cottage-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+      <!-- The Practice -->
+      <section style="padding: 5rem 1rem; background: white;">
+        <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center;">
+          <div>
+            <h2 class="cottage-heading" style="font-size: 1.75rem; color: var(--cottage-text-dark); margin-bottom: 1.5rem;">
+              The Practice
+            </h2>
+            <div class="cottage-body" style="color: var(--cottage-text-medium); line-height: 1.9; font-size: 1rem;">
+              <p style="margin-bottom: 1.5rem;">
+                Her landscape works, including the SHIFTING series, present terrain in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata, creating surfaces that function almost as relief sculpture.
+              </p>
+              <p>
+                Each painting asks us to witness without intruding. The work explores emergence and transformation—the universal experience of becoming.
+              </p>
+            </div>
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--cottage-taupe);">
+              <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cottage-wisteria); margin-bottom: 0.75rem;">
+                Artistic Connections
+              </h3>
+              <p class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-medium);">
+                Lucian Freud, Frank Auerbach, Jenny Saville, Leon Kossoff, Emil Nolde, Joan Eardley
+              </p>
+            </div>
+          </div>
+          <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(200, 167, 216, 0.08);">
+            <img
+              src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+              alt="A Becoming - Expressionist figure painting of nude torso emerging from gestural brushwork"
+              style="width: 100%; display: block;"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Studio & Process -->
+      <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
+        <div style="max-width: 1000px; margin: 0 auto;">
+          <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 2rem;">
+            Studio & Process
+          </h2>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+            <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
+              <img
+                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                alt="Works in progress on outdoor deck - nascent stage of A Becoming"
+                style="width: 100%; display: block;"
+              />
+            </div>
+            <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
+              <img
+                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                alt="Marilyn in studio light showing golden warmth"
+                style="width: 100%; display: block;"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section style="padding: 5rem 1rem; background: white;">
+        <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+          <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
             Stay in Touch
           </h2>
-          <p class="cottage-body" style="color: var(--cottage-text-medium);">
+          <p class="cottage-body" style="color: var(--cottage-text-medium); margin-bottom: 2rem;">
             Subscribe to hear about new work and exhibitions.
           </p>
+          <form phx-submit="subscribe" style="display: flex; gap: 0.75rem; flex-direction: column;">
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
+              placeholder="Your email"
+            />
+            <button
+              type="submit"
+              class="cottage-button"
+              style="padding: 0.75rem 1.5rem; width: 100%;"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
-        <form
-          phx-submit="subscribe"
-          style="max-width: 28rem; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;"
-        >
-          <input
-            id="email-address"
-            name="email"
-            type="email"
-            autocomplete="email"
-            required
-            style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
-            placeholder="Your email"
-          />
-          <button
-            type="submit"
-            class="cottage-button"
-            style="padding: 0.75rem 1.5rem; width: 100%;"
-          >
-            Subscribe
-          </button>
-        </form>
+      </section>
+
+      <!-- Back to home -->
+      <div style="border-top: 1px solid var(--cottage-taupe); padding: 2rem 1rem; background: white;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <a href="/" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-wisteria); text-decoration: none;">
+            ← Back to home
+          </a>
+        </div>
       </div>
 
-      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--cottage-taupe); text-align: center;">
-        <.link
-          navigate={~p"/"}
-          class="cottage-body"
-          style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;"
+    <% else %>
+      <!-- Generic page layout (hotels-designers, etc.) -->
+      <div style="max-width: 800px; margin: 0 auto; padding: 4rem 1rem;">
+        <div style="text-align: center; margin-bottom: 4rem;">
+          <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cottage-text-dark);">
+            <%= @page.title %>
+          </h1>
+          <div class="cottage-divider"></div>
+        </div>
+
+        <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
+          <div class="cottage-body" style="font-size: 1.125rem; line-height: 1.75; color: var(--cottage-text-medium);">
+            <%= raw(Earmark.as_html!(section.content_md || "")) %>
+          </div>
+        </div>
+
+        <div
+          :if={@page.slug in ["collect"]}
+          style="margin-top: 4rem; padding: 3rem; background: white; border: 1px solid var(--cottage-taupe); border-radius: 8px;"
         >
-          ← Back to home
-        </.link>
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 class="cottage-heading" style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--cottage-text-dark);">
+              Stay in Touch
+            </h2>
+            <p class="cottage-body" style="color: var(--cottage-text-medium);">
+              Subscribe to hear about new work and exhibitions.
+            </p>
+          </div>
+          <form
+            phx-submit="subscribe"
+            style="max-width: 28rem; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;"
+          >
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              style="padding: 0.75rem 1rem; border: 1px solid var(--cottage-taupe); border-radius: 6px; outline: none; font-family: 'Montserrat', sans-serif; font-size: 1rem; background: var(--cottage-cream);"
+              placeholder="Your email"
+            />
+            <button
+              type="submit"
+              class="cottage-button"
+              style="padding: 0.75rem 1.5rem; width: 100%;"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+
+        <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--cottage-taupe); text-align: center;">
+          <.link
+            navigate={~p"/"}
+            class="cottage-body"
+            style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-wisteria); text-decoration: none; border-bottom: 1px solid var(--cottage-wisteria); padding-bottom: 0.25rem;"
+          >
+            ← Back to home
+          </.link>
+        </div>
       </div>
-    </div>
+    <% end %>
     """
   end
 
