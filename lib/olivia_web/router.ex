@@ -18,6 +18,10 @@ defmodule OliviaWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :block_admin_in_production do
+    plug OliviaWeb.Plugs.AdminAccessPlug
+  end
+
   scope "/", OliviaWeb do
     pipe_through :browser
 
@@ -47,9 +51,9 @@ defmodule OliviaWeb.Router do
   end
 
 
-  ## Admin routes
+  ## Admin routes (blocked in production)
   scope "/admin", OliviaWeb.Admin, as: :admin do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :block_admin_in_production, :require_authenticated_user]
 
     live_session :admin, layout: {OliviaWeb.Layouts, :admin}, on_mount: {OliviaWeb.OliviaWeb.UserAuth, :ensure_authenticated} do
       live "/", DashboardLive, :index

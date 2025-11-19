@@ -8,6 +8,7 @@ defmodule Olivia.Communications do
   alias Olivia.Communications.{Subscriber, Enquiry, Newsletter}
   alias Olivia.Emails.{NewsletterEmail, EnquiryEmail}
   alias Olivia.Mailer
+  alias Olivia.Notifications.Webhook
 
   ## Subscribers
 
@@ -43,9 +44,19 @@ defmodule Olivia.Communications do
   Returns {:ok, subscriber} or {:error, changeset}.
   """
   def create_subscriber(attrs \\ %{}) do
-    %Subscriber{}
-    |> Subscriber.changeset(attrs)
-    |> Repo.insert()
+    result =
+      %Subscriber{}
+      |> Subscriber.changeset(attrs)
+      |> Repo.insert()
+
+    case result do
+      {:ok, subscriber} ->
+        Webhook.notify_subscriber(subscriber)
+        {:ok, subscriber}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -133,6 +144,7 @@ defmodule Olivia.Communications do
     case result do
       {:ok, enquiry} ->
         send_enquiry_notification(enquiry)
+        Webhook.notify_enquiry(enquiry)
         {:ok, enquiry}
 
       error ->

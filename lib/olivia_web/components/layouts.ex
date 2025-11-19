@@ -235,14 +235,6 @@ defmodule OliviaWeb.Layouts do
                 </a>
               </div>
             </div>
-            <%= if @current_scope do %>
-              <.link
-                navigate={~p"/admin"}
-                class="text-indigo-600 hover:text-indigo-800 px-3 py-2 text-sm font-medium"
-              >
-                Admin
-              </.link>
-            <% end %>
           </div>
 
           <div class="flex md:hidden">
@@ -339,14 +331,6 @@ defmodule OliviaWeb.Layouts do
             </div>
           </div>
 
-          <%= if @current_scope do %>
-            <.link
-              navigate={~p"/admin"}
-              class="block rounded-md px-3 py-2 text-base font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
-            >
-              Admin
-            </.link>
-          <% end %>
         </div>
       </div>
     </nav>
@@ -392,7 +376,7 @@ defmodule OliviaWeb.Layouts do
             <ul class="mt-4 space-y-2">
               <li>
                 <a
-                  href="https://instagram.com/oliviagraham"
+                  href="https://instagram.com/oliviatewstudio"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-sm text-gray-600 hover:text-gray-900"
@@ -402,7 +386,7 @@ defmodule OliviaWeb.Layouts do
               </li>
               <li>
                 <a
-                  href="mailto:hello@oliviagraham.com"
+                  href="mailto:olivia.tew@gmail.com"
                   class="text-sm text-gray-600 hover:text-gray-900"
                 >
                   Email
