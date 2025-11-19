@@ -8,7 +8,12 @@ defmodule OliviaWeb.Plugs.ThemePlug do
 
   @theme_cookie_key "olivia_theme"
   @default_theme "original"
-  @valid_themes ["original", "gallery", "cottage"]
+
+  # Import theme IDs from shared component
+  # This ensures theme validation stays in sync with the UI
+  defp valid_themes do
+    OliviaWeb.ThemeComponents.theme_ids()
+  end
 
   def init(opts), do: opts
 
@@ -21,22 +26,27 @@ defmodule OliviaWeb.Plugs.ThemePlug do
   end
 
   defp get_theme_from_cookie(conn) do
-    case conn.cookies[@theme_cookie_key] do
-      theme when theme in @valid_themes -> theme
-      _ -> nil
+    theme = conn.cookies[@theme_cookie_key]
+
+    if theme in valid_themes() do
+      theme
+    else
+      nil
     end
   end
 
   @doc """
   Sets the theme cookie.
   """
-  def set_theme(conn, theme) when theme in @valid_themes do
-    put_resp_cookie(conn, @theme_cookie_key, theme,
-      max_age: 365 * 24 * 60 * 60,
-      http_only: true,
-      same_site: "Lax"
-    )
+  def set_theme(conn, theme) do
+    if theme in valid_themes() do
+      put_resp_cookie(conn, @theme_cookie_key, theme,
+        max_age: 365 * 24 * 60 * 60,
+        http_only: true,
+        same_site: "Lax"
+      )
+    else
+      conn
+    end
   end
-
-  def set_theme(conn, _invalid_theme), do: conn
 end

@@ -29,6 +29,9 @@ defmodule OliviaWeb.Router do
 
       live "/artworks/:slug", ArtworkLive.Show, :show
 
+      live "/work", WorkLive, :index
+      live "/process", ProcessLive, :index
+
       live "/about", PageLive, :show, as: :page
       live "/collect", PageLive, :show, as: :page
       live "/hotels-designers", PageLive, :show, as: :page

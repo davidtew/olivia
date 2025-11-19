@@ -3,23 +3,25 @@ defmodule OliviaWeb.ThemeController do
 
   alias OliviaWeb.Plugs.ThemePlug
 
-  @valid_themes ["original", "gallery", "cottage"]
-
-  def set_theme(conn, %{"theme" => theme} = params) when theme in @valid_themes do
-    redirect_to = params["redirect_to"] || "/"
-
-    conn
-    |> put_resp_header("cache-control", "no-cache, no-store, must-revalidate")
-    |> put_resp_header("pragma", "no-cache")
-    |> put_resp_header("expires", "0")
-    |> ThemePlug.set_theme(theme)
-    |> redirect(to: redirect_to)
+  # Use shared theme definitions
+  defp valid_themes do
+    OliviaWeb.ThemeComponents.theme_ids()
   end
 
-  def set_theme(conn, params) do
-    # Invalid theme, redirect without changing
+  def set_theme(conn, %{"theme" => theme} = params) do
     redirect_to = params["redirect_to"] || "/"
-    redirect(conn, to: redirect_to)
+
+    if theme in valid_themes() do
+      conn
+      |> put_resp_header("cache-control", "no-cache, no-store, must-revalidate")
+      |> put_resp_header("pragma", "no-cache")
+      |> put_resp_header("expires", "0")
+      |> ThemePlug.set_theme(theme)
+      |> redirect(to: redirect_to)
+    else
+      # Invalid theme, redirect without changing
+      redirect(conn, to: redirect_to)
+    end
   end
 
   # Legacy toggle endpoint - kept for backwards compatibility

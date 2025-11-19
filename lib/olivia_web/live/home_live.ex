@@ -7,10 +7,156 @@ defmodule OliviaWeb.HomeLive do
   @impl true
   def render(assigns) do
     cond do
+      assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
       true -> render_default(assigns)
     end
+  end
+
+  defp render_curator(assigns) do
+    ~H"""
+    <!-- Flash Messages -->
+    <div :if={Phoenix.Flash.get(@flash, :info) || Phoenix.Flash.get(@flash, :error)} style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem;">
+      <p :if={Phoenix.Flash.get(@flash, :info)} class="curator-body" style="background: var(--curator-sage); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
+        <%= Phoenix.Flash.get(@flash, :info) %>
+      </p>
+      <p :if={Phoenix.Flash.get(@flash, :error)} class="curator-body" style="background: var(--curator-coral); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
+        <%= Phoenix.Flash.get(@flash, :error) %>
+      </p>
+    </div>
+
+    <!-- Hero Section - A BECOMING -->
+    <section style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 2rem;">
+      <!-- Hero Image -->
+      <div style="max-width: 600px; width: 100%; margin-bottom: 3rem;">
+        <img
+          src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+          alt="A BECOMING - Expressionist figure painting of nude torso emerging from gestural brushwork"
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+
+      <!-- Hero Text -->
+      <div style="text-align: center; max-width: 600px;">
+        <h1 class="curator-heading-italic" style="font-size: 3rem; margin-bottom: 1rem; color: var(--curator-text-light);">
+          A Becoming
+        </h1>
+        <p class="curator-body" style="font-size: 1.125rem; color: var(--curator-text-muted); line-height: 1.8; margin-bottom: 2rem;">
+          Contemporary expressionist work exploring transformation, vulnerability, and the emergence of form from paint itself.
+        </p>
+        <a href="/work" class="curator-button">
+          Enter Gallery
+        </a>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); opacity: 0.5;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Preview Triptych -->
+    <section style="padding: 6rem 2rem; background: var(--curator-bg-warm);">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 4rem;">
+          <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 1rem;">
+            The Collection
+          </h2>
+          <div class="curator-divider"></div>
+        </div>
+
+        <!-- Three Collection Previews -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+          <!-- Becoming (Figures) -->
+          <a href="/work#becoming" style="text-decoration: none; display: block;">
+            <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
+              <img
+                src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                alt="Changes - expressionistic figure study"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
+            </div>
+            <h3 class="curator-heading" style="font-size: 1.25rem; color: var(--curator-text-light); margin-bottom: 0.5rem;">
+              Becoming
+            </h3>
+            <p class="curator-body" style="font-size: 0.875rem; color: var(--curator-text-muted);">
+              Figure works exploring emergence and transformation
+            </p>
+          </a>
+
+          <!-- Abundance (Florals) -->
+          <a href="/work#abundance" style="text-decoration: none; display: block;">
+            <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
+              <img
+                src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                alt="Ecstatic - floral still life in Georgian setting"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
+            </div>
+            <h3 class="curator-heading" style="font-size: 1.25rem; color: var(--curator-text-light); margin-bottom: 0.5rem;">
+              Abundance
+            </h3>
+            <p class="curator-body" style="font-size: 0.875rem; color: var(--curator-text-muted);">
+              Floral celebrations of colour and joy
+            </p>
+          </a>
+
+          <!-- Shifting (Landscapes) -->
+          <a href="/work#shifting" style="text-decoration: none; display: block;">
+            <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
+              <img
+                src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+                alt="SHIFTING - expressionist landscape diptych"
+                style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;"
+              />
+            </div>
+            <h3 class="curator-heading" style="font-size: 1.25rem; color: var(--curator-text-light); margin-bottom: 0.5rem;">
+              Shifting
+            </h3>
+            <p class="curator-body" style="font-size: 0.875rem; color: var(--curator-text-muted);">
+              Landscapes in perpetual transformation
+            </p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Artist Statement -->
+    <section style="padding: 6rem 2rem;">
+      <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+        <blockquote class="curator-heading-italic" style="font-size: 1.5rem; line-height: 1.6; color: var(--curator-text-light); margin-bottom: 2rem;">
+          "Each painting asks us to witness without intruding—the universal experience of weathering change, of the body as vessel for emotional experience."
+        </blockquote>
+        <div class="curator-divider"></div>
+        <p class="curator-body" style="margin-top: 2rem; color: var(--curator-text-muted);">
+          Olivia Tew works in oil, building surfaces through heavy impasto that gives form weight and permanence. Her practice spans figure studies, floral still lifes, and expressionistic landscapes—all united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+        <div style="margin-top: 2rem;">
+          <a href="/about" class="curator-button">
+            About the Artist
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section style="padding: 4rem 2rem; background: var(--curator-bg-warm); text-align: center;">
+      <div style="max-width: 500px; margin: 0 auto;">
+        <h3 class="curator-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+          Enquire About Work
+        </h3>
+        <p class="curator-body" style="color: var(--curator-text-muted); margin-bottom: 2rem;">
+          For collector enquiries, exhibition proposals, or commission discussions.
+        </p>
+        <a href="/contact" class="curator-button curator-button-primary">
+          Get in Touch
+        </a>
+      </div>
+    </section>
+    """
   end
 
   defp render_cottage(assigns) do

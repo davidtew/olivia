@@ -143,8 +143,15 @@ defmodule Olivia.Communications do
   defp send_enquiry_notification(enquiry) do
     admin_email = Application.get_env(:olivia, :emails)[:admin_email] || "admin@olivia.art"
 
-    EnquiryEmail.new_enquiry_notification(enquiry, admin_email)
-    |> Mailer.deliver()
+    try do
+      EnquiryEmail.new_enquiry_notification(enquiry, admin_email)
+      |> Mailer.deliver()
+    rescue
+      e ->
+        require Logger
+        Logger.warning("Failed to send enquiry notification email: #{inspect(e)}")
+        :ok
+    end
   end
 
   @doc """

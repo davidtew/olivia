@@ -7,10 +7,113 @@ defmodule OliviaWeb.ContactLive do
   @impl true
   def render(assigns) do
     cond do
+      assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
       true -> render_default(assigns)
     end
+  end
+
+  defp render_curator(assigns) do
+    ~H"""
+    <!-- Flash Messages -->
+    <div :if={Phoenix.Flash.get(@flash, :info) || Phoenix.Flash.get(@flash, :error)} style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 0;">
+      <p :if={Phoenix.Flash.get(@flash, :info)} class="curator-body" style="background: var(--curator-sage); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
+        <%= Phoenix.Flash.get(@flash, :info) %>
+      </p>
+      <p :if={Phoenix.Flash.get(@flash, :error)} class="curator-body" style="background: var(--curator-coral); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
+        <%= Phoenix.Flash.get(@flash, :error) %>
+      </p>
+    </div>
+
+    <!-- Page Header -->
+    <section style="padding: 4rem 2rem 2rem; text-align: center;">
+      <h1 class="curator-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+        Contact
+      </h1>
+      <p class="curator-body" style="color: var(--curator-text-muted); max-width: 500px; margin: 0 auto;">
+        For collector enquiries, exhibition proposals, commission discussions, or press requests.
+      </p>
+    </section>
+
+    <!-- Contact Form -->
+    <section style="padding: 2rem;">
+      <div style="max-width: 500px; margin: 0 auto;">
+        <.form
+          for={@form}
+          id="contact-form"
+          phx-change="validate"
+          phx-submit="submit"
+        >
+          <div style="display: grid; gap: 1.5rem;">
+            <div>
+              <label class="curator-label">I'm interested in</label>
+              <select
+                name={@form[:type].name}
+                class="curator-input"
+              >
+                <option value="artwork" selected={@form[:type].value == "artwork"}>Purchasing artwork</option>
+                <option value="commission" selected={@form[:type].value == "commission"}>Commissioning a piece</option>
+                <option value="project" selected={@form[:type].value == "project"}>A project collaboration</option>
+                <option value="general" selected={@form[:type].value == "general"}>General enquiry</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="curator-label">Your name</label>
+              <input
+                type="text"
+                name={@form[:name].name}
+                value={@form[:name].value}
+                class="curator-input"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="curator-label">Email address</label>
+              <input
+                type="email"
+                name={@form[:email].name}
+                value={@form[:email].value}
+                class="curator-input"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="curator-label">Message</label>
+              <textarea
+                name={@form[:message].name}
+                class="curator-input"
+                rows="6"
+                required
+                placeholder="Tell me about your enquiry..."
+              ><%= @form[:message].value %></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem;">
+            <button
+              type="submit"
+              phx-disable-with="Sending..."
+              class="curator-button curator-button-primary"
+              style="width: 100%; padding: 1rem 2rem;"
+            >
+              Send Message
+            </button>
+          </div>
+        </.form>
+
+        <!-- Back link -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(245, 242, 237, 0.1); text-align: center;">
+          <a href="/" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--curator-text-muted); text-decoration: none;">
+            ← Back to home
+          </a>
+        </div>
+      </div>
+    </section>
+    """
   end
 
   defp render_cottage(assigns) do

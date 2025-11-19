@@ -9,8 +9,8 @@
     <.live_title suffix=" · Olivia Tew">
       <%= assigns[:page_title] || "Olivia Tew - Visual Artist" %>
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&family=Montserrat:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
 
@@ -328,9 +328,10 @@
                 </svg>
               </button>
               <div id="cottage-theme-menu" class="hidden theme-dropdown-menu">
-                <a href="/set-theme/original">Original</a>
+                <a href="/set-theme/curator">Curator</a>
                 <a href="/set-theme/gallery">Gallery</a>
                 <a href="/set-theme/cottage" class="active">Cottage</a>
+                <a href="/set-theme/original">Original</a>
               </div>
             </div>
           </nav>
@@ -356,9 +357,10 @@
             <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--cottage-taupe);">
               <div class="cottage-body" style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cottage-text-light); margin-bottom: 0.5rem;">Theme</div>
               <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                <a href="/set-theme/original" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Original</a>
+                <a href="/set-theme/curator" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Curator</a>
                 <a href="/set-theme/gallery" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Gallery</a>
                 <a href="/set-theme/cottage" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-wisteria); border-radius: 6px; font-weight: 500; background: var(--cottage-wisteria-light); background: rgba(200, 167, 216, 0.1);">Cottage</a>
+                <a href="/set-theme/original" class="cottage-body" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; text-decoration: none; color: var(--cottage-text-dark); border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='var(--cottage-beige)'" onmouseout="this.style.background='transparent'">Original</a>
               </div>
             </div>
           </div>
@@ -425,8 +427,8 @@
     <.live_title suffix=" · Olivia's Gallery">
       <%= assigns[:page_title] || "Olivia's Gallery" %>
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap');
@@ -641,6 +643,9 @@
                 class="hidden"
                 style="position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: #ffffff; border: 1px solid #c4b5a0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 140px; z-index: 50;"
               >
+                <a href="/set-theme/curator" style="display: block; padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-bottom: 1px solid #e8e6e3; transition: background 0.2s;">
+                  Curator
+                </a>
                 <a href="/set-theme/original" style="display: block; padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-bottom: 1px solid #e8e6e3; transition: background 0.2s;">
                   Original
                 </a>
@@ -675,6 +680,7 @@
             <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e8e6e3;">
               <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9a8a7a; margin-bottom: 0.5rem; padding-left: 0.75rem;">Theme</div>
               <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <a href="/set-theme/curator" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Curator</a>
                 <a href="/set-theme/original" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Original</a>
                 <a href="/set-theme/gallery" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #8b7355; text-decoration: none; border-radius: 4px; font-weight: 500; background: #faf8f5;">Gallery</a>
                 <a href="/set-theme/cottage" style="padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #6b5d54; text-decoration: none; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#f5f1ed'" onmouseout="this.style.background='transparent'">Cottage</a>
@@ -746,6 +752,385 @@
         <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
           <p style="font-size: 0.75rem; color: #9a8a7a; text-transform: uppercase; letter-spacing: 0.1em;">
             © <%= DateTime.utc_now().year %> Olivia. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<% assigns[:theme] == "curator" -> %>
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Olivia Tew">
+      <%= assigns[:page_title] || "Olivia Tew - Contemporary Artist" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+      :root {
+        /* Base colours */
+        --curator-bg: #1a1a1a;
+        --curator-bg-warm: #2a2420;
+        --curator-bg-light: #faf8f5;
+        --curator-cream: #f5f2ed;
+
+        /* Accent colours from the work */
+        --curator-coral: #c45a4a;
+        --curator-ochre: #c4a055;
+        --curator-sage: #7a9b7e;
+        --curator-terracotta: #b86b4a;
+        --curator-blue: #4a6b8a;
+
+        /* Text */
+        --curator-text-light: #f5f2ed;
+        --curator-text-dark: #2c2416;
+        --curator-text-muted: #8a8075;
+      }
+
+      .curator-layout {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        background: var(--curator-bg);
+        color: var(--curator-text-light);
+      }
+
+      .curator-heading {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+      }
+
+      .curator-heading-italic {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .curator-body {
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        line-height: 1.7;
+        letter-spacing: 0.01em;
+      }
+
+      .curator-nav-link {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 0.8125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--curator-text-light);
+        text-decoration: none;
+        padding: 0.5rem 0;
+        position: relative;
+        transition: color 0.3s ease;
+      }
+
+      .curator-nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--curator-coral);
+        transition: width 0.3s ease;
+      }
+
+      .curator-nav-link:hover::after {
+        width: 100%;
+      }
+
+      .curator-button {
+        display: inline-block;
+        padding: 0.875rem 2rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        text-decoration: none;
+        border: 1px solid var(--curator-text-light);
+        color: var(--curator-text-light);
+        background: transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .curator-button:hover {
+        background: var(--curator-text-light);
+        color: var(--curator-bg);
+      }
+
+      .curator-button-primary {
+        background: var(--curator-coral);
+        border-color: var(--curator-coral);
+        color: var(--curator-text-light);
+      }
+
+      .curator-button-primary:hover {
+        background: transparent;
+        color: var(--curator-coral);
+      }
+
+      .curator-divider {
+        width: 60px;
+        height: 1px;
+        background: var(--curator-coral);
+        margin: 2rem auto;
+      }
+
+      /* Artwork card */
+      .curator-artwork-card {
+        position: relative;
+        overflow: hidden;
+        background: var(--curator-bg);
+      }
+
+      .curator-artwork-card img {
+        transition: transform 0.5s ease;
+      }
+
+      .curator-artwork-card:hover img {
+        transform: scale(1.02);
+      }
+
+      /* Desktop navigation */
+      .curator-desktop-nav {
+        display: flex;
+        gap: 2.5rem;
+        align-items: center;
+      }
+
+      /* Mobile menu */
+      .curator-mobile-menu {
+        display: none;
+      }
+
+      /* Mobile nav - hidden by default */
+      #curator-mobile-nav {
+        display: none;
+      }
+
+      #curator-mobile-nav:not(.hidden) {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .curator-desktop-nav {
+          display: none !important;
+        }
+        .curator-mobile-menu {
+          display: block;
+        }
+        .curator-about-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
+      /* Dropdown */
+      .curator-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .curator-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 160px;
+        background: var(--curator-bg);
+        border: 1px solid rgba(245, 242, 237, 0.2);
+        z-index: 50;
+        padding: 0.5rem 0;
+      }
+
+      .curator-dropdown:hover .curator-dropdown-content {
+        display: block;
+      }
+
+      .curator-dropdown-item {
+        display: block;
+        padding: 0.625rem 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--curator-text-light);
+        text-decoration: none;
+        transition: background 0.2s ease;
+      }
+
+      .curator-dropdown-item:hover {
+        background: rgba(245, 242, 237, 0.1);
+      }
+
+      /* Form styling */
+      .curator-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: transparent;
+        border: 1px solid rgba(245, 242, 237, 0.3);
+        color: var(--curator-text-light);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .curator-input:focus {
+        outline: none;
+        border-color: var(--curator-coral);
+      }
+
+      .curator-input::placeholder {
+        color: var(--curator-text-muted);
+      }
+
+      .curator-label {
+        display: block;
+        font-size: 0.6875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--curator-text-muted);
+        margin-bottom: 0.5rem;
+      }
+
+      /* Light background variant */
+      .curator-light {
+        background: var(--curator-bg-light);
+        color: var(--curator-text-dark);
+      }
+
+      .curator-light .curator-nav-link {
+        color: var(--curator-text-dark);
+      }
+
+      .curator-light .curator-button {
+        border-color: var(--curator-text-dark);
+        color: var(--curator-text-dark);
+      }
+
+      .curator-light .curator-button:hover {
+        background: var(--curator-text-dark);
+        color: var(--curator-bg-light);
+      }
+    </style>
+  </head>
+  <body class="curator-layout min-h-full flex flex-col">
+    <!-- Header -->
+    <header style="padding: 1.5rem 2rem; border-bottom: 1px solid rgba(245, 242, 237, 0.1);">
+      <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- Logo -->
+        <a href="/" style="text-decoration: none;">
+          <span class="curator-heading" style="font-size: 1.5rem; color: var(--curator-text-light);">
+            Olivia Tew
+          </span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="curator-desktop-nav">
+          <a href="/" class="curator-nav-link">Home</a>
+          <a href="/work" class="curator-nav-link">Work</a>
+          <a href="/about" class="curator-nav-link">About</a>
+          <a href="/process" class="curator-nav-link">Process</a>
+          <a href="/contact" class="curator-nav-link">Contact</a>
+
+          <!-- Theme Dropdown -->
+          <div class="curator-dropdown">
+            <button class="curator-nav-link" style="background: none; border: none; cursor: pointer;">
+              Theme
+            </button>
+            <div class="curator-dropdown-content">
+              <a href="/set-theme/curator" class="curator-dropdown-item">Curator</a>
+              <a href="/set-theme/gallery" class="curator-dropdown-item">Gallery</a>
+              <a href="/set-theme/cottage" class="curator-dropdown-item">Cottage</a>
+              <a href="/set-theme/original" class="curator-dropdown-item">Original</a>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button class="curator-mobile-menu" onclick="document.getElementById('curator-mobile-nav').classList.toggle('hidden')" style="background: none; border: none; color: var(--curator-text-light); padding: 0.5rem; cursor: pointer;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav id="curator-mobile-nav" class="hidden" style="padding: 1.5rem 0; border-top: 1px solid rgba(245, 242, 237, 0.1); margin-top: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <a href="/" class="curator-nav-link">Home</a>
+          <a href="/work" class="curator-nav-link">Work</a>
+          <a href="/about" class="curator-nav-link">About</a>
+          <a href="/process" class="curator-nav-link">Process</a>
+          <a href="/contact" class="curator-nav-link">Contact</a>
+          <div style="padding-top: 1rem; border-top: 1px solid rgba(245, 242, 237, 0.1); margin-top: 0.5rem;">
+            <span class="curator-label">Theme</span>
+            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+              <a href="/set-theme/curator" class="curator-nav-link" style="font-size: 0.6875rem;">Curator</a>
+              <a href="/set-theme/gallery" class="curator-nav-link" style="font-size: 0.6875rem;">Gallery</a>
+              <a href="/set-theme/cottage" class="curator-nav-link" style="font-size: 0.6875rem;">Cottage</a>
+              <a href="/set-theme/original" class="curator-nav-link" style="font-size: 0.6875rem;">Original</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main style="flex: 1;">
+      {@inner_content}
+    </main>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 2rem 2rem; border-top: 1px solid rgba(245, 242, 237, 0.1);">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+          <!-- Brand -->
+          <div>
+            <h3 class="curator-heading" style="font-size: 1.25rem; margin-bottom: 1rem;">Olivia Tew</h3>
+            <p class="curator-body" style="font-size: 0.875rem; color: var(--curator-text-muted);">
+              Contemporary expressionist artist working in oil, exploring themes of transformation, vulnerability, and celebration.
+            </p>
+          </div>
+
+          <!-- Navigation -->
+          <div>
+            <h4 style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; color: var(--curator-text-muted);">
+              Navigate
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <a href="/work" style="color: var(--curator-text-light); text-decoration: none; font-size: 0.875rem;">Work</a>
+              <a href="/about" style="color: var(--curator-text-light); text-decoration: none; font-size: 0.875rem;">About</a>
+              <a href="/process" style="color: var(--curator-text-light); text-decoration: none; font-size: 0.875rem;">Process</a>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div>
+            <h4 style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; color: var(--curator-text-muted);">
+              Connect
+            </h4>
+            <a href="/contact" class="curator-button" style="font-size: 0.6875rem; padding: 0.625rem 1.25rem;">
+              Enquire
+            </a>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div style="border-top: 1px solid rgba(245, 242, 237, 0.1); padding-top: 2rem; text-align: center;">
+          <p style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--curator-text-muted);">
+            © <%= DateTime.utc_now().year %> Olivia Tew. All rights reserved.
           </p>
         </div>
       </div>
