@@ -174,25 +174,13 @@ defmodule OliviaWeb.Layouts do
               navigate={~p"/series"}
               class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
             >
-              Series
+              Collections
             </.link>
             <.link
               navigate={~p"/about"}
               class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
             >
               About
-            </.link>
-            <.link
-              navigate={~p"/collect"}
-              class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-            >
-              Collect
-            </.link>
-            <.link
-              navigate={~p"/hotels-designers"}
-              class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-            >
-              Hotels & Designers
             </.link>
             <.link
               navigate={~p"/press-projects"}
@@ -264,42 +252,34 @@ defmodule OliviaWeb.Layouts do
 
       <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200">
         <div class="space-y-1 px-2 pb-3 pt-2">
-          <.link
-            navigate={~p"/series"}
+          <a
+            href="/series"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           >
-            Series
-          </.link>
-          <.link
-            navigate={~p"/about"}
+            Collections
+          </a>
+          <a
+            href="/about"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           >
             About
-          </.link>
-          <.link
-            navigate={~p"/collect"}
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-          >
-            Collect
-          </.link>
-          <.link
-            navigate={~p"/hotels-designers"}
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-          >
-            Hotels & Designers
-          </.link>
-          <.link
-            navigate={~p"/press-projects"}
+          </a>
+          <a
+            href="/press-projects"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           >
             Press & Projects
-          </.link>
-          <.link
-            navigate={~p"/contact"}
+          </a>
+          <a
+            href="/contact"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"
             class="block rounded-md px-3 py-2 text-base font-medium bg-gray-900 text-white hover:bg-gray-800"
           >
             Contact
-          </.link>
+          </a>
 
           <div class="px-3 py-2">
             <div class="text-sm font-semibold text-gray-500 mb-2">Theme</div>
@@ -350,17 +330,12 @@ defmodule OliviaWeb.Layouts do
             <ul class="mt-4 space-y-2">
               <li>
                 <.link navigate={~p"/series"} class="text-sm text-gray-600 hover:text-gray-900">
-                  Series
+                  Collections
                 </.link>
               </li>
               <li>
                 <.link navigate={~p"/about"} class="text-sm text-gray-600 hover:text-gray-900">
                   About
-                </.link>
-              </li>
-              <li>
-                <.link navigate={~p"/collect"} class="text-sm text-gray-600 hover:text-gray-900">
-                  Collect
                 </.link>
               </li>
               <li>

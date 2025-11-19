@@ -1,6 +1,8 @@
 defmodule OliviaWeb.SeriesLive.Index do
   use OliviaWeb, :live_view
 
+  import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
+
   alias Olivia.Content
 
   @impl true
@@ -27,9 +29,9 @@ defmodule OliviaWeb.SeriesLive.Index do
       <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
         <article :for={series <- @series_list} style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; background: white;">
           <.link navigate={~p"/series/#{series.slug}"} style="display: block; text-decoration: none;">
-            <div :if={series.cover_image_url} style="height: 100%;">
+            <div :if={Olivia.Content.Series.resolved_cover_image_url(series)} style="height: 100%;">
               <.artwork_image
-                src={series.cover_image_url}
+                src={Olivia.Content.Series.resolved_cover_image_url(series)}
                 alt={series.title}
                 aspect="aspect-[16/9]"
                 style="width: 100%; height: 100%; object-fit: cover; display: block;"
@@ -37,7 +39,7 @@ defmodule OliviaWeb.SeriesLive.Index do
               />
             </div>
             <div
-              :if={!series.cover_image_url}
+              :if={!Olivia.Content.Series.resolved_cover_image_url(series)}
               style="aspect-ratio: 16/9; background: var(--cottage-beige); display: flex; align-items: center; justify-content: center;"
             >
               <span class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">No image</span>
@@ -90,9 +92,9 @@ defmodule OliviaWeb.SeriesLive.Index do
       <div style="display: grid; grid-template-columns: 1fr; gap: 4rem; max-width: 80rem; margin: 0 auto;">
         <article :for={series <- @series_list} class="artwork-card" style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
           <.link navigate={~p"/series/#{series.slug}"} style="display: block; text-decoration: none;">
-            <div :if={series.cover_image_url} class="elegant-border" style="overflow: hidden; margin-bottom: 1rem;">
+            <div :if={Olivia.Content.Series.resolved_cover_image_url(series)} class="elegant-border" style="overflow: hidden; margin-bottom: 1rem;">
               <.artwork_image
-                src={series.cover_image_url}
+                src={Olivia.Content.Series.resolved_cover_image_url(series)}
                 alt={series.title}
                 aspect="aspect-[16/9]"
                 style="width: 100%; display: block;"
@@ -100,7 +102,7 @@ defmodule OliviaWeb.SeriesLive.Index do
               />
             </div>
             <div
-              :if={!series.cover_image_url}
+              :if={!Olivia.Content.Series.resolved_cover_image_url(series)}
               class="elegant-border"
               style="aspect-ratio: 16/9; background: #fafafa; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;"
             >
@@ -144,7 +146,7 @@ defmodule OliviaWeb.SeriesLive.Index do
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mx-auto max-w-2xl text-center">
             <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Series
+              Collections
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-600">
               Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
@@ -162,7 +164,7 @@ defmodule OliviaWeb.SeriesLive.Index do
               <.link navigate={~p"/series/becoming"} class="group block">
                 <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                    src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                     alt="A Becoming - Expressionist figure painting"
                     class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
@@ -215,7 +217,7 @@ defmodule OliviaWeb.SeriesLive.Index do
               <.link navigate={~p"/series/abundance"} class="group block order-1 lg:order-2">
                 <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                    src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                     alt="Ecstatic - floral still life"
                     class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
@@ -228,7 +230,7 @@ defmodule OliviaWeb.SeriesLive.Index do
               <.link navigate={~p"/series/shifting"} class="group block">
                 <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+                    src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
                     alt="Shifting - expressionist landscape diptych"
                     class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />

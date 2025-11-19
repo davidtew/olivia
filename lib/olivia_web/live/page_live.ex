@@ -1,6 +1,8 @@
 defmodule OliviaWeb.PageLive do
   use OliviaWeb, :live_view
 
+  import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
+
   alias Olivia.CMS
 
   @impl true
@@ -41,7 +43,7 @@ defmodule OliviaWeb.PageLive do
             <div>
               <div class="curator-artwork-card">
                 <img
-                  src="/uploads/media/1763245447_a9722ba628198afa.png"
+                  src={resolve_asset_url("/uploads/media/1763245447_a9722ba628198afa.png")}
                   alt="Portrait of artist Olivia Tew in her studio"
                   style="width: 100%; display: block;"
                 />
@@ -81,7 +83,7 @@ defmodule OliviaWeb.PageLive do
           <div style="margin-top: 4rem;">
             <div class="curator-artwork-card" style="max-width: 700px; margin: 0 auto;">
               <img
-                src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
                 alt="Olivia Tew with her expressionistic figure painting in gallery setting"
                 style="width: 100%; display: block;"
               />
@@ -128,11 +130,18 @@ defmodule OliviaWeb.PageLive do
       <!-- About Page Special Layout -->
       <!-- Hero with Portrait and Bio -->
       <section style="background: var(--cottage-cream);">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; padding: 5rem 1rem; align-items: center;">
+        <div class="cottage-about-hero" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1rem; align-items: center;">
+          <style>
+            @media (min-width: 768px) {
+              .cottage-about-hero { grid-template-columns: 1fr 1.2fr !important; gap: 4rem !important; padding: 5rem 1rem !important; }
+              .cottage-about-practice { grid-template-columns: 1.2fr 1fr !important; gap: 4rem !important; }
+              .cottage-about-studio { grid-template-columns: repeat(2, 1fr) !important; }
+            }
+          </style>
           <!-- Artist Portrait -->
           <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(200, 167, 216, 0.1);">
             <img
-              src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+              src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
               alt="Olivia Tew standing beside her expressionistic figure painting in gallery setting"
               style="width: 100%; display: block;"
             />
@@ -160,8 +169,8 @@ defmodule OliviaWeb.PageLive do
       </section>
 
       <!-- The Practice -->
-      <section style="padding: 5rem 1rem; background: white;">
-        <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center;">
+      <section style="padding: 3rem 1rem; background: white;">
+        <div class="cottage-about-practice" style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
           <div>
             <h2 class="cottage-heading" style="font-size: 1.75rem; color: var(--cottage-text-dark); margin-bottom: 1.5rem;">
               The Practice
@@ -185,7 +194,7 @@ defmodule OliviaWeb.PageLive do
           </div>
           <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(200, 167, 216, 0.08);">
             <img
-              src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+              src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
               alt="A Becoming - Expressionist figure painting of nude torso emerging from gestural brushwork"
               style="width: 100%; display: block;"
             />
@@ -199,17 +208,17 @@ defmodule OliviaWeb.PageLive do
           <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 2rem;">
             Studio & Process
           </h2>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+          <div class="cottage-about-studio" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                 alt="Works in progress on outdoor deck - nascent stage of A Becoming"
                 style="width: 100%; display: block;"
               />
             </div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn in studio light showing golden warmth"
                 style="width: 100%; display: block;"
               />
@@ -328,11 +337,18 @@ defmodule OliviaWeb.PageLive do
       <!-- About Page Special Layout -->
       <!-- Hero with Portrait -->
       <section style="background: linear-gradient(to bottom, #faf8f5, #fff);">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; padding: 4rem 1.5rem; align-items: center;">
+        <div class="gallery-about-hero" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; padding: 4rem 1.5rem; align-items: center;">
+          <style>
+            @media (min-width: 768px) {
+              .gallery-about-hero { grid-template-columns: 1fr 1.2fr !important; gap: 4rem !important; }
+              .gallery-about-practice { grid-template-columns: 1.2fr 1fr !important; gap: 4rem !important; }
+              .gallery-about-studio { grid-template-columns: repeat(2, 1fr) !important; }
+            }
+          </style>
           <!-- Artist Portrait -->
           <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
             <img
-              src="/uploads/media/1763245447_a9722ba628198afa.png"
+              src={resolve_asset_url("/uploads/media/1763245447_a9722ba628198afa.png")}
               alt="Portrait of artist Olivia Tew in her studio"
               style="width: 100%; display: block;"
             />
@@ -361,7 +377,7 @@ defmodule OliviaWeb.PageLive do
 
       <!-- Artist with Work -->
       <section style="padding: 5rem 1.5rem; background: #fff;">
-        <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center;">
+        <div class="gallery-about-practice" style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
           <div>
             <h2 class="gallery-heading" style="font-size: 1.75rem; color: #2c2416; margin-bottom: 1.5rem;">
               The Practice
@@ -385,7 +401,7 @@ defmodule OliviaWeb.PageLive do
           </div>
           <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
             <img
-              src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+              src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
               alt="Olivia Tew with her expressionistic figure painting"
               style="width: 100%; display: block;"
             />
@@ -399,17 +415,17 @@ defmodule OliviaWeb.PageLive do
           <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 2rem;">
             Studio & Process
           </h2>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+          <div class="gallery-about-studio" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
               <img
-                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                 alt="Works in progress on outdoor deck"
                 style="width: 100%; display: block;"
               />
             </div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn in studio"
                 style="width: 100%; display: block;"
               />
@@ -532,7 +548,7 @@ defmodule OliviaWeb.PageLive do
               <!-- Hotel Visualization Image -->
               <div class="relative aspect-[3/4] lg:aspect-auto">
                 <img
-                  src="/uploads/media/1763555487_35a594e71b1cb673.png"
+                  src={resolve_asset_url("/uploads/media/1763555487_35a594e71b1cb673.png")}
                   alt="Artwork visualisation in luxury Swiss hotel lounge with alpine views"
                   class="w-full h-full object-cover"
                 />
@@ -646,7 +662,7 @@ defmodule OliviaWeb.PageLive do
               <!-- Artist Portrait -->
               <div class="relative aspect-[3/4] lg:aspect-auto">
                 <img
-                  src="/uploads/media/1763245447_a9722ba628198afa.png"
+                  src={resolve_asset_url("/uploads/media/1763245447_a9722ba628198afa.png")}
                   alt="Portrait of artist Olivia Tew in her studio"
                   class="w-full h-full object-cover object-top"
                 />
@@ -700,7 +716,7 @@ defmodule OliviaWeb.PageLive do
               <div class="order-1 lg:order-2">
                 <div class="aspect-[4/3] overflow-hidden rounded-lg">
                   <img
-                    src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+                    src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
                     alt="Olivia Tew with her expressionistic figure painting"
                     class="w-full h-full object-cover"
                   />
@@ -719,14 +735,14 @@ defmodule OliviaWeb.PageLive do
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="aspect-[4/3] overflow-hidden rounded-lg">
                 <img
-                  src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                   alt="Works in progress on outdoor deck"
                   class="w-full h-full object-cover"
                 />
               </div>
               <div class="aspect-[4/3] overflow-hidden rounded-lg">
                 <img
-                  src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                  src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                   alt="Marilyn in studio"
                   class="w-full h-full object-cover"
                 />
@@ -865,6 +881,9 @@ defmodule OliviaWeb.PageLive do
       "/collect" -> "collect"
       "/hotels-designers" -> "hotels-designers"
       "/press-projects" -> "press-projects"
+      # Archived pages
+      "/archive/collect" -> "collect"
+      "/archive/hotels-designers" -> "hotels-designers"
       _ -> "home"
     end
   end

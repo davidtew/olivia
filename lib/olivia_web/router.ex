@@ -33,15 +33,17 @@ defmodule OliviaWeb.Router do
 
       live "/artworks/:slug", ArtworkLive.Show, :show
 
-      live "/work", WorkLive, :index
       live "/process", ProcessLive, :index
 
       live "/about", PageLive, :show, as: :page
-      live "/collect", PageLive, :show, as: :page
-      live "/hotels-designers", PageLive, :show, as: :page
       live "/press-projects", PageLive, :show, as: :page
 
       live "/contact", ContactLive, :index
+
+      # Archived pages - accessible but not linked from navigation
+      live "/archive/work", WorkLive, :index
+      live "/archive/collect", PageLive, :show, as: :archive_collect
+      live "/archive/hotels-designers", PageLive, :show, as: :archive_hotels
     end
 
     get "/sitemap.xml", SitemapController, :index
