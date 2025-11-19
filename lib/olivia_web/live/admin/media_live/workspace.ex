@@ -218,6 +218,17 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
                 Approve
               </button>
             <% end %>
+
+            <%= if @selected_media.status != "archived" do %>
+              <button
+                type="button"
+                phx-click="show_archive_modal"
+                class="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500"
+              >
+                <.icon name="hero-archive-box" class="w-4 h-4 inline mr-1" />
+                Archive
+              </button>
+            <% end %>
           </div>
 
           <!-- Analysis History -->
@@ -514,6 +525,57 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
           </div>
         </div>
       <% end %>
+
+      <!-- Archive Confirmation Modal -->
+      <%= if @show_archive_modal && @selected_media do %>
+        <div class="fixed inset-0 z-50 overflow-y-auto" phx-click="hide_archive_modal">
+          <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+            <div
+              class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+              phx-click="stop_propagation"
+            >
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <.icon name="hero-exclamation-triangle" class="h-6 w-6 text-amber-600" />
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-base font-semibold leading-6 text-gray-900">
+                    Archive Media
+                  </h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">
+                      Are you sure you want to archive "<%= @selected_media.filename %>"?
+                    </p>
+                    <p class="mt-2 text-sm text-gray-500">
+                      Archived media will be hidden from the main views but can be restored later.
+                      The file will remain on disk.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
+                <button
+                  type="button"
+                  phx-click="archive_media"
+                  phx-value-id={@selected_media.id}
+                  class="inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:w-auto"
+                >
+                  Yes, Archive
+                </button>
+                <button
+                  type="button"
+                  phx-click="hide_archive_modal"
+                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -543,6 +605,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
      |> assign(:show_generated_prompt, false)
      |> assign(:generated_prompt, "")
      |> assign(:show_upload_modal, false)
+     |> assign(:show_archive_modal, false)
      |> assign(:alt_texts, %{})
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .webp),
@@ -725,6 +788,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
 
     {successful, failed} =
       Enum.split_with(uploaded_results, fn
+        %Olivia.Media.MediaFile{} -> true
         {:ok, _} -> true
         _ -> false
       end)
@@ -795,6 +859,37 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to approve media")}
+    end
+  end
+
+  @impl true
+  def handle_event("show_archive_modal", _, socket) do
+    {:noreply, assign(socket, :show_archive_modal, true)}
+  end
+
+  @impl true
+  def handle_event("hide_archive_modal", _, socket) do
+    {:noreply, assign(socket, :show_archive_modal, false)}
+  end
+
+  @impl true
+  def handle_event("archive_media", %{"id" => id}, socket) do
+    media = Media.get_media!(id)
+
+    case Media.update_media(media, %{status: "archived"}) do
+      {:ok, _updated_media} ->
+        {:noreply,
+         socket
+         |> assign(:selected_media, nil)
+         |> assign(:show_archive_modal, false)
+         |> load_media()
+         |> put_flash(:info, "Media archived successfully")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> assign(:show_archive_modal, false)
+         |> put_flash(:error, "Failed to archive media")}
     end
   end
 

@@ -2,6 +2,7 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
   use OliviaWeb, :live_view
 
   alias Olivia.Media
+  alias Olivia.Media.ProcessingPipeline
   alias Olivia.Uploads
 
   @impl true
@@ -290,7 +291,19 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
             case Media.create_media(attrs) do
               {:ok, media} ->
                 Logger.info("Database insert successful: #{entry.client_name} (ID: #{media.id})")
-                {:ok, media}
+
+                # Process synchronously while we still have access to the temp file
+                # This generates thumbnails, extracts metadata, calculates phash
+                case ProcessingPipeline.process_upload(media.id, path, user_id) do
+                  {:ok, processed_media} ->
+                    Logger.info("Processing complete for #{entry.client_name}")
+                    {:ok, processed_media}
+
+                  {:error, reason} ->
+                    # Log but don't fail the upload - media is saved, just not processed
+                    Logger.warning("Processing failed for #{entry.client_name}: #{inspect(reason)}")
+                    {:ok, media}
+                end
 
               {:error, changeset} ->
                 Logger.error("Database insert failed for #{entry.client_name}: #{inspect(changeset.errors)}")

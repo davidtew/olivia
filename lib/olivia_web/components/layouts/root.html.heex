@@ -289,6 +289,16 @@
       .hidden {
         display: none;
       }
+
+      /* Responsive navigation for Cottage theme */
+      @media (min-width: 768px) {
+        .hidden.md\:flex {
+          display: flex !important;
+        }
+        .md\:hidden {
+          display: none !important;
+        }
+      }
     </style>
     <script>
       document.addEventListener('click', function(event) {
@@ -312,7 +322,7 @@
             <p class="cottage-body" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-text-light);">Visual Artist</p>
           </div>
 
-          <nav style="display: none; gap: 2rem; align-items: center;" class="md:flex">
+          <nav style="gap: 2rem; align-items: center;" class="hidden md:flex">
             <a href="/series" class="cottage-nav-link">Collections</a>
             <a href="/about" class="cottage-nav-link">About</a>
             <a href="/contact" class="cottage-nav-link">Contact</a>
@@ -595,6 +605,16 @@
       .hidden {
         display: none;
       }
+
+      /* Responsive navigation for Gallery theme */
+      @media (min-width: 768px) {
+        .hidden.md\:flex {
+          display: flex !important;
+        }
+        .md\:hidden {
+          display: none !important;
+        }
+      }
     </style>
     <script>
       // Close theme dropdown when clicking outside
@@ -617,7 +637,7 @@
             <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a8a7a;">Artist & Creator</p>
           </div>
 
-          <nav style="display: none; gap: 2rem; align-items: center;" class="md:flex">
+          <nav style="gap: 2rem; align-items: center;" class="hidden md:flex">
             <a href="/series" class="nav-link" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b5d54; text-decoration: none;">
               Collections
             </a>

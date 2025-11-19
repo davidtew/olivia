@@ -22,11 +22,18 @@ defmodule Olivia.Media.MediaFile do
     field :asset_role, :string
     field :metadata, :map, default: %{}
 
+    # Thumbnail and processing fields
+    field :thumb_url, :string
+    field :medium_url, :string
+    field :phash, :string
+
     belongs_to :user, Olivia.Accounts.User
     has_many :artworks, Olivia.Content.Artwork
     has_many :series, Olivia.Content.Series
     has_many :images, Olivia.Media.Image
     has_many :analyses, Olivia.Media.Analysis, foreign_key: :media_file_id
+    has_many :duplicates, Olivia.Media.Duplicate, foreign_key: :source_media_id
+    has_many :review_notes, Olivia.Media.ReviewNote, foreign_key: :media_id
 
     timestamps(type: :utc_datetime)
   end
@@ -48,7 +55,10 @@ defmodule Olivia.Media.MediaFile do
       :status,
       :asset_type,
       :asset_role,
-      :metadata
+      :metadata,
+      :thumb_url,
+      :medium_url,
+      :phash
     ])
     |> validate_required([:filename, :url])
     |> validate_length(:alt_text, max: 255)

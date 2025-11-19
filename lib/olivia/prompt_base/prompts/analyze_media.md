@@ -100,11 +100,56 @@ Using the JSON you just provided:
 3. Update the media table (ID {{MEDIA_ID}}) with:
    - asset_type from classification
    - asset_role from classification
-   - alt_text from classification
+   - alt_text from classification (must be ≤255 characters - truncate if necessary)
    - tags from classification
    - metadata: merge in interpretation, contexts, artistic_connections, provocations, and technical_details
 
 4. Confirm both operations succeeded and display the new analysis ID
+
+---
+
+## ⚠️ CRITICAL: Database Insertion Guardrails
+
+### ✅ DO: Use Ecto/Repo for JSONB insertion
+
+```elixir
+# CORRECT: Use Olivia.Repo.insert with Elixir maps
+analysis_map = %{
+  "interpretation" => "...",
+  "contexts" => [%{"name" => "..."}]
+}
+
+{:ok, record} = Olivia.Repo.insert(%Olivia.Media.Analysis{
+  media_file_id: {{MEDIA_ID}},
+  llm_response: analysis_map,  # Pass Elixir map directly
+  ...
+})
+```
+
+### ❌ DON'T: Use raw SQL with JSON string parameters
+
+```elixir
+# WRONG: This causes double-escaping!
+json_string = Jason.encode!(analysis_map)
+Olivia.Repo.query("INSERT INTO media_analyses (..., llm_response) VALUES (..., $1::jsonb)", [json_string])
+```
+
+### Why This Matters
+- Passing a JSON **string** to `$1::jsonb` stores it as a JSONB string value, not an object
+- Result: `"{\"interpretation\": ...}"` instead of `{"interpretation": ...}`
+- This causes `Ecto.ChangeError` when loading: "cannot load as type :map"
+
+### Verification After Insert
+Always verify the data was stored correctly:
+```sql
+SELECT id, jsonb_typeof(llm_response) as type FROM media_analyses WHERE id = [NEW_ID]
+```
+- Should return: `object`
+- If it returns: `string` → the data is double-escaped and broken
+
+### Other Constraints
+- `alt_text` field is varchar(255) - truncate longer descriptions
+- Use `DateTime.utc_now()` not `NaiveDateTime.utc_now()` for timestamps
 
 ---
 

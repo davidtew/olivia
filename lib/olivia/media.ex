@@ -172,6 +172,18 @@ defmodule Olivia.Media do
   end
 
   @doc """
+  Returns media files that haven't been processed yet (no thumbnail).
+  """
+  def list_unprocessed_media(limit \\ 50) do
+    from(m in MediaFile,
+      where: is_nil(m.thumb_url),
+      order_by: [asc: m.inserted_at],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Approves a media file, moving it out of quarantine.
   """
   def approve_media(%MediaFile{} = media) do
