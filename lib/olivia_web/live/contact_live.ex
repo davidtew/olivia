@@ -198,56 +198,77 @@ defmodule OliviaWeb.ContactLive do
   defp render_gallery(assigns) do
     ~H"""
     <!-- Gallery Hero -->
-    <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
-      <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
+    <div style="text-align: center; padding: 5rem 1.5rem 3rem; background: linear-gradient(to bottom, #faf8f5, #fff);">
+      <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
         Get in Touch
       </h1>
-      <p class="gallery-script" style="font-size: 1.25rem; color: #6b5d54; max-width: 48rem; margin: 0 auto;">
+      <div style="width: 60px; height: 1px; background: #c4b5a0; margin: 0 auto 2rem;"></div>
+      <p style="font-size: 1.125rem; color: #6b5d54; max-width: 500px; margin: 0 auto; line-height: 1.8;">
         Whether you're interested in purchasing artwork, commissioning a piece, or have a project in mind, I'd love to hear from you.
       </p>
     </div>
 
     <!-- Contact Form -->
-    <div style="max-width: 42rem; margin: 0 auto; padding: 4rem 1.5rem;">
+    <div style="max-width: 500px; margin: 0 auto; padding: 3rem 1.5rem 5rem;">
       <.form
         for={@form}
         id="contact-form"
         phx-change="validate"
         phx-submit="submit"
-        class="gallery-form"
       >
         <div style="display: grid; gap: 1.5rem;">
           <div>
-            <.input
-              field={@form[:type]}
-              type="select"
-              label="I'm interested in"
-              options={[
-                {"Purchasing artwork", "artwork"},
-                {"Commissioning a piece", "commission"},
-                {"A project collaboration", "project"},
-                {"General enquiry", "general"}
-              ]}
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; margin-bottom: 0.5rem;">
+              I'm interested in
+            </label>
+            <select
+              name={@form[:type].name}
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; background: #faf8f5; font-size: 1rem; color: #2c2416; outline: none;"
+            >
+              <option value="artwork" selected={@form[:type].value == "artwork"}>Purchasing artwork</option>
+              <option value="commission" selected={@form[:type].value == "commission"}>Commissioning a piece</option>
+              <option value="project" selected={@form[:type].value == "project"}>A project collaboration</option>
+              <option value="general" selected={@form[:type].value == "general"}>General enquiry</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; margin-bottom: 0.5rem;">
+              Your name
+            </label>
+            <input
+              type="text"
+              name={@form[:name].name}
+              value={@form[:name].value}
+              required
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; background: #faf8f5; font-size: 1rem; color: #2c2416; outline: none;"
             />
           </div>
 
           <div>
-            <.input field={@form[:name]} type="text" label="Your name" required />
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; margin-bottom: 0.5rem;">
+              Email address
+            </label>
+            <input
+              type="email"
+              name={@form[:email].name}
+              value={@form[:email].value}
+              required
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; background: #faf8f5; font-size: 1rem; color: #2c2416; outline: none;"
+            />
           </div>
 
           <div>
-            <.input field={@form[:email]} type="email" label="Email address" required />
-          </div>
-
-          <div>
-            <.input
-              field={@form[:message]}
-              type="textarea"
-              label="Message"
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; margin-bottom: 0.5rem;">
+              Message
+            </label>
+            <textarea
+              name={@form[:message].name}
               rows="6"
               required
               placeholder="Tell me about your enquiry..."
-            />
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; background: #faf8f5; font-size: 1rem; color: #2c2416; outline: none; resize: vertical;"
+            ><%= @form[:message].value %></textarea>
           </div>
         </div>
 
@@ -255,7 +276,7 @@ defmodule OliviaWeb.ContactLive do
           <button
             type="submit"
             phx-disable-with="Sending..."
-            style="width: 100%; padding: 1rem 2rem; background: #6b5d54; color: #faf8f5; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s;"
+            style="width: 100%; padding: 1rem 2rem; background: #6b5d54; color: #faf8f5; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.15em; border: none; cursor: pointer; transition: background-color 0.2s;"
           >
             Send Message
           </button>
@@ -263,9 +284,9 @@ defmodule OliviaWeb.ContactLive do
       </.form>
 
       <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
-        <.link navigate={~p"/"} style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border-bottom: 1px solid #c4b5a0; padding-bottom: 0.25rem;">
+        <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
           ← Back to home
-        </.link>
+        </a>
       </div>
     </div>
     """

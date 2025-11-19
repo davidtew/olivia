@@ -187,106 +187,185 @@ defmodule OliviaWeb.PageLive do
 
   defp render_gallery(assigns) do
     ~H"""
-    <!-- Gallery Hero -->
-    <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
-      <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
-        <%= @page.title %>
-      </h1>
-    </div>
+    <%= if @page.slug == "about" do %>
+      <!-- About Page Special Layout -->
+      <!-- Hero with Portrait -->
+      <section style="background: linear-gradient(to bottom, #faf8f5, #fff);">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; padding: 4rem 1.5rem; align-items: center;">
+          <!-- Artist Portrait -->
+          <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
+            <img
+              src="/uploads/media/1763245447_a9722ba628198afa.png"
+              alt="Portrait of artist Olivia Tew in her studio"
+              style="width: 100%; display: block;"
+            />
+          </div>
 
-    <!-- Page Content -->
-    <div style="max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem;">
-      <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
-        <div style="color: #4a4034; font-size: 1.125rem; line-height: 1.75;">
-          <%= raw(Earmark.as_html!(section.content_md || "")) %>
+          <!-- Bio Text -->
+          <div>
+            <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
+              About the Artist
+            </h1>
+            <div style="width: 60px; height: 1px; background: #c4b5a0; margin-bottom: 2rem;"></div>
+            <div style="color: #6b5d54; line-height: 1.9; font-size: 1rem;">
+              <p style="margin-bottom: 1.5rem;">
+                Olivia Tew is a contemporary expressionist painter working primarily in oil. Her practice spans figure studies, floral still lifes, and landscapes—all united by bold colour, gestural mark-making, and heavy impasto surfaces that give form weight and permanence.
+              </p>
+              <p style="margin-bottom: 1.5rem;">
+                Her figure work captures moments of profound introspection—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience. The gestural brushwork refuses prettiness or idealisation; each stroke is visible, urgent, yet the cumulative effect is deeply tender.
+              </p>
+              <p>
+                Her floral still lifes are maximalist celebrations of colour and abundance. Working with saturated grounds—coral reds, golden ochres—she creates paintings that demand attention, project outward, and perform their beauty with confidence.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Newsletter signup for specific pages -->
-      <div
-        :if={@page.slug in ["about", "collect"]}
-        style="margin-top: 4rem; padding-top: 4rem; border-top: 1px solid #e8e6e3;"
-      >
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 1rem;">
+      <!-- Artist with Work -->
+      <section style="padding: 5rem 1.5rem; background: #fff;">
+        <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center;">
+          <div>
+            <h2 class="gallery-heading" style="font-size: 1.75rem; color: #2c2416; margin-bottom: 1.5rem;">
+              The Practice
+            </h2>
+            <div style="color: #6b5d54; line-height: 1.9; font-size: 1rem;">
+              <p style="margin-bottom: 1.5rem;">
+                Her landscape works, including the SHIFTING series, present terrain in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata, creating surfaces that function almost as relief sculpture.
+              </p>
+              <p>
+                Each painting asks us to witness without intruding. The work explores emergence and transformation—the universal experience of becoming.
+              </p>
+            </div>
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e8e6e3;">
+              <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: #8b7355; margin-bottom: 0.75rem;">
+                Artistic Connections
+              </h3>
+              <p style="font-size: 0.875rem; color: #6b5d54;">
+                Lucian Freud, Frank Auerbach, Jenny Saville, Leon Kossoff, Emil Nolde, Joan Eardley
+              </p>
+            </div>
+          </div>
+          <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
+            <img
+              src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+              alt="Olivia Tew with her expressionistic figure painting"
+              style="width: 100%; display: block;"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Studio & Process -->
+      <section style="padding: 5rem 1.5rem; background: #f5f3f0;">
+        <div style="max-width: 1000px; margin: 0 auto;">
+          <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 2rem;">
+            Studio & Process
+          </h2>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+            <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
+              <img
+                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                alt="Works in progress on outdoor deck"
+                style="width: 100%; display: block;"
+              />
+            </div>
+            <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
+              <img
+                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                alt="Marilyn in studio"
+                style="width: 100%; display: block;"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter & Contact -->
+      <section style="padding: 5rem 1.5rem; background: #fff;">
+        <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+          <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 1rem;">
             Stay in Touch
           </h2>
-          <p class="gallery-script" style="font-size: 1.125rem; color: #6b5d54;">
+          <p style="color: #6b5d54; margin-bottom: 2rem;">
             Subscribe to hear about new work and exhibitions.
           </p>
-        </div>
-        <form
-          phx-submit="subscribe"
-          style="max-width: 28rem; margin: 0 auto; display: flex; gap: 0.75rem;"
-        >
-          <input
-            id="email-address"
-            name="email"
-            type="email"
-            autocomplete="email"
-            required
-            style="flex: 1; padding: 0.5rem 1rem; border: 1px solid #c4b5a0; outline: none; font-size: 1rem; background: #faf8f5;"
-            placeholder="Your email"
-          />
-          <button
-            type="submit"
-            style="padding: 0.5rem 1.5rem; background: #6b5d54; color: #faf8f5; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; border: none; cursor: pointer; transition: background-color 0.2s;"
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
-
-      <!-- Back to home -->
-      <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
-        <.link navigate={~p"/"} style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border-bottom: 1px solid #c4b5a0; padding-bottom: 0.25rem;">
-          ← Back to home
-        </.link>
-      </div>
-    </div>
-    """
-  end
-
-  defp render_default(assigns) do
-    ~H"""
-    <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
-      <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
-        <div :for={section <- @sections} class="mt-10 first:mt-0">
-          <div class="prose prose-lg prose-gray max-w-none">
-            <%= raw(Earmark.as_html!(section.content_md || "")) %>
-          </div>
-        </div>
-
-        <!-- Newsletter signup for specific pages -->
-        <div
-          :if={@page.slug in ["about", "collect"]}
-          class="mt-16 border-t border-gray-200 pt-16"
-        >
-          <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900">
-              Stay in Touch
-            </h2>
-            <p class="mt-4 text-lg text-gray-600">
-              Subscribe to hear about new work and exhibitions.
-            </p>
-          </div>
-          <form
-            phx-submit="subscribe"
-            class="mx-auto mt-10 flex max-w-md gap-x-4"
-          >
-            <label for="email-address" class="sr-only">Email address</label>
+          <form phx-submit="subscribe" style="display: flex; gap: 0.75rem;">
             <input
               id="email-address"
               name="email"
               type="email"
               autocomplete="email"
               required
-              class="min-w-0 flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
-              placeholder="Enter your email"
+              style="flex: 1; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; outline: none; font-size: 1rem; background: #faf8f5;"
+              placeholder="Your email"
             />
             <button
               type="submit"
-              class="flex-none rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
+              style="padding: 0.75rem 1.5rem; background: #6b5d54; color: #faf8f5; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; border: none; cursor: pointer; transition: background-color 0.2s;"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Back to home -->
+      <div style="border-top: 1px solid #e8e6e3; padding: 2rem 1.5rem;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
+            ← Back to home
+          </a>
+        </div>
+      </div>
+
+    <% else %>
+      <!-- Generic page layout (hotels-designers, etc.) -->
+      <!-- Gallery Hero -->
+      <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3; background: linear-gradient(to bottom, #faf8f5, #fff);">
+        <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
+          <%= @page.title %>
+        </h1>
+        <div style="width: 60px; height: 1px; background: #c4b5a0; margin: 0 auto;"></div>
+      </div>
+
+      <!-- Page Content -->
+      <div style="max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem;">
+        <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
+          <div style="color: #6b5d54; font-size: 1.125rem; line-height: 1.8;">
+            <%= raw(Earmark.as_html!(section.content_md || "")) %>
+          </div>
+        </div>
+
+        <!-- Newsletter signup for specific pages -->
+        <div
+          :if={@page.slug in ["collect"]}
+          style="margin-top: 4rem; padding-top: 4rem; border-top: 1px solid #e8e6e3;"
+        >
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 1rem;">
+              Stay in Touch
+            </h2>
+            <p style="font-size: 1rem; color: #6b5d54;">
+              Subscribe to hear about new work and exhibitions.
+            </p>
+          </div>
+          <form
+            phx-submit="subscribe"
+            style="max-width: 28rem; margin: 0 auto; display: flex; gap: 0.75rem;"
+          >
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              style="flex: 1; padding: 0.75rem 1rem; border: 1px solid #c4b5a0; outline: none; font-size: 1rem; background: #faf8f5;"
+              placeholder="Your email"
+            />
+            <button
+              type="submit"
+              style="padding: 0.75rem 1.5rem; background: #6b5d54; color: #faf8f5; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; border: none; cursor: pointer; transition: background-color 0.2s;"
             >
               Subscribe
             </button>
@@ -294,13 +373,332 @@ defmodule OliviaWeb.PageLive do
         </div>
 
         <!-- Back to home -->
-        <div class="mt-16 border-t border-gray-200 pt-8">
-          <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900">
+        <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
+          <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
             ← Back to home
-          </.link>
+          </a>
         </div>
       </div>
-    </div>
+    <% end %>
+    """
+  end
+
+  defp render_default(assigns) do
+    ~H"""
+    <%= if @page.slug == "hotels-designers" do %>
+      <!-- Hotels & Designers Special Layout -->
+      <div class="bg-white">
+        <!-- Hero with Hotel Visualization -->
+        <div class="relative bg-gray-50">
+          <div class="mx-auto max-w-7xl">
+            <div class="grid lg:grid-cols-2 gap-0">
+              <!-- Hotel Visualization Image -->
+              <div class="relative aspect-[3/4] lg:aspect-auto">
+                <img
+                  src="/uploads/media/1763555487_35a594e71b1cb673.png"
+                  alt="Artwork visualisation in luxury Swiss hotel lounge with alpine views"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <!-- Text Content -->
+              <div class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24">
+                <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+                  Hotels & Designers
+                </h1>
+                <div class="mt-8 space-y-6 text-gray-600 leading-7">
+                  <p>
+                    Olivia works with interior designers, hotels, and private collectors on commissions and art consultancy. Her paintings bring warmth, energy, and emotional depth to residential and hospitality spaces.
+                  </p>
+                  <p>
+                    Whether you need original pieces, commissioned work, or high-quality reproductions, she can help you find the right solution for your project.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- What I Offer -->
+        <div class="py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl">
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+                What I Offer
+              </h2>
+              <ul class="mt-8 space-y-4 text-gray-600 leading-7">
+                <li class="flex gap-x-3">
+                  <span class="font-semibold text-gray-900">Original artwork</span>
+                  for statement spaces and private areas
+                </li>
+                <li class="flex gap-x-3">
+                  <span class="font-semibold text-gray-900">Commissioned pieces</span>
+                  tailored to your brand and aesthetic
+                </li>
+                <li class="flex gap-x-3">
+                  <span class="font-semibold text-gray-900">Print editions</span>
+                  for multiple rooms or spaces
+                </li>
+                <li class="flex gap-x-3">
+                  <span class="font-semibold text-gray-900">Curation support</span>
+                  to ensure cohesive visual storytelling
+                </li>
+              </ul>
+              <p class="mt-8 text-gray-600 leading-7">
+                Recent projects include a 1,000-print run for a Swiss luxury hotel group and bespoke originals for London spa treatment rooms.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Poster Assessment Offer -->
+        <div class="bg-gray-50 py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl">
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+                Visualise Before You Commit
+              </h2>
+              <div class="mt-6 space-y-4 text-gray-600 leading-7">
+                <p>
+                  To help you visualise how a piece might work in your space, we can supply a full-size poster print of any artwork for assessment purposes, provided at cost.
+                </p>
+                <p>
+                  This allows you to experience the scale, colour relationships, and impact before committing to an original. It's particularly useful for hospitality projects where multiple stakeholders need to approve artwork selections.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="bg-gray-900 py-16">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center">
+            <h2 class="text-2xl font-bold text-white">
+              Let's Discuss Your Project
+            </h2>
+            <p class="mt-4 text-gray-300 max-w-xl mx-auto">
+              Get in touch to discuss your space, timeline, and vision.
+            </p>
+            <div class="mt-8">
+              <.link
+                navigate={~p"/contact"}
+                class="rounded-md bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100"
+              >
+                Start a Conversation
+              </.link>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back to home -->
+        <div class="border-t border-gray-200 bg-white">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
+            <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
+              ← Back to home
+            </.link>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <%= if @page.slug == "about" do %>
+      <!-- About Page Special Layout -->
+      <div class="bg-white">
+        <!-- Hero Section with Portrait -->
+        <div class="relative bg-gray-50">
+          <div class="mx-auto max-w-7xl">
+            <div class="grid lg:grid-cols-2 gap-0">
+              <!-- Artist Portrait -->
+              <div class="relative aspect-[3/4] lg:aspect-auto">
+                <img
+                  src="/uploads/media/1763245447_a9722ba628198afa.png"
+                  alt="Portrait of artist Olivia Tew in her studio"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <!-- Bio Text -->
+              <div class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24">
+                <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+                  About the Artist
+                </h1>
+                <div class="mt-8 space-y-6 text-gray-600 leading-7">
+                  <p>
+                    Olivia Tew is a contemporary expressionist painter working primarily in oil. Her practice spans figure studies, floral still lifes, and landscapes—all united by bold colour, gestural mark-making, and heavy impasto surfaces that give form weight and permanence.
+                  </p>
+                  <p>
+                    Her figure work captures moments of profound introspection—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience. The gestural brushwork refuses prettiness or idealisation; each stroke is visible, urgent, yet the cumulative effect is deeply tender.
+                  </p>
+                  <p>
+                    Her floral still lifes are maximalist celebrations of colour and abundance. Working with saturated grounds—coral reds, golden ochres—she creates paintings that demand attention, project outward, and perform their beauty with confidence.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artist with Work -->
+        <div class="py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+              <div class="order-2 lg:order-1">
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+                  The Practice
+                </h2>
+                <div class="mt-6 space-y-4 text-gray-600 leading-7">
+                  <p>
+                    Her landscape works, including the SHIFTING series, present terrain in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata, creating surfaces that function almost as relief sculpture.
+                  </p>
+                  <p>
+                    Each painting asks us to witness without intruding. The work explores emergence and transformation—the universal experience of becoming.
+                  </p>
+                </div>
+                <div class="mt-8">
+                  <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                    Artistic Connections
+                  </h3>
+                  <p class="mt-2 text-sm text-gray-500">
+                    Lucian Freud, Frank Auerbach, Jenny Saville, Leon Kossoff, Emil Nolde, Joan Eardley
+                  </p>
+                </div>
+              </div>
+              <div class="order-1 lg:order-2">
+                <div class="aspect-[4/3] overflow-hidden rounded-lg">
+                  <img
+                    src="/uploads/media/1763542139_ff497b70635865b6.jpg"
+                    alt="Olivia Tew with her expressionistic figure painting"
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Process Images -->
+        <div class="bg-gray-50 py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-8">
+              Studio & Process
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="aspect-[4/3] overflow-hidden rounded-lg">
+                <img
+                  src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                  alt="Works in progress on outdoor deck"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="aspect-[4/3] overflow-hidden rounded-lg">
+                <img
+                  src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                  alt="Marilyn in studio"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Newsletter & Contact -->
+        <div class="py-16 sm:py-24">
+          <div class="mx-auto max-w-2xl px-6 lg:px-8 text-center">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+              Stay in Touch
+            </h2>
+            <p class="mt-4 text-gray-600">
+              Subscribe to hear about new work and exhibitions.
+            </p>
+            <form
+              phx-submit="subscribe"
+              class="mt-8 flex max-w-md mx-auto gap-x-4"
+            >
+              <label for="email-address" class="sr-only">Email address</label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="min-w-0 flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+                placeholder="Enter your email"
+              />
+              <button
+                type="submit"
+                class="flex-none rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Back to home -->
+        <div class="border-t border-gray-200">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
+            <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
+              ← Back to home
+            </.link>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <%= if @page.slug not in ["hotels-designers", "about"] do %>
+      <!-- Generic page layout -->
+      <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
+        <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
+          <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-8">
+            <%= @page.title %>
+          </h1>
+          <div :for={section <- @sections} class="mt-10 first:mt-0">
+            <div class="prose prose-lg prose-gray max-w-none">
+              <%= raw(Earmark.as_html!(section.content_md || "")) %>
+            </div>
+          </div>
+
+          <!-- Newsletter signup for specific pages -->
+          <div
+            :if={@page.slug in ["collect"]}
+            class="mt-16 border-t border-gray-200 pt-16"
+          >
+            <div class="mx-auto max-w-2xl text-center">
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+                Stay in Touch
+              </h2>
+              <p class="mt-4 text-lg text-gray-600">
+                Subscribe to hear about new work and exhibitions.
+              </p>
+            </div>
+            <form
+              phx-submit="subscribe"
+              class="mx-auto mt-10 flex max-w-md gap-x-4"
+            >
+              <label for="email-address" class="sr-only">Email address</label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="min-w-0 flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+                placeholder="Enter your email"
+              />
+              <button
+                type="submit"
+                class="flex-none rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+
+          <!-- Back to home -->
+          <div class="mt-16 border-t border-gray-200 pt-8">
+            <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900">
+              ← Back to home
+            </.link>
+          </div>
+        </div>
+      </div>
+    <% end %>
     """
   end
 
