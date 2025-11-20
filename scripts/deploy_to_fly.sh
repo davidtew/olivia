@@ -68,9 +68,9 @@ echo "  4. Import your local data"
 echo ""
 echo -e "${RED}WARNING: This will DELETE all existing data on Fly!${NC}"
 echo ""
-read -p "Continue? (yes/no): " CONFIRM
+read -p "Continue? (y/n): " CONFIRM
 
-if [ "$CONFIRM" != "yes" ]; then
+if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "yes" ]; then
     echo "Deployment cancelled."
     rm "$BACKUP_FILE"
     exit 0
@@ -80,9 +80,14 @@ echo ""
 
 # Step 4: Reset Fly database
 echo -e "${YELLOW}Step 4: Resetting Fly database...${NC}"
+echo ""
+echo "Please run these commands in the Postgres shell:"
+echo "  DROP DATABASE IF EXISTS $REMOTE_DB;"
+echo "  CREATE DATABASE $REMOTE_DB;"
+echo "  \\q"
+echo ""
 
-fly postgres connect -a $DB_NAME -c "DROP DATABASE IF EXISTS $REMOTE_DB;"
-fly postgres connect -a $DB_NAME -c "CREATE DATABASE $REMOTE_DB;"
+fly postgres connect -a $DB_NAME
 
 echo -e "${GREEN}Database reset complete${NC}"
 echo ""

@@ -67,4 +67,23 @@ defmodule Olivia.Media.MediaFile do
 
   def statuses, do: @statuses
   def asset_types, do: @asset_types
+
+  @doc """
+  Returns the resolved URL for the media file.
+  In production, prepends S3 URL to local paths.
+  """
+  def resolved_url(%__MODULE__{url: url}), do: OliviaWeb.AssetHelpers.resolve_asset_url(url)
+  def resolved_url(_), do: nil
+
+  @doc """
+  Returns the resolved thumbnail URL for the media file.
+  """
+  def resolved_thumb_url(%__MODULE__{thumb_url: url}), do: OliviaWeb.AssetHelpers.resolve_asset_url(url)
+  def resolved_thumb_url(_), do: nil
+
+  @doc """
+  Returns the resolved medium URL for the media file.
+  """
+  def resolved_medium_url(%__MODULE__{medium_url: url}), do: OliviaWeb.AssetHelpers.resolve_asset_url(url)
+  def resolved_medium_url(_), do: nil
 end

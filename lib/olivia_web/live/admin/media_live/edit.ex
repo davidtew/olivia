@@ -25,7 +25,7 @@ defmodule OliviaWeb.Admin.MediaLive.Edit do
 
       <div class="mt-8">
         <div class="mb-6">
-          <img src={@media.url} alt={@media.alt_text || @media.filename} class="max-w-md rounded-lg shadow-lg" />
+          <img src={Olivia.Media.MediaFile.resolved_url(@media)} alt={@media.alt_text || @media.filename} class="max-w-md rounded-lg shadow-lg" />
         </div>
 
         <form phx-submit="save" class="space-y-6">

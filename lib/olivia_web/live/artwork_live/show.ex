@@ -2,6 +2,8 @@ defmodule OliviaWeb.ArtworkLive.Show do
   use OliviaWeb, :live_view
 
   alias Olivia.Content
+  alias Olivia.Annotations
+  alias Olivia.Uploads
 
   @impl true
   def render(assigns) do
@@ -12,6 +14,19 @@ defmodule OliviaWeb.ArtworkLive.Show do
     end
   end
 
+  # Helper to conditionally add annotation attributes
+  defp annotation_attrs(enabled, anchor_key, anchor_meta) do
+    if enabled do
+      %{
+        "data-note-anchor" => anchor_key,
+        "data-anchor-meta" => Jason.encode!(anchor_meta),
+        "phx-hook" => "AnnotatableElement"
+      }
+    else
+      %{}
+    end
+  end
+
   defp render_cottage(assigns) do
     ~H"""
     <div style="padding: 4rem 1rem;">
@@ -19,7 +34,7 @@ defmodule OliviaWeb.ArtworkLive.Show do
         <div>
           <div :if={@artwork.image_url} style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden;">
             <.artwork_image
-              src={@artwork.image_url}
+              src={Olivia.Content.Artwork.resolved_image_url(@artwork)}
               alt={@artwork.title}
               aspect="aspect-[4/5]"
               style="width: 100%; display: block;"
@@ -122,7 +137,7 @@ defmodule OliviaWeb.ArtworkLive.Show do
         <div style="max-width: 48rem; margin: 0 auto; width: 100%;">
           <div :if={@artwork.image_url} class="elegant-border" style="overflow: hidden;">
             <.artwork_image
-              src={@artwork.image_url}
+              src={Olivia.Content.Artwork.resolved_image_url(@artwork)}
               alt={@artwork.title}
               aspect="aspect-[4/5]"
               style="width: 100%; display: block;"
@@ -234,10 +249,16 @@ defmodule OliviaWeb.ArtworkLive.Show do
       <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div class="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           <!-- Image gallery -->
-          <div class="flex flex-col-reverse">
+          <div
+            class="flex flex-col-reverse"
+            {annotation_attrs(@annotations_enabled, "artwork:#{@artwork.slug}:image", %{
+              "artwork_id" => @artwork.id,
+              "artwork_slug" => @artwork.slug
+            })}
+          >
             <div :if={@artwork.image_url}>
               <.artwork_image
-                src={@artwork.image_url}
+                src={Olivia.Content.Artwork.resolved_image_url(@artwork)}
                 alt={@artwork.title}
                 aspect="aspect-[4/5]"
                 class="rounded-lg shadow-lg"
@@ -255,31 +276,50 @@ defmodule OliviaWeb.ArtworkLive.Show do
 
           <!-- Artwork info -->
           <div class="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-              <%= @artwork.title %>
-            </h1>
+            <div
+              {annotation_attrs(@annotations_enabled, "artwork:#{@artwork.slug}:title", %{
+                "artwork_id" => @artwork.id,
+                "artwork_slug" => @artwork.slug
+              })}
+            >
+              <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+                <%= @artwork.title %>
+              </h1>
 
-            <div class="mt-3">
-              <h2 class="sr-only">Artwork information</h2>
-              <p :if={@artwork.price_cents && @artwork.status == "available"} class="text-3xl tracking-tight text-gray-900">
-                <%= format_price(@artwork.price_cents, @artwork.currency) %>
-              </p>
-              <p :if={@artwork.status == "sold"} class="text-xl tracking-tight text-red-700">
-                Sold
-              </p>
-              <p :if={@artwork.status == "reserved"} class="text-xl tracking-tight text-yellow-700">
-                Reserved
-              </p>
+              <div class="mt-3">
+                <h2 class="sr-only">Artwork information</h2>
+                <p :if={@artwork.price_cents && @artwork.status == "available"} class="text-3xl tracking-tight text-gray-900">
+                  <%= format_price(@artwork.price_cents, @artwork.currency) %>
+                </p>
+                <p :if={@artwork.status == "sold"} class="text-xl tracking-tight text-red-700">
+                  Sold
+                </p>
+                <p :if={@artwork.status == "reserved"} class="text-xl tracking-tight text-yellow-700">
+                  Reserved
+                </p>
+              </div>
             </div>
 
-            <div class="mt-6">
+            <div
+              class="mt-6"
+              {annotation_attrs(@annotations_enabled, "artwork:#{@artwork.slug}:description", %{
+                "artwork_id" => @artwork.id,
+                "artwork_slug" => @artwork.slug
+              })}
+            >
               <h3 class="sr-only">Description</h3>
               <div class="prose prose-gray">
                 <%= raw(Earmark.as_html!(@artwork.description_md || "")) %>
               </div>
             </div>
 
-            <div class="mt-6 space-y-2">
+            <div
+              class="mt-6 space-y-2"
+              {annotation_attrs(@annotations_enabled, "artwork:#{@artwork.slug}:details", %{
+                "artwork_id" => @artwork.id,
+                "artwork_slug" => @artwork.slug
+              })}
+            >
               <div class="flex justify-between text-sm">
                 <dt class="text-gray-500">Year</dt>
                 <dd class="font-medium text-gray-900"><%= @artwork.year %></dd>
@@ -330,6 +370,15 @@ defmodule OliviaWeb.ArtworkLive.Show do
           </div>
         </div>
       </div>
+
+      <!-- Annotation recorder hook -->
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -338,10 +387,127 @@ defmodule OliviaWeb.ArtworkLive.Show do
   def mount(%{"slug" => slug}, _session, socket) do
     artwork = Content.get_artwork_by_slug!(slug, published: true, preload: [:series])
 
-    {:ok,
+    theme = socket.assigns[:theme]
+    page_path = "/artworks/#{slug}"
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:page_title, "#{artwork.title} - Olivia Tew")
+      |> assign(:artwork, artwork)
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
+  end
+
+  # Annotation event handlers (only used in reviewer theme)
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
      socket
-     |> assign(:page_title, "#{artwork.title} - Olivia Tew")
-     |> assign(:artwork, artwork)}
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          case Uploads.upload_from_binary(binary_data, filename, mime_type) do
+            {:ok, url} ->
+              case Annotations.create_voice_note(%{
+                audio_url: url,
+                anchor_key: anchor.key,
+                anchor_meta: anchor.meta,
+                page_path: socket.assigns.page_path,
+                theme: "reviewer"
+              }) do
+                {:ok, voice_note} ->
+                  {:noreply,
+                   socket
+                   |> put_flash(:info, "Annotation saved successfully")
+                   |> assign(:current_anchor, nil)
+                   |> push_event("annotation_saved", %{
+                     id: voice_note.id,
+                     anchor_key: voice_note.anchor_key,
+                     audio_url: voice_note.audio_url
+                   })}
+
+                {:error, _changeset} ->
+                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+              end
+
+            {:error, _reason} ->
+              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+          end
+
+        :error ->
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
+    end
   end
 
   defp format_price(cents, currency) do

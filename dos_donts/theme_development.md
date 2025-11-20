@@ -863,4 +863,12 @@ The Cottage theme was verified via browser snapshots:
 
 ---
 
+
+Original prompt by DTew:
+```
+You must orient yourself as the art exhibition curator - You're the best in the business! You can look over all the images that are in the database (excluding the two archived), all 12 of them, that I myself can see in the Media Workspace. Your first task is to peruse all the images, perhaps via their analysis or by you looking at the images themselves - whatever works for you. You're then going to fit as best you can those images into the already made theme site 'Cottage' (thus leaving as is, Gallery , 'Curator' and 'Original' themes too, since these are  already complete.).  Of course you understand as well as I that the theme 'Cottage' is just a mere mockup and its particular placeholders, their size, positioning, quantity etc is not fixed and you can scrap those and start again as you wish now.  What should remain is the style but also the concepts of the particular pages which can be navigated too: I expect you to fill and fulfill their purpose, as you imagine them, both with the artwork, and text.
+```
+
+
+
 *Updated: 2024-11-19 - Cottage theme curation session*

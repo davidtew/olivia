@@ -102,7 +102,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
 
         <div :if={@artwork.image_url || @selected_media} class="mt-2 mb-4">
           <img
-            src={@selected_media && @selected_media.url || @artwork.image_url}
+            src={@selected_media && Olivia.Media.MediaFile.resolved_url(@selected_media) || Olivia.Content.Artwork.resolved_image_url(@artwork)}
             alt={@artwork.title}
             class="max-w-md rounded-lg shadow"
           />
@@ -133,7 +133,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
               phx-click="select_media"
               phx-value-id={media.id}
             >
-              <img src={media.url} alt={media.alt_text || media.filename} class="w-full h-full object-cover" />
+              <img src={Olivia.Media.MediaFile.resolved_url(media)} alt={media.alt_text || media.filename} class="w-full h-full object-cover" />
               <div :if={@selected_media && @selected_media.id == media.id} class="absolute inset-0 bg-indigo-600 bg-opacity-20 flex items-center justify-center">
                 <.icon name="hero-check-circle" class="w-8 h-8 text-white" />
               </div>

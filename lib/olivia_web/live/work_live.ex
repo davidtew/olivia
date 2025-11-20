@@ -1,6 +1,8 @@
 defmodule OliviaWeb.WorkLive do
   use OliviaWeb, :live_view
 
+  import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
+
   @impl true
   def render(assigns) do
     cond do
@@ -44,7 +46,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                 alt="A Becoming - Expressionist figure painting of nude torso emerging from gestural brushwork"
                 style="width: 100%; display: block;"
               />
@@ -57,7 +59,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
                 alt="Changes - expressionistic figure study in blue"
                 style="width: 100%; display: block;"
               />
@@ -70,7 +72,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_a84d8a1756abb807.JPG"
+                src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
                 alt="She Lays Down - reclining figure in warm flesh tones"
                 style="width: 100%; display: block;"
               />
@@ -102,7 +104,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                 alt="Marilyn - golden floral with white daffodils in garden light"
                 style="width: 100%; display: block;"
               />
@@ -115,7 +117,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                 alt="Ecstatic - floral still life above Georgian fireplace"
                 style="width: 100%; display: block;"
               />
@@ -128,7 +130,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
                 alt="Floral with red ground and patterned vase"
                 style="width: 100%; display: block;"
               />
@@ -141,7 +143,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_c9cd48fa716cf037.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
                 alt="Floral detail with coral ground"
                 style="width: 100%; display: block;"
               />
@@ -154,7 +156,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn - studio view with warm golden tones"
                 style="width: 100%; display: block;"
               />
@@ -167,7 +169,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                 alt="I Love Three Times - floral triptych installation"
                 style="width: 100%; display: block;"
               />
@@ -198,7 +200,7 @@ defmodule OliviaWeb.WorkLive do
         <div style="margin-bottom: 3rem;">
           <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
             <img
-              src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+              src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
               alt="Shifting - expressionist landscape diptych"
               style="width: 100%; display: block;"
             />
@@ -213,7 +215,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
                 alt="Shifting Part 1 - garden threshold with pink wall"
                 style="width: 100%; display: block;"
               />
@@ -226,7 +228,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_a7b4acd750ac636c.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
                 alt="Shifting Part 2 - coastal path through textured terrain"
                 style="width: 100%; display: block;"
               />
@@ -300,7 +302,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                 alt="A Becoming - Expressionist figure painting of nude torso emerging from gestural brushwork in earthy flesh tones"
                 style="width: 100%; display: block;"
               />
@@ -313,7 +315,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
                 alt="Changes - expressionistic figure study of seated nude with arms wrapped around knees against blue background"
                 style="width: 100%; display: block;"
               />
@@ -326,7 +328,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763483281_a84d8a1756abb807.JPG"
+                src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
                 alt="She Lays Down - reclining female nude in warm flesh tones against deep blue and yellow"
                 style="width: 100%; display: block;"
               />
@@ -358,7 +360,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                 alt="Marilyn - vibrant floral with white daffodils and blue hydrangea against golden ochre ground"
                 style="width: 100%; display: block;"
               />
@@ -371,7 +373,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
                 alt="Abundant mixed flowers in black and white patterned vase against coral-red background"
                 style="width: 100%; display: block;"
               />
@@ -384,7 +386,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                 alt="Ecstatic - floral still life in patterned vase above Georgian fireplace with vibrant red background"
                 style="width: 100%; display: block;"
               />
@@ -397,7 +399,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763483281_9f4cf777abd53640.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_9f4cf777abd53640.jpg")}
                 alt="Abundant mixed flowers in decorative compote bowl on striped textile with soft pink background"
                 style="width: 100%; display: block;"
               />
@@ -410,7 +412,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn - white daffodils rising from ruffled vessel against golden ochre background, studio light"
                 style="width: 100%; display: block;"
               />
@@ -423,7 +425,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                 alt="I Love Three Times - three panel triptych of flowers rising from striped vessel against olive-green background"
                 style="width: 100%; display: block;"
               />
@@ -454,7 +456,7 @@ defmodule OliviaWeb.WorkLive do
         <div style="margin-bottom: 3rem;">
           <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
             <img
-              src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+              src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
               alt="Shifting - expressionist coastal landscape diptych with pale pathway through textured hillsides in warm earth tones"
               style="width: 100%; display: block;"
             />
@@ -469,7 +471,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
                 alt="Shifting Part 1 - pink architectural wall beside dense green and multicoloured vegetation"
                 style="width: 100%; display: block;"
               />
@@ -482,7 +484,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
-                src="/uploads/media/1763483281_a7b4acd750ac636c.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
                 alt="Shifting Part 2 - coastal pathway through richly textured terrain in warm earth tones"
                 style="width: 100%; display: block;"
               />
@@ -552,7 +554,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                 alt="A BECOMING - Expressionist figure painting of nude torso emerging from gestural brushwork"
                 style="width: 100%; display: block;"
               />
@@ -565,7 +567,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
                 alt="Changes - expressionistic figure study in blue"
                 style="width: 100%; display: block;"
               />
@@ -578,7 +580,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                 alt="Process documentation - A Becoming in progress"
                 style="width: 100%; display: block;"
               />
@@ -591,7 +593,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                 alt="Exhibition documentation with artist"
                 style="width: 100%; display: block;"
               />
@@ -623,7 +625,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                 alt="Ecstatic - floral still life above Georgian fireplace"
                 style="width: 100%; display: block;"
               />
@@ -636,7 +638,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                 alt="I Love Three Times - triptych installation"
                 style="width: 100%; display: block;"
               />
@@ -649,7 +651,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                 alt="Marilyn - golden floral in natural light"
                 style="width: 100%; display: block;"
               />
@@ -662,7 +664,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
                 alt="Floral still life with red ground"
                 style="width: 100%; display: block;"
               />
@@ -675,7 +677,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn - indoor studio view"
                 style="width: 100%; display: block;"
               />
@@ -688,7 +690,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
                 alt="I Love Three Times - alternative installation"
                 style="width: 100%; display: block;"
               />
@@ -701,7 +703,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_c9cd48fa716cf037.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
                 alt="Floral detail with red ground"
                 style="width: 100%; display: block;"
               />
@@ -733,7 +735,7 @@ defmodule OliviaWeb.WorkLive do
           <div style="grid-column: span 2;">
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
                 alt="SHIFTING - expressionist landscape diptych"
                 style="width: 100%; display: block;"
               />
@@ -746,7 +748,7 @@ defmodule OliviaWeb.WorkLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
                 alt="SHIFTING PART 1 - garden threshold"
                 style="width: 100%; display: block;"
               />
@@ -812,7 +814,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                   alt="A Becoming - Expressionist figure painting"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -825,7 +827,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
                   alt="Changes - expressionistic figure study"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -838,7 +840,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_a84d8a1756abb807.JPG"
+                  src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
                   alt="She Lays Down - reclining figure"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -870,7 +872,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                   alt="Ecstatic - floral still life"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -883,7 +885,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                   alt="Marilyn - golden floral"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -896,7 +898,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                  src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                   alt="I Love Three Times - triptych"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -909,7 +911,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
                   alt="Floral with red ground"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -922,7 +924,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_c9cd48fa716cf037.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
                   alt="Floral detail with coral ground"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -935,7 +937,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
                   alt="I Love Three Times detail"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -967,7 +969,7 @@ defmodule OliviaWeb.WorkLive do
             <div>
               <div class="aspect-[21/9] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
                   alt="Shifting - expressionist landscape diptych"
                   class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
@@ -982,7 +984,7 @@ defmodule OliviaWeb.WorkLive do
               <div>
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                    src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
                     alt="Shifting Part 1"
                     class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                   />
@@ -995,7 +997,7 @@ defmodule OliviaWeb.WorkLive do
               <div>
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763483281_a7b4acd750ac636c.jpg"
+                    src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
                     alt="Shifting Part 2"
                     class="w-full h-full object-cover hover:opacity-90 transition-opacity"
                   />

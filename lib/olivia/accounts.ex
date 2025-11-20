@@ -26,6 +26,53 @@ defmodule Olivia.Accounts do
     Repo.get_by(User, email: email)
   end
 
+  @doc """
+  Gets a user by email and password.
+
+  ## Examples
+
+      iex> get_user_by_email_and_password("foo@example.com", "correct_password")
+      %User{}
+
+      iex> get_user_by_email_and_password("foo@example.com", "invalid_password")
+      nil
+
+  """
+  def get_user_by_email_and_password(email, password) when is_binary(email) and is_binary(password) do
+    user = get_user_by_email(email)
+    if user && User.valid_password?(user, password) do
+      user
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user password.
+  """
+  def change_user_password(user, attrs \\ %{}) do
+    User.password_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user password.
+
+  ## Examples
+
+      iex> update_user_password(user, "valid_password", %{password: ...})
+      {:ok, %User{}}
+
+      iex> update_user_password(user, "invalid_password", %{password: ...})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_password(user, password, attrs) do
+    if User.valid_password?(user, password) do
+      user
+      |> User.password_changeset(attrs)
+      |> Repo.update()
+    else
+      {:error, User.password_changeset(user, attrs) |> Ecto.Changeset.add_error(:current_password, "is not valid")}
+    end
+  end
 
   @doc """
   Gets a single user.

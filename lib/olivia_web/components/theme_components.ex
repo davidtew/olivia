@@ -13,8 +13,17 @@ defmodule OliviaWeb.ThemeComponents do
     %{id: "curator", label: "Curator", description: "Gallery-inspired dark theme"},
     %{id: "gallery", label: "Gallery", description: "Elegant warm tones"},
     %{id: "cottage", label: "Cottage", description: "Soft wisteria garden"},
+    %{id: "reviewer", label: "Reviewer", description: "Private review mode with annotations"},
     %{id: "original", label: "Original", description: "Clean and modern"}
   ]
+
+  @doc """
+  Returns themes that should be shown in public dropdowns.
+  Excludes the secret reviewer theme.
+  """
+  def public_themes do
+    Enum.filter(@themes, fn t -> t.id != "reviewer" end)
+  end
 
   @doc """
   Returns all available themes.

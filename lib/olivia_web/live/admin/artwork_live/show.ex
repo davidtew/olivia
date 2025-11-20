@@ -23,7 +23,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Show do
 
     <div :if={@artwork.image_url} class="mt-6 mb-8">
       <h3 class="text-lg font-medium text-gray-900 mb-4">Artwork Image</h3>
-      <img src={@artwork.image_url} alt={@artwork.title} class="max-w-2xl rounded-lg shadow-lg" />
+      <img src={Olivia.Content.Artwork.resolved_image_url(@artwork)} alt={@artwork.title} class="max-w-2xl rounded-lg shadow-lg" />
     </div>
 
     <.list>

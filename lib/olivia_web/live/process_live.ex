@@ -348,7 +348,7 @@ defmodule OliviaWeb.ProcessLive do
                    socket
                    |> put_flash(:info, "Annotation saved successfully")
                    |> assign(:current_anchor, nil)
-                   |> push_event("annotation_saved", %{
+                   |> push_event("note_created", %{
                      id: voice_note.id,
                      anchor_key: voice_note.anchor_key,
                      audio_url: voice_note.audio_url

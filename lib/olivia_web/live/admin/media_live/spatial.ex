@@ -50,7 +50,7 @@ defmodule OliviaWeb.Admin.MediaLive.Spatial do
             draggable="true"
             class="group relative aspect-square cursor-grab overflow-hidden rounded-lg bg-gray-100 active:cursor-grabbing"
           >
-            <img src={media.url} alt={media.alt_text || media.filename} class="h-full w-full object-cover" loading="lazy" />
+            <img src={Olivia.Media.MediaFile.resolved_url(media)} alt={media.alt_text || media.filename} class="h-full w-full object-cover" loading="lazy" />
 
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
               <div class="absolute bottom-0 left-0 right-0 p-2 text-white">
@@ -232,7 +232,7 @@ defmodule OliviaWeb.Admin.MediaLive.Spatial do
           <div class="p-4 space-y-6">
             <!-- Image Preview -->
             <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
-              <img src={@selected_media.url} alt={@selected_media.filename} class="w-full h-full object-cover" />
+              <img src={Olivia.Media.MediaFile.resolved_url(@selected_media)} alt={@selected_media.filename} class="w-full h-full object-cover" />
             </div>
 
             <!-- Deterministic Data Section -->

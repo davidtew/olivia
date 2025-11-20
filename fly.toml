@@ -15,6 +15,7 @@ kill_signal = 'SIGTERM'
 [env]
   AWS_REGION = 'auto'
   PHX_HOST = 'olivia-art-portfolio.fly.dev'
+  PHX_SERVER = 'true'
   PORT = '8080'
   S3_HOST = 'fly.storage.tigris.dev'
 

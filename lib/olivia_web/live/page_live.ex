@@ -784,13 +784,22 @@ defmodule OliviaWeb.PageLive do
     <%= if @page.slug not in ["hotels-designers", "about"] do %>
       <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
         <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
-          <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-8">
-            <%= @page.title %>
-          </h1>
-          <div :for={section <- @sections} class="mt-10 first:mt-0">
-            <div class="prose prose-lg prose-gray max-w-none">
+          <.annotatable
+            anchor={"#{@page.slug}:header"}
+            data-anchor-meta={Jason.encode!(%{"page" => @page.slug, "section" => "header"})}
+          >
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-8">
+              <%= @page.title %>
+            </h1>
+          </.annotatable>
+          <div :for={{section, index} <- Enum.with_index(@sections)} class="mt-10 first:mt-0">
+            <.annotatable
+              anchor={"#{@page.slug}:section:#{index}"}
+              class="prose prose-lg prose-gray max-w-none"
+              data-anchor-meta={Jason.encode!(%{"page" => @page.slug, "section" => "content", "index" => index})}
+            >
               <%= raw(Earmark.as_html!(section.content_md || "")) %>
-            </div>
+            </.annotatable>
           </div>
 
           <div
@@ -990,7 +999,7 @@ defmodule OliviaWeb.PageLive do
                    socket
                    |> put_flash(:info, "Annotation saved successfully")
                    |> assign(:current_anchor, nil)
-                   |> push_event("annotation_saved", %{
+                   |> push_event("note_created", %{
                      id: voice_note.id,
                      anchor_key: voice_note.anchor_key,
                      audio_url: voice_note.audio_url

@@ -3,6 +3,8 @@ defmodule OliviaWeb.HomeLive do
 
   alias Olivia.CMS
   alias Olivia.Content
+  alias Olivia.Annotations
+  alias Olivia.Uploads
   import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
 
   @impl true
@@ -15,9 +17,11 @@ defmodule OliviaWeb.HomeLive do
     end
   end
 
+  # Note: The 'annotation_attrs' helper was removed because
+  # we now use the <.annotatable> component in render_default.
+
   defp render_curator(assigns) do
     ~H"""
-    <!-- Flash Messages -->
     <div :if={Phoenix.Flash.get(@flash, :info) || Phoenix.Flash.get(@flash, :error)} style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem;">
       <p :if={Phoenix.Flash.get(@flash, :info)} class="curator-body" style="background: var(--curator-sage); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
         <%= Phoenix.Flash.get(@flash, :info) %>
@@ -27,9 +31,7 @@ defmodule OliviaWeb.HomeLive do
       </p>
     </div>
 
-    <!-- Hero Section - A BECOMING -->
     <section style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 2rem;">
-      <!-- Hero Image -->
       <div style="max-width: 600px; width: 100%; margin-bottom: 3rem;">
         <img
           src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
@@ -38,7 +40,6 @@ defmodule OliviaWeb.HomeLive do
         />
       </div>
 
-      <!-- Hero Text -->
       <div style="text-align: center; max-width: 600px;">
         <h1 class="curator-heading-italic" style="font-size: 3rem; margin-bottom: 1rem; color: var(--curator-text-light);">
           A Becoming
@@ -46,12 +47,11 @@ defmodule OliviaWeb.HomeLive do
         <p class="curator-body" style="font-size: 1.125rem; color: var(--curator-text-muted); line-height: 1.8; margin-bottom: 2rem;">
           Contemporary expressionist work exploring transformation, vulnerability, and the emergence of form from paint itself.
         </p>
-        <a href="/work" class="curator-button">
+        <a href="/series" class="curator-button">
           Enter Gallery
         </a>
       </div>
 
-      <!-- Scroll Indicator -->
       <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); opacity: 0.5;">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
           <path d="M12 5v14M19 12l-7 7-7-7"/>
@@ -59,7 +59,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Preview Triptych -->
     <section style="padding: 6rem 2rem; background: var(--curator-bg-warm);">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 4rem;">
@@ -69,10 +68,8 @@ defmodule OliviaWeb.HomeLive do
           <div class="curator-divider"></div>
         </div>
 
-        <!-- Three Collection Previews -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
-          <!-- Becoming (Figures) -->
-          <a href="/work#becoming" style="text-decoration: none; display: block;">
+          <a href="/series/becoming" style="text-decoration: none; display: block;">
             <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
@@ -88,8 +85,7 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Abundance (Florals) -->
-          <a href="/work#abundance" style="text-decoration: none; display: block;">
+          <a href="/series/abundance" style="text-decoration: none; display: block;">
             <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -105,8 +101,7 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Shifting (Landscapes) -->
-          <a href="/work#shifting" style="text-decoration: none; display: block;">
+          <a href="/series/shifting" style="text-decoration: none; display: block;">
             <div class="curator-artwork-card" style="margin-bottom: 1.5rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -125,7 +120,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Artist Statement -->
     <section style="padding: 6rem 2rem;">
       <div style="max-width: 700px; margin: 0 auto; text-align: center;">
         <blockquote class="curator-heading-italic" style="font-size: 1.5rem; line-height: 1.6; color: var(--curator-text-light); margin-bottom: 2rem;">
@@ -143,7 +137,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Contact CTA -->
     <section style="padding: 4rem 2rem; background: var(--curator-bg-warm); text-align: center;">
       <div style="max-width: 500px; margin: 0 auto;">
         <h3 class="curator-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
@@ -162,9 +155,7 @@ defmodule OliviaWeb.HomeLive do
 
   defp render_cottage(assigns) do
     ~H"""
-    <!-- Hero Section -->
     <section style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem; background: var(--cottage-cream);">
-      <!-- Hero Artwork - Marilyn in garden light -->
       <div style="max-width: 500px; width: 100%; margin-bottom: 3rem;">
         <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(200, 167, 216, 0.12);">
           <img
@@ -175,7 +166,6 @@ defmodule OliviaWeb.HomeLive do
         </div>
       </div>
 
-      <!-- Hero Text -->
       <div style="text-align: center; max-width: 600px;">
         <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 0.5rem; color: var(--cottage-text-dark);">
           Olivia Tew
@@ -192,7 +182,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Three Bodies of Work -->
     <section style="padding: 6rem 1rem; background: white;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 4rem;">
@@ -203,7 +192,6 @@ defmodule OliviaWeb.HomeLive do
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-          <!-- Becoming - Figures -->
           <a href="/work#becoming" style="text-decoration: none; display: block;">
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
               <img
@@ -220,7 +208,6 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Abundance - Florals -->
           <a href="/work#abundance" style="text-decoration: none; display: block;">
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
               <img
@@ -237,7 +224,6 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Shifting - Landscapes -->
           <a href="/work#shifting" style="text-decoration: none; display: block;">
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08); transition: box-shadow 0.3s ease;">
               <img
@@ -257,7 +243,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Artist Statement Quote -->
     <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
       <div style="max-width: 700px; margin: 0 auto; text-align: center;">
         <blockquote class="cottage-accent" style="font-size: 1.5rem; line-height: 1.6; color: var(--cottage-text-dark); margin-bottom: 2rem;">
@@ -275,7 +260,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Selected Works Grid -->
     <section style="padding: 6rem 1rem; background: white;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 3rem; text-align: center;">
@@ -319,7 +303,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- For Collectors & Designers -->
     <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
       <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
         <div>
@@ -343,7 +326,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Newsletter -->
     <section style="padding: 5rem 1rem; background: white;">
       <div style="max-width: 500px; margin: 0 auto; text-align: center;">
         <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
@@ -373,7 +355,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Contact CTA -->
     <section style="padding: 4rem 1rem; background: var(--cottage-wisteria-deep); text-align: center;">
       <div style="max-width: 500px; margin: 0 auto;">
         <h3 class="cottage-heading" style="font-size: 1.5rem; color: white; margin-bottom: 1rem;">
@@ -392,9 +373,7 @@ defmodule OliviaWeb.HomeLive do
 
   defp render_gallery(assigns) do
     ~H"""
-    <!-- Hero Section with Featured Artwork -->
     <section style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1.5rem; background: linear-gradient(to bottom, #faf8f5, #f5f3f0);">
-      <!-- Hero Artwork - A Becoming -->
       <div style="max-width: 500px; width: 100%; margin-bottom: 3rem;">
         <div style="border: 8px solid #fff; box-shadow: 0 4px 20px rgba(44, 36, 22, 0.1);">
           <img
@@ -405,7 +384,6 @@ defmodule OliviaWeb.HomeLive do
         </div>
       </div>
 
-      <!-- Hero Text -->
       <div style="text-align: center; max-width: 600px;">
         <h1 class="gallery-script" style="font-size: 3.5rem; color: #2c2416; margin-bottom: 0.5rem; font-weight: 400;">
           Olivia Tew
@@ -425,7 +403,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Three Bodies of Work -->
     <section style="padding: 6rem 1.5rem; background: #fff;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 4rem;">
@@ -436,7 +413,6 @@ defmodule OliviaWeb.HomeLive do
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
-          <!-- Becoming - Figures -->
           <a href="/work#becoming" style="text-decoration: none; display: block;">
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1.5rem; overflow: hidden;">
               <img
@@ -453,7 +429,6 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Abundance - Florals -->
           <a href="/work#abundance" style="text-decoration: none; display: block;">
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1.5rem; overflow: hidden;">
               <img
@@ -470,7 +445,6 @@ defmodule OliviaWeb.HomeLive do
             </p>
           </a>
 
-          <!-- Shifting - Landscapes -->
           <a href="/work#shifting" style="text-decoration: none; display: block;">
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1.5rem; overflow: hidden;">
               <img
@@ -490,7 +464,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Statement Quote -->
     <section style="padding: 5rem 1.5rem; background: #f5f3f0;">
       <div style="max-width: 700px; margin: 0 auto; text-align: center;">
         <blockquote class="gallery-script" style="font-size: 1.75rem; line-height: 1.6; color: #2c2416; margin-bottom: 2rem; font-style: italic;">
@@ -511,7 +484,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Selected Works Grid -->
     <section style="padding: 6rem 1.5rem; background: #fff;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 3rem;">
@@ -558,7 +530,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- For Collectors & Designers -->
     <section style="padding: 5rem 1.5rem; background: #f5f3f0;">
       <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
         <div>
@@ -585,7 +556,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Newsletter -->
     <section style="padding: 5rem 1.5rem; background: #fff; border-top: 1px solid #e8e6e3;">
       <div style="max-width: 500px; margin: 0 auto; text-align: center;">
         <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 1rem;">
@@ -614,7 +584,6 @@ defmodule OliviaWeb.HomeLive do
       </div>
     </section>
 
-    <!-- Contact CTA -->
     <section style="padding: 4rem 1.5rem; background: #2c2416; text-align: center;">
       <div style="max-width: 500px; margin: 0 auto;">
         <h3 class="gallery-heading" style="font-size: 1.25rem; color: #faf8f5; margin-bottom: 1rem;">
@@ -637,20 +606,26 @@ defmodule OliviaWeb.HomeLive do
   defp render_default(assigns) do
     ~H"""
     <div class="min-h-screen">
-      <!-- Hero Section with Featured Artwork -->
       <div class="relative bg-gray-50">
         <div class="mx-auto max-w-7xl">
           <div class="grid lg:grid-cols-2 gap-0">
-            <!-- Hero Image -->
-            <div class="relative aspect-[4/5] lg:aspect-auto">
+            <.annotatable
+              anchor="home:hero:image"
+              class="relative aspect-[4/5] lg:aspect-auto"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "hero"})}
+            >
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                 alt="A Becoming - Expressionist figure painting of nude torso emerging from gestural brushwork"
                 class="w-full h-full object-cover"
               />
-            </div>
-            <!-- Hero Text -->
-            <div class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24">
+            </.annotatable>
+
+            <.annotatable
+              anchor="home:hero:text"
+              class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "hero"})}
+            >
               <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                 Olivia Tew
               </h1>
@@ -674,81 +649,99 @@ defmodule OliviaWeb.HomeLive do
                   About the Artist
                 </.link>
               </div>
-            </div>
+            </.annotatable>
           </div>
         </div>
       </div>
 
-      <!-- Three Bodies of Work -->
       <div class="bg-white py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
-          <div class="mx-auto max-w-2xl text-center mb-16">
+          <.annotatable
+            anchor="home:collections:header"
+            class="mx-auto max-w-2xl text-center mb-16"
+            data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "collections"})}
+          >
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               The Collection
             </h2>
             <p class="mt-4 text-lg text-gray-600">
               Three distinct bodies of work exploring transformation, abundance, and the shifting landscape
             </p>
-          </div>
+          </.annotatable>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Figure Works -->
-            <.link navigate={~p"/series/becoming"} class="group block">
-              <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
-                  alt="Changes - expressionistic figure study"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                Becoming
-              </h3>
-              <p class="mt-1 text-sm text-gray-500">
-                Figure works exploring emergence and transformation
-              </p>
-            </.link>
+            <.annotatable
+              anchor="home:collections:becoming"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "series" => "becoming"})}
+            >
+              <.link navigate={~p"/series/becoming"} class="group block">
+                <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                  <img
+                    src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
+                    alt="Changes - expressionistic figure study"
+                    class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                  />
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                  Becoming
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Figure works exploring emergence and transformation
+                </p>
+              </.link>
+            </.annotatable>
 
-            <!-- Floral Works -->
-            <.link navigate={~p"/series/abundance"} class="group block">
-              <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
-                  alt="Ecstatic - floral still life"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                Abundance
-              </h3>
-              <p class="mt-1 text-sm text-gray-500">
-                Floral celebrations of colour and joy
-              </p>
-            </.link>
+            <.annotatable
+              anchor="home:collections:abundance"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "series" => "abundance"})}
+            >
+              <.link navigate={~p"/series/abundance"} class="group block">
+                <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                  <img
+                    src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
+                    alt="Ecstatic - floral still life"
+                    class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                  />
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                  Abundance
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Floral celebrations of colour and joy
+                </p>
+              </.link>
+            </.annotatable>
 
-            <!-- Landscape Works -->
-            <.link navigate={~p"/series/shifting"} class="group block">
-              <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
-                  alt="Shifting - expressionist landscape diptych"
-                  class="w-full h-full object-cover object-center group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                Shifting
-              </h3>
-              <p class="mt-1 text-sm text-gray-500">
-                Landscapes in perpetual transformation
-              </p>
-            </.link>
+            <.annotatable
+              anchor="home:collections:shifting"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "series" => "shifting"})}
+            >
+              <.link navigate={~p"/series/shifting"} class="group block">
+                <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                  <img
+                    src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
+                    alt="Shifting - expressionist landscape diptych"
+                    class="w-full h-full object-cover object-center group-hover:opacity-90 transition-opacity"
+                  />
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                  Shifting
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Landscapes in perpetual transformation
+                </p>
+              </.link>
+            </.annotatable>
           </div>
         </div>
       </div>
 
-      <!-- Artist Statement -->
       <div class="bg-gray-50 py-16 sm:py-24">
-        <div class="mx-auto max-w-3xl px-6 lg:px-8">
+        <.annotatable
+          anchor="home:statement"
+          class="mx-auto max-w-3xl px-6 lg:px-8"
+          data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "statement"})}
+        >
           <blockquote class="text-center">
             <p class="text-2xl font-medium leading-9 text-gray-900 italic">
               "Each painting asks us to witness without intruding—the universal experience of weathering change, of the body as vessel for emotional experience."
@@ -768,12 +761,15 @@ defmodule OliviaWeb.HomeLive do
               Read more about the artist <span aria-hidden="true">→</span>
             </.link>
           </div>
-        </div>
+        </.annotatable>
       </div>
 
-      <!-- Selected Works Gallery -->
       <div class="bg-white py-16 sm:py-24">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <.annotatable
+          anchor="home:selected-works"
+          class="mx-auto max-w-7xl px-6 lg:px-8"
+          data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "selected-works"})}
+        >
           <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-8">
             Selected Works
           </h2>
@@ -815,14 +811,16 @@ defmodule OliviaWeb.HomeLive do
               View Full Collection
             </.link>
           </div>
-        </div>
+        </.annotatable>
       </div>
 
-      <!-- For Hotels & Designers -->
       <div class="bg-gray-50 py-16">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <.annotatable
+              anchor="home:hotels-designers:text"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "hotels-designers"})}
+            >
               <h2 class="text-2xl font-bold tracking-tight text-gray-900">
                 For Hotels & Designers
               </h2>
@@ -840,19 +838,23 @@ defmodule OliviaWeb.HomeLive do
                   Learn about working together <span aria-hidden="true">→</span>
                 </.link>
               </div>
-            </div>
-            <div class="aspect-[3/4] overflow-hidden rounded-lg">
+            </.annotatable>
+
+            <.annotatable
+              anchor="home:hotels-designers:image"
+              class="aspect-[3/4] overflow-hidden rounded-lg"
+              data-anchor-meta={Jason.encode!(%{"page" => "home", "section" => "hotels-designers"})}
+            >
               <img
                 src={resolve_asset_url("/uploads/media/1763555487_35a594e71b1cb673.png")}
                 alt="Artwork visualisation in luxury Swiss hotel lounge with alpine views"
                 class="w-full h-full object-cover"
               />
-            </div>
+            </.annotatable>
           </div>
         </div>
       </div>
 
-      <!-- Newsletter Section -->
       <div class="bg-white py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mx-auto max-w-2xl text-center">
@@ -887,7 +889,6 @@ defmodule OliviaWeb.HomeLive do
         </div>
       </div>
 
-      <!-- Contact CTA -->
       <div class="bg-gray-900 py-12">
         <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center">
           <h2 class="text-xl font-semibold text-white">
@@ -906,6 +907,14 @@ defmodule OliviaWeb.HomeLive do
           </div>
         </div>
       </div>
+
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -916,16 +925,147 @@ defmodule OliviaWeb.HomeLive do
     sections = sections_to_map(page.sections)
     featured_artworks = Content.list_featured_artworks(preload: [:series], limit: 3)
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Olivia Tew - Contemporary Painter")
-     |> assign(:sections, sections)
-     |> assign(:featured_artworks, featured_artworks)}
+    theme = socket.assigns[:theme]
+    page_path = "/"
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:page_title, "Olivia Tew - Contemporary Painter")
+      |> assign(:sections, sections)
+      |> assign(:featured_artworks, featured_artworks)
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
   end
 
   @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
+  end
+
+  # Annotation event handlers (only used in reviewer theme)
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
+     socket
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    Logger.debug("save_audio_blob event received: #{filename}, #{mime_type}")
+
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      Logger.warning("No current_anchor set")
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      Logger.debug("Processing blob upload for anchor: #{inspect(anchor)}")
+
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          Logger.debug("Decoded #{byte_size(binary_data)} bytes")
+
+          case Olivia.Uploads.upload_from_binary(binary_data, filename, mime_type) do
+            {:ok, url} ->
+              Logger.info("Uploaded to: #{url}")
+
+              case Annotations.create_voice_note(%{
+                audio_url: url,
+                anchor_key: anchor.key,
+                anchor_meta: anchor.meta,
+                page_path: socket.assigns.page_path,
+                theme: "reviewer"
+              }) do
+                {:ok, voice_note} ->
+                  Logger.info("Voice note saved: #{voice_note.id}")
+
+                  {:noreply,
+                   socket
+                   |> put_flash(:info, "Annotation saved successfully")
+                   |> assign(:current_anchor, nil)
+                   |> push_event("annotation_saved", %{
+                     id: voice_note.id,
+                     anchor_key: voice_note.anchor_key,
+                     audio_url: voice_note.audio_url
+                   })}
+
+                {:error, changeset} ->
+                  Logger.error("Failed to save voice note: #{inspect(changeset)}")
+                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+              end
+
+            {:error, reason} ->
+              Logger.error("Upload failed: #{inspect(reason)}")
+              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+          end
+
+        :error ->
+          Logger.error("Base64 decode failed")
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
+    end
   end
 
   @impl true

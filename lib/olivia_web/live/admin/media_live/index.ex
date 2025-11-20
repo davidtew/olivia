@@ -143,7 +143,7 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
           :for={media <- @media_list}
           class="group relative aspect-square overflow-hidden rounded-lg bg-gray-100"
         >
-          <img src={media.url} alt={media.alt_text || media.filename} class="h-full w-full object-cover" />
+          <img src={Olivia.Media.MediaFile.resolved_url(media)} alt={media.alt_text || media.filename} class="h-full w-full object-cover" />
 
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
             <div class="absolute bottom-0 left-0 right-0 p-3 text-white">

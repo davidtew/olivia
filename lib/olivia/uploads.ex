@@ -72,11 +72,12 @@ defmodule Olivia.Uploads do
   end
 
   @doc """
-  Uploads binary data to S3 and returns the public URL.
+  Uploads binary data and returns the public URL.
+  Uses local filesystem or S3 depending on UPLOADS_STORAGE environment variable.
 
   ## Parameters
     - binary: File data as binary
-    - key: S3 object key (path in bucket)
+    - key: S3 object key (path in bucket) or local path
     - content_type: MIME type of the file
 
   ## Returns
@@ -84,6 +85,25 @@ defmodule Olivia.Uploads do
     - {:error, reason} on failure
   """
   def upload_binary(binary, key, content_type \\ "image/jpeg") do
+    case @storage_type do
+      "local" -> upload_binary_local(binary, key)
+      _ -> upload_binary_s3(binary, key, content_type)
+    end
+  end
+
+  defp upload_binary_local(binary, key) do
+    dest_path = Path.join(@local_upload_dir, key)
+    dest_dir = Path.dirname(dest_path)
+
+    with :ok <- File.mkdir_p(dest_dir),
+         :ok <- File.write(dest_path, binary) do
+      {:ok, "/uploads/#{key}"}
+    else
+      error -> {:error, error}
+    end
+  end
+
+  defp upload_binary_s3(binary, key, content_type) do
     binary
     |> S3.put_object(bucket(), key,
       acl: :public_read,

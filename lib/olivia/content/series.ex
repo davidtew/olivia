@@ -58,4 +58,22 @@ defmodule Olivia.Content.Series do
 
   # Public function for both internal and external use
   def slugify(str), do: do_slugify(str)
+
+  @doc """
+  Returns the resolved cover image URL for the series.
+  Falls back to the first artwork's image if no cover_image_url is set.
+  In production, prepends S3 URL to local paths.
+  """
+  def resolved_cover_image_url(%__MODULE__{cover_image_url: url}) when is_binary(url) and url != "" do
+    OliviaWeb.AssetHelpers.resolve_asset_url(url)
+  end
+
+  def resolved_cover_image_url(%__MODULE__{artworks: artworks}) when is_list(artworks) do
+    case artworks do
+      [first | _] -> Olivia.Content.Artwork.resolved_image_url(first)
+      [] -> nil
+    end
+  end
+
+  def resolved_cover_image_url(_), do: nil
 end

@@ -88,4 +88,11 @@ defmodule Olivia.Content.Artwork do
   def slugify(str), do: do_slugify(str)
 
   def statuses, do: @statuses
+
+  @doc """
+  Returns the resolved image URL for the artwork.
+  In production, prepends S3 URL to local paths.
+  """
+  def resolved_image_url(%__MODULE__{image_url: url}), do: OliviaWeb.AssetHelpers.resolve_asset_url(url)
+  def resolved_image_url(_), do: nil
 end

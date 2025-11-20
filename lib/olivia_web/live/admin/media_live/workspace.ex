@@ -107,7 +107,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
             phx-click="select_media"
             phx-value-id={media.id}
           >
-            <img src={media.url} alt={media.alt_text || media.filename} class="h-full w-full object-cover" />
+            <img src={Olivia.Media.MediaFile.resolved_url(media)} alt={media.alt_text || media.filename} class="h-full w-full object-cover" />
 
             <!-- Status Badge -->
             <div class="absolute top-2 left-2">
@@ -165,7 +165,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
           <!-- Image Preview -->
           <div class="mb-4 aspect-square overflow-hidden rounded-lg bg-white">
             <img
-              src={@selected_media.url}
+              src={Olivia.Media.MediaFile.resolved_url(@selected_media)}
               alt={@selected_media.alt_text || @selected_media.filename}
               class="h-full w-full object-contain"
             />

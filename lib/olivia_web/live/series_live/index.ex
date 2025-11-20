@@ -4,6 +4,8 @@ defmodule OliviaWeb.SeriesLive.Index do
   import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
 
   alias Olivia.Content
+  alias Olivia.Annotations
+  alias Olivia.Uploads
 
   @impl true
   def render(assigns) do
@@ -13,6 +15,8 @@ defmodule OliviaWeb.SeriesLive.Index do
       true -> render_default(assigns)
     end
   end
+
+  # Note: annotation_attrs helper removed as we now use <.annotatable>
 
   defp render_cottage(assigns) do
     ~H"""
@@ -77,7 +81,6 @@ defmodule OliviaWeb.SeriesLive.Index do
 
   defp render_gallery(assigns) do
     ~H"""
-    <!-- Gallery Hero -->
     <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3;">
       <h1 class="gallery-heading" style="font-size: 3rem; color: #2c2416; margin-bottom: 1rem;">
         Collections
@@ -87,7 +90,6 @@ defmodule OliviaWeb.SeriesLive.Index do
       </p>
     </div>
 
-    <!-- Series Grid -->
     <div style="padding: 4rem 1.5rem;">
       <div style="display: grid; grid-template-columns: 1fr; gap: 4rem; max-width: 80rem; margin: 0 auto;">
         <article :for={series <- @series_list} class="artwork-card" style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
@@ -141,36 +143,46 @@ defmodule OliviaWeb.SeriesLive.Index do
   defp render_default(assigns) do
     ~H"""
     <div class="min-h-screen bg-white">
-      <!-- Page Header -->
       <div class="bg-gray-50 py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
-          <div class="mx-auto max-w-2xl text-center">
+          <.annotatable
+            anchor="series-index:header"
+            class="mx-auto max-w-2xl text-center"
+            data-anchor-meta={Jason.encode!(%{"page" => "series-index"})}
+          >
             <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
               Collections
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-600">
               Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
             </p>
-          </div>
+          </.annotatable>
         </div>
       </div>
 
-      <!-- Series Grid -->
       <div class="py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="grid grid-cols-1 gap-16">
-            <!-- Becoming - Figure Works -->
             <article class="grid lg:grid-cols-2 gap-8 items-center">
-              <.link navigate={~p"/series/becoming"} class="group block">
-                <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
-                    alt="A Becoming - Expressionist figure painting"
-                    class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                  />
-                </div>
-              </.link>
-              <div>
+              <.annotatable
+                anchor="series-index:becoming:image"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "becoming"})}
+              >
+                <.link navigate={~p"/series/becoming"} class="group block">
+                  <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
+                    <img
+                      src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+                      alt="A Becoming - Expressionist figure painting"
+                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  </div>
+                </.link>
+              </.annotatable>
+
+              <.annotatable
+                anchor="series-index:becoming:text"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "becoming"})}
+              >
                 <div class="mb-2">
                   <span class="text-xs text-gray-500 uppercase tracking-wide">3 artworks</span>
                 </div>
@@ -189,12 +201,15 @@ defmodule OliviaWeb.SeriesLive.Index do
                 >
                   View series <span aria-hidden="true">→</span>
                 </.link>
-              </div>
+              </.annotatable>
             </article>
 
-            <!-- Abundance - Floral Works -->
             <article class="grid lg:grid-cols-2 gap-8 items-center">
-              <div class="order-2 lg:order-1">
+              <.annotatable
+                anchor="series-index:abundance:text"
+                class="order-2 lg:order-1"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "abundance"})}
+              >
                 <div class="mb-2">
                   <span class="text-xs text-gray-500 uppercase tracking-wide">6 artworks</span>
                 </div>
@@ -213,30 +228,45 @@ defmodule OliviaWeb.SeriesLive.Index do
                 >
                   View series <span aria-hidden="true">→</span>
                 </.link>
-              </div>
-              <.link navigate={~p"/series/abundance"} class="group block order-1 lg:order-2">
-                <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
-                    alt="Ecstatic - floral still life"
-                    class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                  />
-                </div>
-              </.link>
+              </.annotatable>
+
+              <.annotatable
+                anchor="series-index:abundance:image"
+                class="order-1 lg:order-2"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "abundance"})}
+              >
+                <.link navigate={~p"/series/abundance"} class="group block">
+                  <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
+                    <img
+                      src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
+                      alt="Ecstatic - floral still life"
+                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  </div>
+                </.link>
+              </.annotatable>
             </article>
 
-            <!-- Shifting - Landscape Works -->
             <article class="grid lg:grid-cols-2 gap-8 items-center">
-              <.link navigate={~p"/series/shifting"} class="group block">
-                <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
-                    alt="Shifting - expressionist landscape diptych"
-                    class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                  />
-                </div>
-              </.link>
-              <div>
+              <.annotatable
+                anchor="series-index:shifting:image"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "shifting"})}
+              >
+                <.link navigate={~p"/series/shifting"} class="group block">
+                  <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
+                    <img
+                      src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
+                      alt="Shifting - expressionist landscape diptych"
+                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  </div>
+                </.link>
+              </.annotatable>
+
+              <.annotatable
+                anchor="series-index:shifting:text"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "shifting"})}
+              >
                 <div class="mb-2">
                   <span class="text-xs text-gray-500 uppercase tracking-wide">3 artworks</span>
                 </div>
@@ -255,13 +285,20 @@ defmodule OliviaWeb.SeriesLive.Index do
                 >
                   View series <span aria-hidden="true">→</span>
                 </.link>
-              </div>
+              </.annotatable>
             </article>
           </div>
         </div>
       </div>
 
-      <!-- Back to home -->
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
+
       <div class="border-t border-gray-200 bg-white">
         <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
           <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
@@ -277,9 +314,126 @@ defmodule OliviaWeb.SeriesLive.Index do
   def mount(_params, _session, socket) do
     series_list = Content.list_series(published: true, preload: [:artworks])
 
-    {:ok,
+    theme = socket.assigns[:theme]
+    page_path = "/series"
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:page_title, "Series - Olivia Tew")
+      |> assign(:series_list, series_list)
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
+  end
+
+  # Annotation event handlers (only used in reviewer theme)
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
      socket
-     |> assign(:page_title, "Series - Olivia Tew")
-     |> assign(:series_list, series_list)}
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          case Uploads.upload_from_binary(binary_data, filename, mime_type) do
+            {:ok, url} ->
+              case Annotations.create_voice_note(%{
+                audio_url: url,
+                anchor_key: anchor.key,
+                anchor_meta: anchor.meta,
+                page_path: socket.assigns.page_path,
+                theme: "reviewer"
+              }) do
+                {:ok, voice_note} ->
+                  {:noreply,
+                   socket
+                   |> put_flash(:info, "Annotation saved successfully")
+                   |> assign(:current_anchor, nil)
+                   |> push_event("note_created", %{
+                     id: voice_note.id,
+                     anchor_key: voice_note.anchor_key,
+                     audio_url: voice_note.audio_url
+                   })}
+
+                {:error, _changeset} ->
+                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+              end
+
+            {:error, _reason} ->
+              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+          end
+
+        :error ->
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
+    end
   end
 end

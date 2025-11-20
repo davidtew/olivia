@@ -1,14 +1,41 @@
 defmodule OliviaWeb.SeriesLive.Show do
   use OliviaWeb, :live_view
 
+  import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
+
   alias Olivia.Content
+  alias Olivia.Annotations
+  alias Olivia.Uploads
 
   @impl true
   def render(assigns) do
-    cond do
-      assigns[:theme] == "cottage" -> render_cottage(assigns)
-      assigns[:theme] == "gallery" -> render_gallery(assigns)
-      true -> render_default(assigns)
+    # When in reviewer mode, determine which visual theme to use
+    # For now, default to cottage for database series, default for hardcoded
+    visual_theme = cond do
+      assigns[:theme] == "reviewer" && is_struct(assigns[:series]) -> "cottage"
+      assigns[:theme] == "reviewer" -> "default"
+      assigns[:theme] == "cottage" -> "cottage"
+      assigns[:theme] == "gallery" -> "gallery"
+      true -> "default"
+    end
+
+    case visual_theme do
+      "cottage" -> render_cottage(assigns)
+      "gallery" -> render_gallery(assigns)
+      _ -> render_default(assigns)
+    end
+  end
+
+  # Helper to conditionally add annotation attributes
+  defp annotation_attrs(enabled, anchor_key, anchor_meta) do
+    if enabled do
+      %{
+        "data-note-anchor" => anchor_key,
+        "data-anchor-meta" => Jason.encode!(anchor_meta),
+        "phx-hook" => "AnnotatableElement"
+      }
+    else
+      %{}
     end
   end
 
@@ -25,21 +52,47 @@ defmodule OliviaWeb.SeriesLive.Show do
       </div>
 
       <div :if={@series.body_md} style="max-width: 48rem; margin: 0 auto; margin-bottom: 4rem;">
-        <div class="cottage-body" style="font-size: 1.125rem; line-height: 1.75;">
+        <div
+          id={"series-#{@slug}-description"}
+          class="cottage-body"
+          style="font-size: 1.125rem; line-height: 1.75;"
+          {annotation_attrs(@annotations_enabled, "series:#{@slug}:description", %{
+            "anchor_type" => "text",
+            "series_slug" => @slug
+          })}
+        >
           <%= raw(Earmark.as_html!(@series.body_md)) %>
         </div>
       </div>
+
+      <!-- Annotation recorder hook -->
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
 
       <div style="margin-top: 4rem;">
         <h2 class="cottage-heading" style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">
           Works in this Collection
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
-          <div :for={artwork <- @artworks} style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
+          <div
+            :for={artwork <- @artworks}
+            id={"artwork-#{artwork.slug}"}
+            style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);"
+            {annotation_attrs(@annotations_enabled, "artwork:#{artwork.slug}", %{
+              "anchor_type" => "artwork",
+              "artwork_id" => artwork.id,
+              "series_slug" => @slug
+            })}
+          >
             <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
               <div :if={artwork.image_url} style="aspect-ratio: 4/5; overflow: hidden;">
                 <img
-                  src={artwork.image_url}
+                  src={Olivia.Content.Artwork.resolved_image_url(artwork)}
                   alt={artwork.title}
                   style="width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease;"
                 />
@@ -118,7 +171,14 @@ defmodule OliviaWeb.SeriesLive.Show do
 
     <!-- Description -->
     <div :if={@series.body_md} style="max-width: 48rem; margin: 0 auto; padding: 3rem 1.5rem;">
-      <div style="color: #4a4034; font-size: 1.125rem; line-height: 1.75;">
+      <div
+        id={"series-#{@slug}-description"}
+        style="color: #4a4034; font-size: 1.125rem; line-height: 1.75;"
+        {annotation_attrs(@annotations_enabled, "series:#{@slug}:description", %{
+          "anchor_type" => "text",
+          "series_slug" => @slug
+        })}
+      >
         <%= raw(Earmark.as_html!(@series.body_md)) %>
       </div>
     </div>
@@ -129,11 +189,20 @@ defmodule OliviaWeb.SeriesLive.Show do
         Works in this Collection
       </h2>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 3rem; max-width: 80rem; margin: 0 auto;">
-        <div :for={artwork <- @artworks} class="artwork-card">
+        <div
+          :for={artwork <- @artworks}
+          id={"artwork-#{artwork.slug}"}
+          class="artwork-card"
+          {annotation_attrs(@annotations_enabled, "artwork:#{artwork.slug}", %{
+            "anchor_type" => "artwork",
+            "artwork_id" => artwork.id,
+            "series_slug" => @slug
+          })}
+        >
           <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
             <div :if={artwork.image_url} class="elegant-border" style="overflow: hidden; margin-bottom: 1rem; aspect-ratio: 4/5;">
               <img
-                src={artwork.image_url}
+                src={Olivia.Content.Artwork.resolved_image_url(artwork)}
                 alt={artwork.title}
                 style="width: 100%; height: 100%; object-fit: cover; display: block;"
               />
@@ -189,6 +258,15 @@ defmodule OliviaWeb.SeriesLive.Show do
         ← Back to all collections
       </.link>
     </div>
+
+    <!-- Annotation recorder hook -->
+    <%= if @annotations_enabled do %>
+      <div id="annotation-recorder-container">
+        <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation" style="display: none;">
+          <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+        </form>
+      </div>
+    <% end %>
     """
   end
 
@@ -214,7 +292,14 @@ defmodule OliviaWeb.SeriesLive.Show do
 
         <!-- Description -->
         <div class="mx-auto max-w-3xl px-6 lg:px-8 py-16">
-          <div class="prose prose-lg prose-gray">
+          <div
+            id="series-becoming-description"
+            class="prose prose-lg prose-gray"
+            {annotation_attrs(@annotations_enabled, "series:becoming:description", %{
+              "anchor_type" => "text",
+              "series_slug" => "becoming"
+            })}
+          >
             <p>
               These paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience. The gestural brushwork refuses prettiness or idealisation; each stroke is visible, urgent, yet the cumulative effect is deeply tender.
             </p>
@@ -231,10 +316,18 @@ defmodule OliviaWeb.SeriesLive.Show do
           </h2>
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <!-- A Becoming -->
-            <div class="group">
+            <div
+              id="artwork-a-becoming"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:a-becoming", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "A Becoming",
+                "series_slug" => "becoming"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                   alt="A Becoming - Expressionist figure painting"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -246,10 +339,18 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- Changes -->
-            <div class="group">
+            <div
+              id="artwork-changes"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:changes", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "Changes",
+                "series_slug" => "becoming"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_22309219aa56fb95.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
                   alt="Changes - expressionistic figure study"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -261,10 +362,18 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- She Lays Down -->
-            <div class="group">
+            <div
+              id="artwork-she-lays-down"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:she-lays-down", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "She Lays Down",
+                "series_slug" => "becoming"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_a84d8a1756abb807.JPG"
+                  src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
                   alt="She Lays Down - reclining figure"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -285,6 +394,15 @@ defmodule OliviaWeb.SeriesLive.Show do
             </.link>
           </div>
         </div>
+
+        <!-- Annotation recorder hook -->
+        <%= if @annotations_enabled do %>
+          <div id="annotation-recorder-container">
+            <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+              <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+            </form>
+          </div>
+        <% end %>
       </div>
     <% end %>
 
@@ -328,7 +446,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_f6add8cef5e11b3a.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
                   alt="Ecstatic - floral still life"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -343,7 +461,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                   alt="Marilyn - golden floral"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -358,7 +476,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                  src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                   alt="I Love Three Times - triptych"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -373,7 +491,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_62762e1c677b1d02.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
                   alt="Floral with red ground"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -388,7 +506,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_c9cd48fa716cf037.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
                   alt="Floral detail with coral ground"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -403,7 +521,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg"
+                  src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
                   alt="I Love Three Times detail"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -467,7 +585,7 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div class="group">
               <div class="aspect-[21/9] overflow-hidden rounded-lg bg-gray-100">
                 <img
-                  src="/uploads/media/1763483281_14d2d6ab6485926c.jpg"
+                  src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
                   alt="Shifting - expressionist landscape diptych"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                 />
@@ -484,7 +602,7 @@ defmodule OliviaWeb.SeriesLive.Show do
               <div class="group">
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763483281_ebd1913da6ebeabd.jpg"
+                    src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
                     alt="Shifting Part 1"
                     class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
@@ -499,7 +617,7 @@ defmodule OliviaWeb.SeriesLive.Show do
               <div class="group">
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
-                    src="/uploads/media/1763483281_a7b4acd750ac636c.jpg"
+                    src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
                     alt="Shifting Part 2"
                     class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
@@ -557,7 +675,7 @@ defmodule OliviaWeb.SeriesLive.Show do
                 <div class="aspect-[4/5] w-full overflow-hidden rounded-lg">
                   <img
                     :if={artwork.image_url}
-                    src={artwork.image_url}
+                    src={Olivia.Content.Artwork.resolved_image_url(artwork)}
                     alt={artwork.title}
                     class="h-full w-full object-cover group-hover:opacity-75 transition-opacity"
                   />
@@ -594,30 +712,179 @@ defmodule OliviaWeb.SeriesLive.Show do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
+    theme = socket.assigns[:theme]
+    page_path = "/series/#{slug}"
+
+    # Derive annotations_enabled from theme
+    annotations_enabled = theme == "reviewer"
+
     # Handle hardcoded series for Original theme
-    if slug in ["becoming", "abundance", "shifting"] do
+    socket = if slug in ["becoming", "abundance", "shifting"] do
       title = case slug do
         "becoming" -> "Becoming"
         "abundance" -> "Abundance"
         "shifting" -> "Shifting"
       end
 
-      {:ok,
-       socket
-       |> assign(:page_title, "#{title} - Olivia Tew")
-       |> assign(:slug, slug)
-       |> assign(:series, %{title: title, summary: "", body_md: nil})
-       |> assign(:artworks, [])}
+      socket
+      |> assign(:page_title, "#{title} - Olivia Tew")
+      |> assign(:slug, slug)
+      |> assign(:series, %{title: title, summary: "", body_md: nil})
+      |> assign(:artworks, [])
     else
       series = Content.get_series_by_slug!(slug, published: true)
       artworks = Content.list_artworks(series_id: series.id, published: true)
 
-      {:ok,
-       socket
-       |> assign(:page_title, "#{series.title} - Olivia Tew")
-       |> assign(:slug, slug)
-       |> assign(:series, series)
-       |> assign(:artworks, artworks)}
+      socket
+      |> assign(:page_title, "#{series.title} - Olivia Tew")
+      |> assign(:slug, slug)
+      |> assign(:series, series)
+      |> assign(:artworks, artworks)
+    end
+
+    # Set annotations_enabled for all themes
+    socket = assign(socket, :annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
+  end
+
+  # Annotation event handlers (only used in reviewer theme)
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
+     socket
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    Logger.debug("save_audio_blob event received: #{filename}, #{mime_type}")
+
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      Logger.warning("No current_anchor set")
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      Logger.debug("Processing blob upload for anchor: #{inspect(anchor)}")
+
+      # Decode base64 audio data
+      case Base.decode64(blob_data) do
+        {:ok, binary} ->
+          save_audio_binary(socket, binary, filename, mime_type, anchor.key, anchor.meta)
+
+        :error ->
+          Logger.error("Failed to decode base64 audio data")
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
     end
   end
+
+  defp save_audio_binary(socket, binary, filename, mime_type, anchor_key, anchor_meta) do
+    require Logger
+    theme = socket.assigns.theme
+    page_path = socket.assigns.page_path
+    user = socket.assigns[:current_scope] && socket.assigns.current_scope.user
+
+    Logger.debug("Saving audio binary: #{byte_size(binary)} bytes")
+
+    # Write binary to a temporary file
+    temp_path = Path.join(System.tmp_dir!(), filename)
+
+    case File.write(temp_path, binary) do
+      :ok ->
+        # Upload to S3
+        clean_filename = Uploads.generate_filename(filename)
+        key = "voice_notes/#{clean_filename}"
+
+        case Uploads.upload_file(temp_path, key, mime_type) do
+          {:ok, audio_url} ->
+            # Clean up temp file
+            File.rm(temp_path)
+
+            # Save to database
+            attrs = %{
+              audio_url: audio_url,
+              anchor_key: anchor_key,
+              anchor_meta: anchor_meta,
+              anchor_type: "explicit",
+              page_path: page_path,
+              theme: theme,
+              user_id: user && user.id
+            }
+
+            case Annotations.create_voice_note(attrs) do
+              {:ok, note} ->
+                Logger.info("Voice note created: #{note.id}")
+
+                {:noreply,
+                 socket
+                 |> assign(:current_anchor, nil)
+                 |> update(:existing_notes, &[note | &1])
+                 |> push_event("note_created", %{
+                   id: note.id,
+                   anchor_key: note.anchor_key,
+                   audio_url: note.audio_url
+                 })}
+
+              {:error, changeset} ->
+                Logger.error("Failed to create voice note: #{inspect(changeset)}")
+                {:noreply, put_flash(socket, :error, "Failed to save note")}
+            end
+
+          {:error, reason} ->
+            File.rm(temp_path)
+            Logger.error("Failed to upload to S3: #{inspect(reason)}")
+            {:noreply, put_flash(socket, :error, "Upload failed")}
+        end
+
+      {:error, reason} ->
+        Logger.error("Failed to write temp file: #{inspect(reason)}")
+        {:noreply, put_flash(socket, :error, "Failed to process audio")}
+    end
+  end
+
 end
