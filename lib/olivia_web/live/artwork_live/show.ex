@@ -460,32 +460,49 @@ defmodule OliviaWeb.ArtworkLive.Show do
     else
       case Base.decode64(blob_data) do
         {:ok, binary_data} ->
-          case Uploads.upload_from_binary(binary_data, filename, mime_type) do
-            {:ok, url} ->
-              case Annotations.create_voice_note(%{
-                audio_url: url,
-                anchor_key: anchor.key,
-                anchor_meta: anchor.meta,
-                page_path: socket.assigns.page_path,
-                theme: "reviewer"
-              }) do
-                {:ok, voice_note} ->
-                  {:noreply,
-                   socket
-                   |> put_flash(:info, "Annotation saved successfully")
-                   |> assign(:current_anchor, nil)
-                   |> push_event("annotation_saved", %{
-                     id: voice_note.id,
-                     anchor_key: voice_note.anchor_key,
-                     audio_url: voice_note.audio_url
-                   })}
+          # Write to temp file first (same as SeriesLive.Show)
+          temp_path = Path.join(System.tmp_dir!(), filename)
 
-                {:error, _changeset} ->
-                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+          case File.write(temp_path, binary_data) do
+            :ok ->
+              # Generate proper S3 key with path prefix
+              clean_filename = Uploads.generate_filename(filename)
+              key = "voice_notes/#{clean_filename}"
+
+              case Uploads.upload_file(temp_path, key, mime_type) do
+                {:ok, url} ->
+                  # Clean up temp file
+                  File.rm(temp_path)
+
+                  case Annotations.create_voice_note(%{
+                    audio_url: url,
+                    anchor_key: anchor.key,
+                    anchor_meta: anchor.meta,
+                    page_path: socket.assigns.page_path,
+                    theme: "reviewer"
+                  }) do
+                    {:ok, voice_note} ->
+                      {:noreply,
+                       socket
+                       |> put_flash(:info, "Annotation saved successfully")
+                       |> assign(:current_anchor, nil)
+                       |> push_event("note_created", %{
+                         id: voice_note.id,
+                         anchor_key: voice_note.anchor_key,
+                         audio_url: voice_note.audio_url
+                       })}
+
+                    {:error, _changeset} ->
+                      {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+                  end
+
+                {:error, _reason} ->
+                  File.rm(temp_path)
+                  {:noreply, put_flash(socket, :error, "Failed to upload audio")}
               end
 
             {:error, _reason} ->
-              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+              {:noreply, put_flash(socket, :error, "Failed to process audio")}
           end
 
         :error ->
