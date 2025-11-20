@@ -194,35 +194,48 @@ defmodule OliviaWeb.Layouts do
             >
               Contact
             </.link>
-            <div class="relative">
+            <%= if @theme == "reviewer" do %>
               <button
-                id="theme-dropdown-toggle"
-                onclick="document.getElementById('theme-dropdown-menu').classList.toggle('hidden')"
-                class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium border border-gray-300 rounded-md flex items-center gap-1"
+                id="annotation-toggle-btn"
+                phx-click="toggle_mode"
+                class="text-indigo-600 hover:text-indigo-700 px-3 py-2 text-sm font-medium border border-indigo-600 rounded-md"
               >
-                Theme
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
-                </svg>
+                Toggle Annotations
               </button>
-              <div
-                id="theme-dropdown-menu"
-                class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-              >
-                <a href="/set-theme/curator" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
-                  Curator
-                </a>
-                <a href="/set-theme/original" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
-                  Original
-                </a>
-                <a href="/set-theme/gallery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
-                  Gallery
-                </a>
-                <a href="/set-theme/cottage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Cottage
-                </a>
+              <a href="/set-theme/original" class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium border border-gray-300 rounded-md">
+                Exit Review
+              </a>
+            <% else %>
+              <div class="relative">
+                <button
+                  id="theme-dropdown-toggle"
+                  onclick="document.getElementById('theme-dropdown-menu').classList.toggle('hidden')"
+                  class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium border border-gray-300 rounded-md flex items-center gap-1"
+                >
+                  Theme
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                  </svg>
+                </button>
+                <div
+                  id="theme-dropdown-menu"
+                  class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                >
+                  <a href="/set-theme/curator" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                    Curator
+                  </a>
+                  <a href="/set-theme/original" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                    Original
+                  </a>
+                  <a href="/set-theme/gallery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                    Gallery
+                  </a>
+                  <a href="/set-theme/cottage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Cottage
+                  </a>
+                </div>
               </div>
-            </div>
+            <% end %>
           </div>
 
           <div class="flex md:hidden">
@@ -281,35 +294,53 @@ defmodule OliviaWeb.Layouts do
             Contact
           </a>
 
-          <div class="px-3 py-2">
-            <div class="text-sm font-semibold text-gray-500 mb-2">Theme</div>
-            <div class="space-y-1">
-              <a
-                href="/set-theme/curator"
-                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+          <%= if @theme == "reviewer" do %>
+            <div class="px-3 py-2 space-y-2">
+              <button
+                phx-click="toggle_mode"
+                class="w-full text-left block rounded-md px-3 py-2 text-base font-medium text-indigo-600 border border-indigo-600 hover:bg-indigo-50"
               >
-                Curator
-              </a>
+                Toggle Annotations
+              </button>
               <a
                 href="/set-theme/original"
-                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                onclick="document.getElementById('mobile-menu').classList.add('hidden')"
+                class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 border border-gray-300 hover:bg-gray-50"
               >
-                Original
-              </a>
-              <a
-                href="/set-theme/gallery"
-                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-              >
-                Gallery
-              </a>
-              <a
-                href="/set-theme/cottage"
-                class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-              >
-                Cottage
+                Exit Review
               </a>
             </div>
-          </div>
+          <% else %>
+            <div class="px-3 py-2">
+              <div class="text-sm font-semibold text-gray-500 mb-2">Theme</div>
+              <div class="space-y-1">
+                <a
+                  href="/set-theme/curator"
+                  class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Curator
+                </a>
+                <a
+                  href="/set-theme/original"
+                  class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Original
+                </a>
+                <a
+                  href="/set-theme/gallery"
+                  class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Gallery
+                </a>
+                <a
+                  href="/set-theme/cottage"
+                  class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Cottage
+                </a>
+              </div>
+            </div>
+          <% end %>
 
         </div>
       </div>

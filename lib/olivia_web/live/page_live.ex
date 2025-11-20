@@ -3,7 +3,9 @@ defmodule OliviaWeb.PageLive do
 
   import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
 
+  alias Olivia.Annotations
   alias Olivia.CMS
+  alias Olivia.Uploads
 
   @impl true
   def render(assigns) do
@@ -17,7 +19,6 @@ defmodule OliviaWeb.PageLive do
 
   defp render_curator(assigns) do
     ~H"""
-    <!-- Flash Messages -->
     <div :if={Phoenix.Flash.get(@flash, :info) || Phoenix.Flash.get(@flash, :error)} style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 0;">
       <p :if={Phoenix.Flash.get(@flash, :info)} class="curator-body" style="background: var(--curator-sage); color: white; padding: 1rem 1.5rem; border-radius: 4px;">
         <%= Phoenix.Flash.get(@flash, :info) %>
@@ -27,18 +28,15 @@ defmodule OliviaWeb.PageLive do
       </p>
     </div>
 
-    <!-- Page Header -->
     <section style="padding: 4rem 2rem 2rem; text-align: center;">
       <h1 class="curator-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
         <%= @page.title %>
       </h1>
     </section>
 
-    <!-- About Page Special Layout -->
     <%= if @page.slug == "about" do %>
       <section style="padding: 2rem;">
         <div style="max-width: 1000px; margin: 0 auto;">
-          <!-- Artist Portrait and Bio -->
           <div class="curator-about-grid" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 3rem; align-items: start;">
             <div>
               <div class="curator-artwork-card">
@@ -50,7 +48,6 @@ defmodule OliviaWeb.PageLive do
               </div>
             </div>
 
-            <!-- Bio Content -->
             <div>
               <div class="curator-body" style="font-size: 1rem; line-height: 1.8; color: var(--curator-text-light);">
                 <p style="margin-bottom: 1.5rem;">
@@ -67,7 +64,6 @@ defmodule OliviaWeb.PageLive do
                 </p>
               </div>
 
-              <!-- Artistic Connections -->
               <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(245, 242, 237, 0.1);">
                 <h3 style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--curator-text-muted); margin-bottom: 1rem;">
                   Artistic Connections
@@ -79,7 +75,6 @@ defmodule OliviaWeb.PageLive do
             </div>
           </div>
 
-          <!-- Gallery Shot - Artist with Work -->
           <div style="margin-top: 4rem;">
             <div class="curator-artwork-card" style="max-width: 700px; margin: 0 auto;">
               <img
@@ -95,7 +90,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
     <% else %>
-      <!-- Generic page content -->
       <section style="padding: 2rem;">
         <div style="max-width: 700px; margin: 0 auto;">
           <div :for={section <- @sections} style="margin-bottom: 2rem;">
@@ -107,7 +101,6 @@ defmodule OliviaWeb.PageLive do
       </section>
     <% end %>
 
-    <!-- Contact CTA -->
     <section style="padding: 4rem 2rem; background: var(--curator-bg-warm); text-align: center; margin-top: 3rem;">
       <div style="max-width: 500px; margin: 0 auto;">
         <h3 class="curator-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
@@ -127,8 +120,6 @@ defmodule OliviaWeb.PageLive do
   defp render_cottage(assigns) do
     ~H"""
     <%= if @page.slug == "about" do %>
-      <!-- About Page Special Layout -->
-      <!-- Hero with Portrait and Bio -->
       <section style="background: var(--cottage-cream);">
         <div class="cottage-about-hero" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1rem; align-items: center;">
           <style>
@@ -138,7 +129,6 @@ defmodule OliviaWeb.PageLive do
               .cottage-about-studio { grid-template-columns: repeat(2, 1fr) !important; }
             }
           </style>
-          <!-- Artist Portrait -->
           <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(200, 167, 216, 0.1);">
             <img
               src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
@@ -147,7 +137,6 @@ defmodule OliviaWeb.PageLive do
             />
           </div>
 
-          <!-- Bio Text -->
           <div>
             <h1 class="cottage-heading" style="font-size: 2.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
               About the Artist
@@ -168,7 +157,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- The Practice -->
       <section style="padding: 3rem 1rem; background: white;">
         <div class="cottage-about-practice" style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
           <div>
@@ -202,7 +190,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Studio & Process -->
       <section style="padding: 5rem 1rem; background: var(--cottage-beige);">
         <div style="max-width: 1000px; margin: 0 auto;">
           <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 2rem;">
@@ -227,7 +214,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Newsletter -->
       <section style="padding: 5rem 1rem; background: white;">
         <div style="max-width: 500px; margin: 0 auto; text-align: center;">
           <h2 class="cottage-heading" style="font-size: 1.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
@@ -257,7 +243,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Back to home -->
       <div style="border-top: 1px solid var(--cottage-taupe); padding: 2rem 1rem; background: white;">
         <div style="max-width: 1200px; margin: 0 auto;">
           <a href="/" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-wisteria); text-decoration: none;">
@@ -267,7 +252,6 @@ defmodule OliviaWeb.PageLive do
       </div>
 
     <% else %>
-      <!-- Generic page layout (hotels-designers, etc.) -->
       <div style="max-width: 800px; margin: 0 auto; padding: 4rem 1rem;">
         <div style="text-align: center; margin-bottom: 4rem;">
           <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cottage-text-dark);">
@@ -334,8 +318,6 @@ defmodule OliviaWeb.PageLive do
   defp render_gallery(assigns) do
     ~H"""
     <%= if @page.slug == "about" do %>
-      <!-- About Page Special Layout -->
-      <!-- Hero with Portrait -->
       <section style="background: linear-gradient(to bottom, #faf8f5, #fff);">
         <div class="gallery-about-hero" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; padding: 4rem 1.5rem; align-items: center;">
           <style>
@@ -345,7 +327,6 @@ defmodule OliviaWeb.PageLive do
               .gallery-about-studio { grid-template-columns: repeat(2, 1fr) !important; }
             }
           </style>
-          <!-- Artist Portrait -->
           <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08);">
             <img
               src={resolve_asset_url("/uploads/media/1763245447_a9722ba628198afa.png")}
@@ -354,7 +335,6 @@ defmodule OliviaWeb.PageLive do
             />
           </div>
 
-          <!-- Bio Text -->
           <div>
             <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
               About the Artist
@@ -375,7 +355,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Artist with Work -->
       <section style="padding: 5rem 1.5rem; background: #fff;">
         <div class="gallery-about-practice" style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
           <div>
@@ -409,7 +388,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Studio & Process -->
       <section style="padding: 5rem 1.5rem; background: #f5f3f0;">
         <div style="max-width: 1000px; margin: 0 auto;">
           <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 2rem;">
@@ -434,7 +412,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Newsletter & Contact -->
       <section style="padding: 5rem 1.5rem; background: #fff;">
         <div style="max-width: 500px; margin: 0 auto; text-align: center;">
           <h2 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 1rem;">
@@ -463,7 +440,6 @@ defmodule OliviaWeb.PageLive do
         </div>
       </section>
 
-      <!-- Back to home -->
       <div style="border-top: 1px solid #e8e6e3; padding: 2rem 1.5rem;">
         <div style="max-width: 1200px; margin: 0 auto;">
           <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
@@ -473,8 +449,6 @@ defmodule OliviaWeb.PageLive do
       </div>
 
     <% else %>
-      <!-- Generic page layout (hotels-designers, etc.) -->
-      <!-- Gallery Hero -->
       <div style="text-align: center; padding: 4rem 1.5rem; border-bottom: 1px solid #e8e6e3; background: linear-gradient(to bottom, #faf8f5, #fff);">
         <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
           <%= @page.title %>
@@ -482,7 +456,6 @@ defmodule OliviaWeb.PageLive do
         <div style="width: 60px; height: 1px; background: #c4b5a0; margin: 0 auto;"></div>
       </div>
 
-      <!-- Page Content -->
       <div style="max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem;">
         <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
           <div style="color: #6b5d54; font-size: 1.125rem; line-height: 1.8;">
@@ -490,7 +463,6 @@ defmodule OliviaWeb.PageLive do
           </div>
         </div>
 
-        <!-- Newsletter signup for specific pages -->
         <div
           :if={@page.slug in ["collect"]}
           style="margin-top: 4rem; padding-top: 4rem; border-top: 1px solid #e8e6e3;"
@@ -525,7 +497,6 @@ defmodule OliviaWeb.PageLive do
           </form>
         </div>
 
-        <!-- Back to home -->
         <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e8e6e3; text-align: center;">
           <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
             ← Back to home
@@ -539,22 +510,26 @@ defmodule OliviaWeb.PageLive do
   defp render_default(assigns) do
     ~H"""
     <%= if @page.slug == "hotels-designers" do %>
-      <!-- Hotels & Designers Special Layout -->
       <div class="bg-white">
-        <!-- Hero with Hotel Visualization -->
         <div class="relative bg-gray-50">
           <div class="mx-auto max-w-7xl">
             <div class="grid lg:grid-cols-2 gap-0">
-              <!-- Hotel Visualization Image -->
-              <div class="relative aspect-[3/4] lg:aspect-auto">
+              <.annotatable
+                anchor="hotels:hero:image"
+                class="relative aspect-[3/4] lg:aspect-auto"
+                data-anchor-meta={Jason.encode!(%{"page" => "hotels-designers", "section" => "hero"})}
+              >
                 <img
                   src={resolve_asset_url("/uploads/media/1763555487_35a594e71b1cb673.png")}
                   alt="Artwork visualisation in luxury Swiss hotel lounge with alpine views"
                   class="w-full h-full object-cover"
                 />
-              </div>
-              <!-- Text Content -->
-              <div class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24">
+              </.annotatable>
+              <.annotatable
+                anchor="hotels:hero:text"
+                class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24"
+                data-anchor-meta={Jason.encode!(%{"page" => "hotels-designers", "section" => "hero"})}
+              >
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
                   Hotels & Designers
                 </h1>
@@ -566,12 +541,11 @@ defmodule OliviaWeb.PageLive do
                     Whether you need original pieces, commissioned work, or high-quality reproductions, she can help you find the right solution for your project.
                   </p>
                 </div>
-              </div>
+              </.annotatable>
             </div>
           </div>
         </div>
 
-        <!-- What I Offer -->
         <div class="py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="mx-auto max-w-3xl">
@@ -603,7 +577,6 @@ defmodule OliviaWeb.PageLive do
           </div>
         </div>
 
-        <!-- Poster Assessment Offer -->
         <div class="bg-gray-50 py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="mx-auto max-w-3xl">
@@ -622,7 +595,6 @@ defmodule OliviaWeb.PageLive do
           </div>
         </div>
 
-        <!-- Contact CTA -->
         <div class="bg-gray-900 py-16">
           <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center">
             <h2 class="text-2xl font-bold text-white">
@@ -642,7 +614,6 @@ defmodule OliviaWeb.PageLive do
           </div>
         </div>
 
-        <!-- Back to home -->
         <div class="border-t border-gray-200 bg-white">
           <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
             <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
@@ -653,22 +624,26 @@ defmodule OliviaWeb.PageLive do
       </div>
     <% end %>
     <%= if @page.slug == "about" do %>
-      <!-- About Page Special Layout -->
       <div class="bg-white">
-        <!-- Hero Section with Portrait -->
         <div class="relative bg-gray-50">
           <div class="mx-auto max-w-7xl">
             <div class="grid lg:grid-cols-2 gap-0">
-              <!-- Artist Portrait -->
-              <div class="relative aspect-[3/4] lg:aspect-auto">
+              <.annotatable
+                anchor="about:hero:portrait"
+                class="relative aspect-[3/4] lg:aspect-auto"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "hero"})}
+              >
                 <img
                   src={resolve_asset_url("/uploads/media/1763245447_a9722ba628198afa.png")}
                   alt="Portrait of artist Olivia Tew in her studio"
                   class="w-full h-full object-cover object-top"
                 />
-              </div>
-              <!-- Bio Text -->
-              <div class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24">
+              </.annotatable>
+              <.annotatable
+                anchor="about:hero:bio"
+                class="flex flex-col justify-center px-6 py-16 lg:px-12 lg:py-24"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "hero"})}
+              >
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
                   About the Artist
                 </h1>
@@ -683,16 +658,19 @@ defmodule OliviaWeb.PageLive do
                     Her floral still lifes are maximalist celebrations of colour and abundance. Working with saturated grounds—coral reds, golden ochres—she creates paintings that demand attention, project outward, and perform their beauty with confidence.
                   </p>
                 </div>
-              </div>
+              </.annotatable>
             </div>
           </div>
         </div>
 
-        <!-- Artist with Work -->
         <div class="py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-              <div class="order-2 lg:order-1">
+              <.annotatable
+                anchor="about:practice:text"
+                class="order-2 lg:order-1"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "practice"})}
+              >
                 <h2 class="text-2xl font-bold tracking-tight text-gray-900">
                   The Practice
                 </h2>
@@ -712,8 +690,12 @@ defmodule OliviaWeb.PageLive do
                     Lucian Freud, Frank Auerbach, Jenny Saville, Leon Kossoff, Emil Nolde, Joan Eardley
                   </p>
                 </div>
-              </div>
-              <div class="order-1 lg:order-2">
+              </.annotatable>
+              <.annotatable
+                anchor="about:practice:image"
+                class="order-1 lg:order-2"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "practice"})}
+              >
                 <div class="aspect-[4/3] overflow-hidden rounded-lg">
                   <img
                     src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
@@ -721,37 +703,43 @@ defmodule OliviaWeb.PageLive do
                     class="w-full h-full object-cover"
                   />
                 </div>
-              </div>
+              </.annotatable>
             </div>
           </div>
         </div>
 
-        <!-- Process Images -->
         <div class="bg-gray-50 py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-8">
               Studio & Process
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="aspect-[4/3] overflow-hidden rounded-lg">
+              <.annotatable
+                anchor="about:studio:image-1"
+                class="aspect-[4/3] overflow-hidden rounded-lg"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "studio"})}
+              >
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                   alt="Works in progress on outdoor deck"
                   class="w-full h-full object-cover"
                 />
-              </div>
-              <div class="aspect-[4/3] overflow-hidden rounded-lg">
+              </.annotatable>
+              <.annotatable
+                anchor="about:studio:image-2"
+                class="aspect-[4/3] overflow-hidden rounded-lg"
+                data-anchor-meta={Jason.encode!(%{"page" => "about", "section" => "studio"})}
+              >
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                   alt="Marilyn in studio"
                   class="w-full h-full object-cover"
                 />
-              </div>
+              </.annotatable>
             </div>
           </div>
         </div>
 
-        <!-- Newsletter & Contact -->
         <div class="py-16 sm:py-24">
           <div class="mx-auto max-w-2xl px-6 lg:px-8 text-center">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900">
@@ -784,7 +772,6 @@ defmodule OliviaWeb.PageLive do
           </div>
         </div>
 
-        <!-- Back to home -->
         <div class="border-t border-gray-200">
           <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
             <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
@@ -795,7 +782,6 @@ defmodule OliviaWeb.PageLive do
       </div>
     <% end %>
     <%= if @page.slug not in ["hotels-designers", "about"] do %>
-      <!-- Generic page layout -->
       <div class="bg-white px-6 py-24 sm:py-32 lg:px-8">
         <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
           <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-8">
@@ -807,7 +793,6 @@ defmodule OliviaWeb.PageLive do
             </div>
           </div>
 
-          <!-- Newsletter signup for specific pages -->
           <div
             :if={@page.slug in ["collect"]}
             class="mt-16 border-t border-gray-200 pt-16"
@@ -843,7 +828,6 @@ defmodule OliviaWeb.PageLive do
             </form>
           </div>
 
-          <!-- Back to home -->
           <div class="mt-16 border-t border-gray-200 pt-8">
             <.link navigate={~p"/"} class="text-sm font-semibold text-gray-900">
               ← Back to home
@@ -852,11 +836,42 @@ defmodule OliviaWeb.PageLive do
         </div>
       </div>
     <% end %>
+
+    <%= if @annotations_enabled do %>
+      <div id="annotation-recorder-container">
+        <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+          <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+        </form>
+      </div>
+    <% end %>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
+    theme = socket.assigns[:theme]
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, "/about")  # Will be updated in handle_params
+      |> assign(:existing_notes, [])
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+    else
+      socket
+    end
+
     {:ok, socket}
   end
 
@@ -866,11 +881,33 @@ defmodule OliviaWeb.PageLive do
     page = CMS.get_page_by_slug!(slug, preload: [:sections])
     sections = Enum.sort_by(page.sections, & &1.position)
 
-    {:noreply,
-     socket
-     |> assign(:page_title, "#{page.title} - Olivia Tew")
-     |> assign(:page, page)
-     |> assign(:sections, sections)}
+    path = URI.parse(uri).path
+
+    socket =
+      socket
+      |> assign(:page_title, "#{page.title} - Olivia Tew")
+      |> assign(:page, page)
+      |> assign(:sections, sections)
+
+    # Update page_path and load notes for reviewer theme
+    socket = if socket.assigns[:annotations_enabled] do
+      existing_notes = Annotations.list_voice_notes(path, "reviewer")
+
+      socket
+      |> assign(:page_path, path)
+      |> assign(:existing_notes, existing_notes)
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:noreply, socket}
   end
 
   defp slug_from_uri(uri) do
@@ -901,6 +938,91 @@ defmodule OliviaWeb.PageLive do
         {:noreply,
          socket
          |> put_flash(:error, "There was an issue subscribing. Please try again.")}
+    end
+  end
+
+  # Annotation event handlers
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
+     socket
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          case Uploads.upload_binary(binary_data, filename, mime_type) do
+            {:ok, url} ->
+              case Annotations.create_voice_note(%{
+                audio_url: url,
+                anchor_key: anchor.key,
+                anchor_meta: anchor.meta,
+                page_path: socket.assigns.page_path,
+                theme: "reviewer"
+              }) do
+                {:ok, voice_note} ->
+                  {:noreply,
+                   socket
+                   |> put_flash(:info, "Annotation saved successfully")
+                   |> assign(:current_anchor, nil)
+                   |> push_event("annotation_saved", %{
+                     id: voice_note.id,
+                     anchor_key: voice_note.anchor_key,
+                     audio_url: voice_note.audio_url
+                   })}
+
+                {:error, _changeset} ->
+                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+              end
+
+            {:error, _reason} ->
+              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+          end
+
+        :error ->
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
     end
   end
 end

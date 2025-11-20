@@ -103,3 +103,24 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+/* Voice Annotation System Styles */
+.annotation-mode [data-note-anchor] {
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.annotation-mode [data-note-anchor]:hover {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2),
+              0 4px 12px rgba(79, 70, 229, 0.15);
+  background-color: rgba(79, 70, 229, 0.02);
+}
+
+.annotation-selected {
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.4),
+              0 8px 24px rgba(79, 70, 229, 0.25),
+              0 0 40px rgba(79, 70, 229, 0.15) !important;
+  background-color: rgba(79, 70, 229, 0.08) !important;
+  border-radius: 4px;
+}

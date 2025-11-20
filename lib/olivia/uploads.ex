@@ -21,6 +21,7 @@ defmodule Olivia.Uploads do
       "https://fly.storage.tigris.dev/olivia-gallery"
   end
 
+  @spec upload_file(binary(), binary()) :: {:error, any()} | {:ok, nonempty_binary()}
   @doc """
   Uploads a file and returns the public URL.
   Uses local filesystem or S3 depending on UPLOADS_STORAGE environment variable.
@@ -173,6 +174,13 @@ defmodule Olivia.Uploads do
     "series/#{series_slug}/#{filename}"
   end
 
+  @doc """
+  Alias for upload_binary/3 to match the function calls in LiveViews.
+  """
+  def upload_from_binary(binary, key, content_type \\ "image/jpeg") do
+    upload_binary(binary, key, content_type)
+  end
+
   defp build_public_url(key) do
     "#{public_url()}/#{key}"
   end
@@ -193,4 +201,5 @@ defmodule Olivia.Uploads do
         :error
     end
   end
+
 end

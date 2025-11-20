@@ -34,6 +34,8 @@ import { PromptBaseGraph } from "./hooks/prompt_base_graph"
 import { CopyToClipboard } from "./hooks/copy_to_clipboard"
 import { SpatialCanvas } from "./hooks/spatial_canvas"
 import { DraggableMedia } from "./hooks/draggable_media"
+import { AnnotatableElement, AudioAnnotation } from "./hooks/annotation_hooks"
+import { initializeAnnotations } from "./annotation_initializer"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
@@ -43,7 +45,9 @@ const liveSocket = new LiveSocket("/live", Socket, {
     PromptBaseGraph,
     CopyToClipboard,
     SpatialCanvas,
-    DraggableMedia
+    DraggableMedia,
+    AnnotatableElement,
+    AudioAnnotation
   }
 })
 
@@ -60,6 +64,9 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+// Initialize annotations system (workaround for hook initialization issues)
+initializeAnnotations()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

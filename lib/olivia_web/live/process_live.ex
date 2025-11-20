@@ -1,6 +1,11 @@
 defmodule OliviaWeb.ProcessLive do
   use OliviaWeb, :live_view
 
+  import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
+
+  alias Olivia.Annotations
+  alias Olivia.Uploads
+
   @impl true
   def render(assigns) do
     cond do
@@ -8,6 +13,19 @@ defmodule OliviaWeb.ProcessLive do
       assigns[:theme] == "cottage" -> render_default(assigns)
       assigns[:theme] == "gallery" -> render_default(assigns)
       true -> render_default(assigns)
+    end
+  end
+
+  # Helper to conditionally add annotation attributes
+  defp annotation_attrs(enabled, anchor_key, anchor_meta) do
+    if enabled do
+      %{
+        "data-note-anchor" => anchor_key,
+        "data-anchor-meta" => Jason.encode!(anchor_meta),
+        "phx-hook" => "AnnotatableElement"
+      }
+    else
+      %{}
     end
   end
 
@@ -50,7 +68,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
                 alt="A Becoming in progress on outdoor easel"
                 style="width: 100%; display: block;"
               />
@@ -64,7 +82,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_3020310155b8abcf.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
                 alt="A BECOMING - finished work"
                 style="width: 100%; display: block;"
               />
@@ -94,7 +112,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_1225c3b883e0ce02.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
                 alt="Marilyn in natural garden light"
                 style="width: 100%; display: block;"
               />
@@ -108,7 +126,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_e7e47b872f6b7223.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
                 alt="Marilyn in studio lighting"
                 style="width: 100%; display: block;"
               />
@@ -138,7 +156,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_5a2e8259c48f9c2c.JPG"
+                src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
                 alt="I Love Three Times on pink wall"
                 style="width: 100%; display: block;"
               />
@@ -152,7 +170,7 @@ defmodule OliviaWeb.ProcessLive do
           <div>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
-                src="/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg"
+                src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
                 alt="I Love Three Times on grey-blue wall"
                 style="width: 100%; display: block;"
               />
@@ -176,7 +194,7 @@ defmodule OliviaWeb.ProcessLive do
         </p>
         <div class="curator-artwork-card" style="max-width: 700px; margin: 0 auto;">
           <img
-            src="/uploads/media/1763542139_ba6e66be3929fdcd.jpg"
+            src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
             alt="Artist's outdoor workspace with paintings in progress"
             style="width: 100%; display: block;"
           />
@@ -203,20 +221,166 @@ defmodule OliviaWeb.ProcessLive do
 
   defp render_default(assigns) do
     ~H"""
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
-      <div style="text-align: center;">
-        <h1 style="font-size: 2rem; margin-bottom: 1rem;">Process</h1>
-        <p style="color: #666; margin-bottom: 2rem;">This page is optimized for the Curator theme.</p>
-        <a href="/set-theme/curator" style="color: #c45a4a; text-decoration: underline;">Switch to Curator theme</a>
+    <div class="bg-white min-h-screen">
+      <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24">
+        <div
+          class="text-center mb-16"
+          {annotation_attrs(@annotations_enabled, "about:header", %{"page" => "about"})}
+        >
+          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">About</h1>
+          <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
+            Behind the finished work—the testing, the iterations, the domestic rituals of making.
+          </p>
+        </div>
+
+        <div
+          class="prose prose-lg prose-gray mx-auto"
+          {annotation_attrs(@annotations_enabled, "about:content", %{"page" => "about"})}
+        >
+          <p>
+            Working primarily in oil, Olivia builds surfaces through heavy impasto that gives form weight and permanence.
+            Her gestural brushwork refuses prettiness or idealisation—each stroke visible, urgent, yet deeply tender in cumulative effect.
+          </p>
+          <p>
+            There's something testing and ceremonial about viewing paintings outside in natural light—it's where the artist
+            sees colour relationships without artificial interference, where decisions get made about what works and what doesn't.
+          </p>
+        </div>
       </div>
+
+      <!-- Annotation recorder hook -->
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
     </div>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
+    theme = socket.assigns[:theme]
+    page_path = "/about"
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:page_title, "About - Olivia Tew")
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 10_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
+  end
+
+  # Annotation event handlers
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
      socket
-     |> assign(:page_title, "Process")}
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          case Uploads.upload_binary(binary_data, filename, mime_type) do
+            {:ok, url} ->
+              case Annotations.create_voice_note(%{
+                audio_url: url,
+                anchor_key: anchor.key,
+                anchor_meta: anchor.meta,
+                page_path: socket.assigns.page_path,
+                theme: "reviewer"
+              }) do
+                {:ok, voice_note} ->
+                  {:noreply,
+                   socket
+                   |> put_flash(:info, "Annotation saved successfully")
+                   |> assign(:current_anchor, nil)
+                   |> push_event("annotation_saved", %{
+                     id: voice_note.id,
+                     anchor_key: voice_note.anchor_key,
+                     audio_url: voice_note.audio_url
+                   })}
+
+                {:error, _changeset} ->
+                  {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+              end
+
+            {:error, _reason} ->
+              {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+          end
+
+        :error ->
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
+    end
   end
 end

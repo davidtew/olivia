@@ -472,21 +472,6 @@ defmodule OliviaWeb.CoreComponents do
 
   @doc """
   Renders an optimized image with lazy loading and responsive sizing.
-
-  ## Examples
-
-      <.artwork_image src={@artwork.image_url} alt={@artwork.title} />
-      <.artwork_image src={@artwork.image_url} alt={@artwork.title} sizes="(max-width: 768px) 100vw, 50vw" />
-      <.artwork_image src={@artwork.image_url} alt={@artwork.title} class="rounded-lg" loading="eager" />
-
-  ## Attributes
-
-    * `src` - The image URL (required)
-    * `alt` - Alt text for accessibility (required)
-    * `sizes` - Responsive sizes attribute for srcset (optional, defaults to "100vw")
-    * `class` - Additional CSS classes (optional)
-    * `loading` - Loading strategy: "lazy" or "eager" (optional, defaults to "lazy")
-    * `aspect` - Aspect ratio class, e.g., "aspect-[4/5]" (optional)
   """
   attr :src, :string, required: true
   attr :alt, :string, required: true
@@ -494,10 +479,12 @@ defmodule OliviaWeb.CoreComponents do
   attr :class, :string, default: nil
   attr :loading, :string, default: "lazy", values: ["lazy", "eager"]
   attr :aspect, :string, default: nil
+  # This line below allows 'style' and other HTML attributes to be passed in
+  attr :rest, :global
 
   def artwork_image(assigns) do
     ~H"""
-    <div class={[@aspect, "w-full overflow-hidden"]}>
+    <div class={[@aspect, "w-full overflow-hidden"]} {@rest}>
       <img
         src={@src}
         alt={@alt}
@@ -506,6 +493,43 @@ defmodule OliviaWeb.CoreComponents do
         sizes={@sizes}
         class={["h-full w-full object-cover", @class]}
       />
+    </div>
+    """
+  end
+
+  @doc """
+  A wrapper component that automatically handles IDs and Hooks for annotations.
+  It takes an 'anchor' (e.g. "home:hero") and automatically generates the
+  DOM ID (e.g. "annotation-home-hero") required by the JavaScript hook.
+
+  ## Examples
+
+      <.annotatable anchor="home:hero" class="relative w-full">
+        <img ... />
+      </.annotatable>
+  """
+  attr :anchor, :string, required: true
+  attr :class, :string, default: nil
+  attr :rest, :global, doc: "Arbitrary HTML attributes to add to the container"
+  slot :inner_block, required: true
+
+  def annotatable(assigns) do
+    # Automatically generate a valid DOM ID from the anchor name
+    # e.g. "home:hero" -> "annotation-home-hero"
+    # e.g. "series:becoming:text" -> "annotation-series-becoming-text"
+    safe_id = "annotation-" <> String.replace(assigns.anchor, ":", "-")
+
+    assigns = assign(assigns, :id, safe_id)
+
+    ~H"""
+    <div
+      id={@id}
+      data-note-anchor={@anchor}
+      phx-hook="AnnotatableElement"
+      class={@class}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
     </div>
     """
   end
