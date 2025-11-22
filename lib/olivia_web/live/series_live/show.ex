@@ -1,6 +1,7 @@
 defmodule OliviaWeb.SeriesLive.Show do
   use OliviaWeb, :live_view
 
+  import Ecto.Query, only: [from: 2]
   import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
 
   alias Olivia.Content
@@ -426,7 +427,7 @@ defmodule OliviaWeb.SeriesLive.Show do
 
         <!-- Description -->
         <div class="mx-auto max-w-3xl px-6 lg:px-8 py-16">
-          <div class="prose prose-lg prose-gray">
+          <div class="prose prose-lg prose-gray text-gray-900">
             <p>
               These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous. Working with saturated grounds—coral reds, golden ochres—Olivia creates paintings that function almost as interior design elements while retaining the unpredictable energy of expressionism.
             </p>
@@ -642,7 +643,173 @@ defmodule OliviaWeb.SeriesLive.Show do
       </div>
     <% end %>
 
-    <%= if @slug not in ["becoming", "abundance", "shifting"] do %>
+    <%= if @slug == "embodiment" do %>
+      <!-- Embodiment Series -->
+      <div class="min-h-screen bg-white">
+        <!-- Header -->
+        <div class="bg-gray-50 py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl text-center">
+              <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+                Embodiment
+              </h1>
+              <p class="mt-2 text-lg text-gray-500 italic">Studies in Gesture and Form</p>
+              <p class="mt-6 text-lg leading-8 text-gray-600">
+                An investigation of the human figure through gesture, colour, and mark-making—capturing how bodies inhabit space, move through daily life, and reveal form through paint.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mx-auto max-w-3xl px-6 lg:px-8 py-16">
+          <div
+            id="series-embodiment-description"
+            class="prose prose-lg prose-gray"
+            {annotation_attrs(@annotations_enabled, "series:embodiment:description", %{
+              "anchor_type" => "text",
+              "series_slug" => "embodiment"
+            })}
+          >
+            <p>
+              This series explores the figure not as static object but as embodied presence—how we bend, reach, stand, and rest. Working on bold chromatic grounds (ochre, magenta, pink), these paintings privilege gesture over finish, investigating how accumulated marks can suggest weight, movement, and the essential architecture of form.
+            </p>
+            <p>
+              Each work captures a moment of physical engagement with the world: stooping to retrieve something, the upright pause of contemplation, the weight of a seated body, the reach of an arm. Together they form a meditation on how we reveal ourselves through movement—how the body's architecture emerges through the simplest of gestures.
+            </p>
+            <p>
+              The bold, non-naturalistic grounds activate pictorial space whilst the gestural handling mirrors the gestural subject—quick, decisive marks capturing quick, decisive movement. These paintings refuse finish in favour of immediacy, prioritising authentic observation over idealised representation.
+            </p>
+          </div>
+        </div>
+
+        <!-- Artworks Grid -->
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
+          <h2
+            class="text-2xl font-bold tracking-tight text-gray-900 mb-12"
+            {annotation_attrs(@annotations_enabled, "series:embodiment:heading", %{
+              "anchor_type" => "heading",
+              "series_slug" => "embodiment"
+            })}
+          >
+            Works in this Series
+          </h2>
+          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4" id="embodiment-artworks-grid">
+            <!-- IN MOTION III -->
+            <div
+              id="artwork-in-motion-iii"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:in-motion-iii", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "IN MOTION III",
+                "series_slug" => "embodiment"
+              })}
+            >
+              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763722109_e4982724359e6940.jpg")}
+                  alt="IN MOTION III - Classical contrapposto figure study"
+                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                />
+              </div>
+              <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-900">IN MOTION III</h3>
+                <p class="text-sm text-gray-500">Oil on prepared ochre ground</p>
+              </div>
+            </div>
+
+            <!-- IN MOTION IV -->
+            <div
+              id="artwork-in-motion-iv"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:in-motion-iv", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "IN MOTION IV",
+                "series_slug" => "embodiment"
+              })}
+            >
+              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763722108_d70e2e2341d3cccd.jpg")}
+                  alt="IN MOTION IV - Figure on magenta ground"
+                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                />
+              </div>
+              <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-900">IN MOTION IV</h3>
+                <p class="text-sm text-gray-500">Oil on canvas</p>
+              </div>
+            </div>
+
+            <!-- IN MOTION V -->
+            <div
+              id="artwork-in-motion-v"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:in-motion-v", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "IN MOTION V",
+                "series_slug" => "embodiment"
+              })}
+            >
+              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763722108_e75261efc20f18a5.jpg")}
+                  alt="IN MOTION V - Woman bending forward"
+                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                />
+              </div>
+              <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-900">IN MOTION V</h3>
+                <p class="text-sm text-gray-500">Oil on canvas with prepared pink-mauve ground</p>
+              </div>
+            </div>
+
+            <!-- She Lays Down -->
+            <div
+              id="artwork-she-lays-down"
+              class="group"
+              {annotation_attrs(@annotations_enabled, "artwork:she-lays-down", %{
+                "anchor_type" => "artwork",
+                "artwork_title" => "She Lays Down",
+                "series_slug" => "embodiment"
+              })}
+            >
+              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
+                  alt="She Lays Down - Reclining figure study"
+                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                />
+              </div>
+              <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-900">She Lays Down</h3>
+                <p class="text-sm text-gray-500">Oil on canvas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back link -->
+        <div class="border-t border-gray-200">
+          <div class="mx-auto max-w-7xl px-6 lg:px-8 py-8">
+            <.link navigate={~p"/series"} class="text-sm font-semibold text-gray-900 hover:text-gray-600">
+              ← Back to all series
+            </.link>
+          </div>
+        </div>
+
+        <!-- Annotation recorder hook -->
+        <%= if @annotations_enabled do %>
+          <div id="annotation-recorder-container">
+            <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+              <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+            </form>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= if @slug not in ["becoming", "abundance", "shifting", "embodiment"] do %>
       <!-- Fallback for database series -->
       <div class="bg-white">
         <!-- Header -->
@@ -719,18 +886,43 @@ defmodule OliviaWeb.SeriesLive.Show do
     annotations_enabled = theme == "reviewer"
 
     # Handle hardcoded series for Original theme
-    socket = if slug in ["becoming", "abundance", "shifting"] do
+    socket = if slug in ["becoming", "abundance", "shifting", "embodiment"] do
       title = case slug do
         "becoming" -> "Becoming"
         "abundance" -> "Abundance"
         "shifting" -> "Shifting"
+        "embodiment" -> "Embodiment"
+      end
+
+      # For embodiment, fetch real artworks with analyses from database
+      artworks_with_analyses = if slug == "embodiment" do
+        series = Content.get_series_by_slug!("embodiment", published: true)
+        artworks = Content.list_artworks(series_id: series.id, published: true)
+
+        # Fetch analyses for each artwork's media file
+        Enum.map(artworks, fn artwork ->
+          analysis = if artwork.media_file_id do
+            Olivia.Repo.one(
+              from a in Olivia.Media.Analysis,
+              where: a.media_file_id == ^artwork.media_file_id,
+              order_by: [desc: a.iteration],
+              limit: 1
+            )
+          else
+            nil
+          end
+
+          Map.put(artwork, :latest_analysis, analysis)
+        end)
+      else
+        []
       end
 
       socket
       |> assign(:page_title, "#{title} - Olivia Tew")
       |> assign(:slug, slug)
       |> assign(:series, %{title: title, summary: "", body_md: nil})
-      |> assign(:artworks, [])
+      |> assign(:artworks, artworks_with_analyses)
     else
       series = Content.get_series_by_slug!(slug, published: true)
       artworks = Content.list_artworks(series_id: series.id, published: true)
@@ -757,7 +949,7 @@ defmodule OliviaWeb.SeriesLive.Show do
       |> allow_upload(:audio,
         accept: ~w(audio/*),
         max_entries: 1,
-        max_file_size: 10_000_000
+        max_file_size: 50_000_000
       )
       |> push_event("load_existing_notes", %{
         notes: Enum.map(existing_notes, &%{
