@@ -83,6 +83,22 @@ export const AudioAnnotation = {
     this.onAnchorSelected = (event) => {
       this.currentAnchor = event.detail;
       this.updateStatus(`Selected: ${this.currentAnchor.anchorKey}`);
+
+      // Use the globally found textForm instead of searching parent
+      if (this.textForm) {
+        const anchorKeyInput = this.textForm.querySelector('.annotation-anchor-key');
+        const anchorMetaInput = this.textForm.querySelector('.annotation-anchor-meta');
+
+        if (anchorKeyInput && anchorMetaInput) {
+          anchorKeyInput.value = this.currentAnchor.anchorKey;
+          anchorMetaInput.value = JSON.stringify(this.currentAnchor.anchorMeta);
+        }
+
+        // Auto-show form if in text mode
+        if (this.annotationMode === 'text') {
+          this.textForm.classList.remove('hidden');
+        }
+      }
     };
     window.addEventListener("anchor-selected", this.onAnchorSelected);
 
@@ -105,10 +121,10 @@ export const AudioAnnotation = {
     });
 
     // Listen for saved notes to add markers
-    this.handleEvent("note_created", ({ id, anchor_key, audio_url }) => {
-      console.log('[AudioAnnotation] Note created:', id, anchor_key);
+    this.handleEvent("note_created", ({ id, anchor_key, audio_url, type, content }) => {
+      console.log('[AudioAnnotation] Note created:', id, anchor_key, type);
 
-      this.addMarker(id, anchor_key, audio_url);
+      this.addMarker(id, anchor_key, { type, audio_url, content });
       this.updateStatus("Note saved!");
       this.currentAnchor = null;
       // Remove selection highlight
@@ -126,7 +142,11 @@ export const AudioAnnotation = {
     // Load existing notes on mount
     this.handleEvent("load_existing_notes", ({ notes }) => {
       notes.forEach(note => {
-        this.addMarker(note.id, note.anchor_key, note.audio_url);
+        this.addMarker(note.id, note.anchor_key, {
+          type: note.type,
+          audio_url: note.audio_url,
+          content: note.content
+        });
       });
     });
 
@@ -149,6 +169,7 @@ export const AudioAnnotation = {
         <button class="annotation-record-btn">🎤 Record</button>
         <span class="annotation-timer hidden">0:00</span>
       </div>
+      <button class="annotation-toggle-mode-btn">📝 Switch to Text</button>
     `;
 
     // Styles
@@ -196,6 +217,106 @@ export const AudioAnnotation = {
         this.startRecording();
       }
     });
+
+    // Find text form globally by ID instead of searching in parent
+    this.textForm = document.getElementById("annotation-text-form");
+
+    // Deriving other elements from the form itself
+    this.textarea = this.textForm?.querySelector(".annotation-textarea");
+
+    // The textInputContainer IS the form in the current HTML structure
+    this.textInputContainer = this.textForm;
+    this.toggleModeBtn = container.querySelector(".annotation-toggle-mode-btn");
+
+    console.log('[AudioAnnotation] buildUI - Found textForm globally:', this.textForm);
+    console.log('[AudioAnnotation] buildUI - Found textarea:', this.textarea);
+    console.log('[AudioAnnotation] buildUI - Found textInputContainer:', this.textInputContainer);
+
+    this.annotationMode = "voice";
+
+    if (this.textarea) {
+      this.textarea.style.cssText = `
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: system-ui, -apple-system, sans-serif;
+        resize: vertical;
+      `;
+    }
+
+    // Add form submit handler for text annotations
+    console.log('[AudioAnnotation] About to add form submit handler, this.textForm =', this.textForm);
+    if (this.textForm) {
+      console.log('[AudioAnnotation] Adding submit event listener to form');
+      this.textForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log('[AudioAnnotation] Text form submitted');
+
+        if (!this.currentAnchor) {
+          console.log('[AudioAnnotation] No anchor selected');
+          return;
+        }
+
+        const text = this.textarea?.value || '';
+        if (!text.trim()) {
+          console.log('[AudioAnnotation] No text content');
+          return;
+        }
+
+        console.log('[AudioAnnotation] Calling saveTextAnnotation with:', text);
+        this.saveTextAnnotation(text);
+      });
+      console.log('[AudioAnnotation] Form submit listener added successfully');
+    } else {
+      console.log('[AudioAnnotation] WARNING: textForm not found, cannot add submit listener');
+    }
+
+    if (this.toggleModeBtn) {
+      this.toggleModeBtn.style.cssText = `
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 8px;
+        width: 100%;
+      `;
+
+      this.toggleModeBtn.addEventListener("click", () => {
+        this.toggleAnnotationMode();
+      });
+    }
+  },
+
+  toggleAnnotationMode() {
+    if (this.annotationMode === "voice") {
+      this.annotationMode = "text";
+      this.recordBtn.parentElement.classList.add("hidden");
+      this.textInputContainer.classList.remove("hidden");
+      this.toggleModeBtn.textContent = "🎤 Switch to Voice";
+    } else {
+      this.annotationMode = "voice";
+      this.recordBtn.parentElement.classList.remove("hidden");
+      this.textInputContainer.classList.add("hidden");
+      this.toggleModeBtn.textContent = "📝 Switch to Text";
+    }
+  },
+
+  saveTextAnnotation(text) {
+    if (!this.currentAnchor) return;
+
+    this.pushEvent("save_text_annotation", {
+      anchor_key: this.currentAnchor.anchorKey,
+      anchor_meta: this.currentAnchor.anchorMeta,
+      text_content: text
+    });
+
+    this.textarea.value = "";
+    this.updateStatus("Saving text note...");
   },
 
   updateStatus(text) {
@@ -317,7 +438,7 @@ export const AudioAnnotation = {
   },
 
 
-  addMarker(id, anchorKey, audioUrl) {
+  addMarker(id, anchorKey, noteData) {
     const element = document.querySelector(`[data-note-anchor="${anchorKey}"]`);
     if (!element) {
       console.warn(`Could not find element with anchor: ${anchorKey}`);
@@ -327,11 +448,14 @@ export const AudioAnnotation = {
     // Don't duplicate markers
     if (document.querySelector(`[data-marker-id="${id}"]`)) return;
 
+    const { type, audio_url, content } = noteData;
+    const isTextNote = type === "text";
+
     const marker = document.createElement("button");
     marker.className = "annotation-marker";
     marker.dataset.markerId = id;
-    marker.innerHTML = "🎤";
-    marker.title = "Play annotation";
+    marker.innerHTML = isTextNote ? "💬" : "🎤";
+    marker.title = isTextNote ? "View text note" : "Play annotation";
 
     marker.style.cssText = `
       position: absolute;
@@ -339,7 +463,7 @@ export const AudioAnnotation = {
       right: 8px;
       width: 28px;
       height: 28px;
-      background: #4F46E5;
+      background: ${isTextNote ? '#059669' : '#4F46E5'};
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -354,7 +478,12 @@ export const AudioAnnotation = {
     marker.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      this.playAudio(audioUrl, marker);
+
+      if (isTextNote) {
+        this.showTextNote(content?.text || "No content", marker);
+      } else {
+        this.playAudio(audio_url, marker);
+      }
     });
 
     // Ensure parent has relative positioning
@@ -364,6 +493,52 @@ export const AudioAnnotation = {
     }
 
     element.appendChild(marker);
+  },
+
+  showTextNote(text, marker) {
+    // Remove any existing viewer
+    const existing = document.querySelector(".annotation-text-viewer");
+    if (existing) existing.remove();
+
+    const viewer = document.createElement("div");
+    viewer.className = "annotation-text-viewer";
+    viewer.innerHTML = `
+      <div class="text-note-content" style="
+        max-width: 300px;
+        padding: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #1f2937;
+      ">${text}</div>
+      <button class="close-viewer" style="
+        background: #DC2626;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 8px;
+      ">Close</button>
+    `;
+
+    viewer.style.cssText = `
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 100;
+      margin-top: 4px;
+    `;
+
+    viewer.querySelector(".close-viewer").addEventListener("click", () => {
+      viewer.remove();
+    });
+
+    marker.parentElement.appendChild(viewer);
   },
 
   playAudio(url, marker) {

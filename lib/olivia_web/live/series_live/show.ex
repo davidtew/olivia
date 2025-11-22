@@ -73,6 +73,13 @@ defmodule OliviaWeb.SeriesLive.Show do
             <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
           </form>
         </div>
+
+        <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+          <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
+          <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
+          <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
+          <button type="submit">💬 Save Note</button>
+        </form>
       <% end %>
 
       <div style="margin-top: 4rem;">
@@ -267,6 +274,13 @@ defmodule OliviaWeb.SeriesLive.Show do
           <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
         </form>
       </div>
+
+      <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+        <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
+        <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
+        <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
+        <button type="submit">💬 Save Note</button>
+      </form>
     <% end %>
     """
   end
@@ -403,6 +417,13 @@ defmodule OliviaWeb.SeriesLive.Show do
               <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
             </form>
           </div>
+
+          <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+            <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
+            <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
+            <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
+            <button type="submit">💬 Save Note</button>
+          </form>
         <% end %>
       </div>
     <% end %>
@@ -712,12 +733,14 @@ defmodule OliviaWeb.SeriesLive.Show do
                 })}
               >
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100 cursor-pointer relative" phx-click="open_lightbox" phx-value-artwork-id={artwork.id}>
-                  <%= if artwork.media_file && artwork.media_file.url do %>
-                    <img
-                      src={resolve_asset_url(artwork.media_file.url)}
-                      alt={"#{artwork.title} - #{artwork.medium}"}
-                      class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-75"
-                    />
+                  <%= if Ecto.assoc_loaded?(artwork.media_file) do %>
+                    <% media_file = artwork.media_file %>
+                    <%= if media_file && media_file.url do %>
+                      <img
+                        src={resolve_asset_url(media_file.url)}
+                        alt={"#{artwork.title} - #{artwork.medium}"}
+                        class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-75"
+                      />
                     <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                       <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-full shadow-lg text-xs font-medium text-gray-900">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -726,6 +749,7 @@ defmodule OliviaWeb.SeriesLive.Show do
                         Click to enlarge
                       </span>
                     </div>
+                    <% end %>
                   <% end %>
                 </div>
                 <div class="mt-4">
@@ -795,8 +819,25 @@ defmodule OliviaWeb.SeriesLive.Show do
           </div>
         </div>
 
+        <!-- Annotation recorder hook -->
+        <%= if @annotations_enabled do %>
+          <div id="annotation-recorder-container">
+            <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+              <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+            </form>
+          </div>
+
+          <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+            <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
+            <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
+            <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
+            <button type="submit">💬 Save Note</button>
+          </form>
+        <% end %>
+
         <!-- Lightbox Modal -->
-        <%= if @lightbox_artwork do %>
+        <%= if assigns[:lightbox_artwork] do %>
+          <% lightbox_artwork = assigns[:lightbox_artwork] %>
           <div class="fixed inset-0 z-50 overflow-y-auto" phx-click="close_lightbox" phx-window-keydown="lightbox_keydown" phx-key="escape">
             <!-- Background overlay -->
             <div class="fixed inset-0 bg-black bg-opacity-90"></div>
@@ -847,28 +888,31 @@ defmodule OliviaWeb.SeriesLive.Show do
                 <!-- Image and info -->
                 <div class="bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
                   <div class="p-4">
-                    <%= if @lightbox_artwork.media_file && @lightbox_artwork.media_file.url do %>
-                      <img
-                        src={resolve_asset_url(@lightbox_artwork.media_file.url)}
-                        alt={"#{@lightbox_artwork.title} - #{@lightbox_artwork.medium}"}
-                        class="w-full h-auto"
-                      />
+                    <%= if Ecto.assoc_loaded?(lightbox_artwork.media_file) do %>
+                      <% media_file = lightbox_artwork.media_file %>
+                      <%= if media_file && media_file.url do %>
+                        <img
+                          src={resolve_asset_url(media_file.url)}
+                          alt={"#{lightbox_artwork.title} - #{lightbox_artwork.medium}"}
+                          class="w-full h-auto"
+                        />
+                      <% end %>
                     <% end %>
                   </div>
 
                   <div class="px-6 pb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= @lightbox_artwork.title %></h2>
-                    <p class="text-gray-600 mb-4"><%= @lightbox_artwork.medium %></p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= lightbox_artwork.title %></h2>
+                    <p class="text-gray-600 mb-4"><%= lightbox_artwork.medium %></p>
 
-                    <%= if @lightbox_artwork.latest_analysis && @lightbox_artwork.latest_analysis.llm_response do %>
+                    <%= if lightbox_artwork.latest_analysis && lightbox_artwork.latest_analysis.llm_response do %>
                       <div class="mt-6 p-4 bg-gray-50 rounded-lg prose prose-sm max-w-none">
-                        <%= if @lightbox_artwork.latest_analysis.llm_response["interpretation"] do %>
+                        <%= if lightbox_artwork.latest_analysis.llm_response["interpretation"] do %>
                           <h4 class="text-sm font-semibold text-gray-900 mt-0">Interpretation</h4>
-                          <p class="text-sm text-gray-700 leading-relaxed"><%= @lightbox_artwork.latest_analysis.llm_response["interpretation"] %></p>
+                          <p class="text-sm text-gray-700 leading-relaxed"><%= lightbox_artwork.latest_analysis.llm_response["interpretation"] %></p>
                         <% end %>
 
-                        <%= if @lightbox_artwork.latest_analysis.llm_response["technical_details"] do %>
-                          <% technical = @lightbox_artwork.latest_analysis.llm_response["technical_details"] %>
+                        <%= if lightbox_artwork.latest_analysis.llm_response["technical_details"] do %>
+                          <% technical = lightbox_artwork.latest_analysis.llm_response["technical_details"] %>
                           <h4 class="text-sm font-semibold text-gray-900 mt-4">Technical Details</h4>
                           <ul class="text-sm text-gray-700 mt-2 space-y-1">
                             <%= if technical["colour_palette"] do %>
@@ -995,7 +1039,7 @@ defmodule OliviaWeb.SeriesLive.Show do
       end
 
       # For embodiment, fetch real artworks with analyses from database
-      artworks_with_analyses = if slug == "embodiment" do
+      {embodiment_series, artworks_with_analyses} = if slug == "embodiment" do
         series = Content.get_series_by_slug!("embodiment", published: true)
         artworks = Content.list_artworks(series_id: series.id, published: true)
 
@@ -1003,7 +1047,7 @@ defmodule OliviaWeb.SeriesLive.Show do
         artworks = Olivia.Repo.preload(artworks, :media_file)
 
         # Fetch analyses for each artwork's media file
-        Enum.map(artworks, fn artwork ->
+        artworks_with_analyses = Enum.map(artworks, fn artwork ->
           analysis = if artwork.media_file_id do
             Olivia.Repo.one(
               from a in Olivia.Media.Analysis,
@@ -1015,16 +1059,21 @@ defmodule OliviaWeb.SeriesLive.Show do
             nil
           end
 
-          Map.put(artwork, :latest_analysis, analysis)
+          artwork
+          |> Map.from_struct()
+          |> Map.put(:latest_analysis, analysis)
+          |> Map.put(:media_file, artwork.media_file)
+          |> Map.put(:__struct__, Olivia.Content.Artwork)
         end)
+        {series, artworks_with_analyses}
       else
-        []
+        {nil, []}
       end
 
       socket
       |> assign(:page_title, "#{title} - Olivia Tew")
       |> assign(:slug, slug)
-      |> assign(:series, %{title: title, summary: "", body_md: nil})
+      |> assign(:series, embodiment_series || %{title: title, summary: "", body_md: nil})
       |> assign(:artworks, artworks_with_analyses)
       |> assign(:expanded_insights, %{})
       |> assign(:lightbox_artwork, nil)
@@ -1049,7 +1098,11 @@ defmodule OliviaWeb.SeriesLive.Show do
           nil
         end
 
-        Map.put(artwork, :latest_analysis, analysis)
+        artwork
+        |> Map.from_struct()
+        |> Map.put(:latest_analysis, analysis)
+        |> Map.put(:media_file, artwork.media_file)
+        |> Map.put(:__struct__, Olivia.Content.Artwork)
       end)
 
       socket
@@ -1250,7 +1303,9 @@ defmodule OliviaWeb.SeriesLive.Show do
                  |> push_event("note_created", %{
                    id: note.id,
                    anchor_key: note.anchor_key,
-                   audio_url: note.audio_url
+                   audio_url: note.audio_url,
+                   type: note.type,
+                   content: note.content
                  })}
 
               {:error, changeset} ->
@@ -1267,6 +1322,43 @@ defmodule OliviaWeb.SeriesLive.Show do
       {:error, reason} ->
         Logger.error("Failed to write temp file: #{inspect(reason)}")
         {:noreply, put_flash(socket, :error, "Failed to process audio")}
+    end
+  end
+
+  def handle_event("save_text_annotation", params, socket) do
+    %{"anchor_key" => anchor_key, "anchor_meta" => anchor_meta, "text_content" => text_content} = params
+
+    user = socket.assigns[:current_user]
+
+    attrs = %{
+      type: "text",
+      content: %{"text" => text_content},
+      anchor_key: anchor_key,
+      anchor_meta: anchor_meta,
+      page_path: socket.assigns.page_path,
+      theme: socket.assigns.theme,
+      user_id: user && user.id
+    }
+
+    case Annotations.create_voice_note(attrs) do
+      {:ok, note} ->
+        Logger.info("Text note created: #{note.id}")
+
+        {:noreply,
+         socket
+         |> assign(:current_anchor, nil)
+         |> update(:existing_notes, &[note | &1])
+         |> push_event("note_created", %{
+           id: note.id,
+           anchor_key: note.anchor_key,
+           audio_url: nil,
+           type: note.type,
+           content: note.content
+         })}
+
+      {:error, changeset} ->
+        Logger.error("Failed to create text note: #{inspect(changeset)}")
+        {:noreply, put_flash(socket, :error, "Failed to save note")}
     end
   end
 

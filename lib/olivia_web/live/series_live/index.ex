@@ -339,6 +339,13 @@ defmodule OliviaWeb.SeriesLive.Index do
           <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
             <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
           </form>
+
+          <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+            <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
+            <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
+            <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
+            <button type="submit">💬 Save Note</button>
+          </form>
         </div>
       <% end %>
 
@@ -385,7 +392,9 @@ defmodule OliviaWeb.SeriesLive.Index do
         notes: Enum.map(existing_notes, &%{
           id: &1.id,
           anchor_key: &1.anchor_key,
-          audio_url: &1.audio_url
+          audio_url: &1.audio_url,
+          type: &1.type,
+          content: &1.content
         })
       })
     else
@@ -445,6 +454,7 @@ defmodule OliviaWeb.SeriesLive.Index do
                   File.rm(temp_path)
 
                   case Annotations.create_voice_note(%{
+                    type: "voice",
                     audio_url: url,
                     anchor_key: anchor.key,
                     anchor_meta: anchor.meta,
@@ -459,7 +469,9 @@ defmodule OliviaWeb.SeriesLive.Index do
                        |> push_event("note_created", %{
                          id: voice_note.id,
                          anchor_key: voice_note.anchor_key,
-                         audio_url: voice_note.audio_url
+                         audio_url: voice_note.audio_url,
+                         type: voice_note.type,
+                         content: voice_note.content
                        })}
 
                     {:error, _changeset} ->
@@ -478,6 +490,45 @@ defmodule OliviaWeb.SeriesLive.Index do
         :error ->
           {:noreply, put_flash(socket, :error, "Invalid audio data")}
       end
+    end
+  end
+
+  @impl true
+  def handle_event("save_text_annotation", params, socket) do
+    %{"anchor_key" => anchor_key, "anchor_meta" => anchor_meta, "text_content" => text_content} = params
+    require Logger
+
+    user = socket.assigns[:current_user]
+
+    attrs = %{
+      type: "text",
+      content: %{"text" => text_content},
+      anchor_key: anchor_key,
+      anchor_meta: anchor_meta,
+      page_path: socket.assigns.page_path,
+      theme: socket.assigns.theme,
+      user_id: user && user.id
+    }
+
+    case Annotations.create_voice_note(attrs) do
+      {:ok, note} ->
+        Logger.info("Text note created: #{note.id}")
+
+        {:noreply,
+         socket
+         |> assign(:current_anchor, nil)
+         |> update(:existing_notes, &[note | &1])
+         |> push_event("note_created", %{
+           id: note.id,
+           anchor_key: note.anchor_key,
+           audio_url: nil,
+           type: note.type,
+           content: note.content
+         })}
+
+      {:error, changeset} ->
+        Logger.error("Failed to create text note: #{inspect(changeset)}")
+        {:noreply, put_flash(socket, :error, "Failed to save note")}
     end
   end
 

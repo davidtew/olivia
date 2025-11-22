@@ -32,28 +32,40 @@ function initAnnotationHooks() {
 
   // We still manually initialize AnnotatableElement hooks since those need manual setup
   const container = document.getElementById('annotation-recorder-container');
-  if (false && container && !container._annotationInitialized) {
-    // DISABLED: This code is kept for reference but not executed
+  if (container && !container._annotationInitialized) {
+    // ENABLED: Manual initialization because LiveView hook mounting is unreliable
     console.log('[Annotations] Initializing AudioAnnotation manually');
     container._annotationInitialized = true;
 
     if (window.liveSocket && window.liveSocket.hooks && window.liveSocket.hooks.AudioAnnotation) {
       const hookDef = window.liveSocket.hooks.AudioAnnotation;
 
+      // Get the actual upload form that has phx-hook="AudioAnnotation"
+      const uploadForm = container.querySelector('#annotation-upload-form');
+      if (!uploadForm) {
+        console.error('[Annotations] Upload form not found in container');
+        return;
+      }
+
       const hookContext = {
-        el: container,
+        el: uploadForm,
         pushEvent: (event, payload) => {
+          console.log('[Annotations] pushEvent called:', event, payload);
           const mainView = document.querySelector('[data-phx-main]');
+          console.log('[Annotations] mainView:', mainView);
+
           if (mainView && window.liveSocket) {
             const view = window.liveSocket.getViewByEl(mainView);
-            if (view && view.liveSocket && view.liveSocket.socket) {
-              const topic = view.channel ? view.channel.topic : null;
-              if (topic) {
-                window.liveSocket.socket.channels
-                  .find(ch => ch.topic === topic)
-                  ?.push('event', { type: event, event: event, value: payload });
-              }
+            console.log('[Annotations] view:', view);
+
+            if (view && view.pushEvent) {
+              console.log('[Annotations] Calling view.pushEvent');
+              view.pushEvent(event, payload);
+            } else {
+              console.error('[Annotations] view.pushEvent not available');
             }
+          } else {
+            console.error('[Annotations] mainView or liveSocket not found');
           }
         },
         handleEvent: (event, callback) => {
@@ -138,7 +150,8 @@ function initAnnotationHooks() {
       try {
         hookDef.mounted.call(hookContext);
         console.log('[Annotations] AudioAnnotation mounted successfully');
-        container._hookContext = hookContext;
+        uploadForm._hookContext = hookContext;
+        uploadForm._annotationInitialized = true;
       } catch (error) {
         console.error('[Annotations] Error mounting AudioAnnotation:', error);
       }
