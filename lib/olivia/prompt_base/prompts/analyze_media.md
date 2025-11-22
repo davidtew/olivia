@@ -93,9 +93,9 @@ Using the JSON you just provided:
    - media_file_id: {{MEDIA_ID}}
    - iteration: {{NEXT_ITERATION}}
    - user_context: {{^USER_CONTEXT}}nil{{/USER_CONTEXT}}{{#USER_CONTEXT}}"{{USER_CONTEXT}}"{{/USER_CONTEXT}}
-   - llm_response: your full JSON analysis
+   - llm_response: your full JSON analysis (as Elixir map, NOT JSON string)
    - model_used: "claude-via-tidewave"
-   - timestamps: current time
+   - timestamps: `DateTime.utc_now() |> DateTime.truncate(:second)` (MUST truncate to seconds)
 
 3. Update the media table (ID {{MEDIA_ID}}) with:
    - asset_type from classification
@@ -119,10 +119,16 @@ analysis_map = %{
   "contexts" => [%{"name" => "..."}]
 }
 
+# CRITICAL: Truncate timestamps to seconds (remove microseconds)
+now = DateTime.utc_now() |> DateTime.truncate(:second)
+
 {:ok, record} = Olivia.Repo.insert(%Olivia.Media.Analysis{
   media_file_id: {{MEDIA_ID}},
-  llm_response: analysis_map,  # Pass Elixir map directly
-  ...
+  iteration: {{NEXT_ITERATION}},
+  llm_response: analysis_map,  # Pass Elixir map directly, NOT JSON string
+  model_used: "claude-via-tidewave",
+  inserted_at: now,
+  updated_at: now
 })
 ```
 
@@ -149,7 +155,10 @@ SELECT id, jsonb_typeof(llm_response) as type FROM media_analyses WHERE id = [NE
 
 ### Other Constraints
 - `alt_text` field is varchar(255) - truncate longer descriptions
-- Use `DateTime.utc_now()` not `NaiveDateTime.utc_now()` for timestamps
+- **CRITICAL**: Timestamps MUST be truncated to seconds (no microseconds)
+  - Use: `DateTime.utc_now() |> DateTime.truncate(:second)`
+  - NOT: `DateTime.utc_now()` (has microseconds, causes ArgumentError)
+  - The Ecto schema uses `:utc_datetime` type which requires second-precision only
 
 ---
 

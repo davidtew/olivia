@@ -875,7 +875,7 @@ defmodule OliviaWeb.PageLive do
       |> allow_upload(:audio,
         accept: ~w(audio/*),
         max_entries: 1,
-        max_file_size: 10_000_000
+        max_file_size: 50_000_000
       )
     else
       socket

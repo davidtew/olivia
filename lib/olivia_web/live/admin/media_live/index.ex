@@ -214,7 +214,7 @@ defmodule OliviaWeb.Admin.MediaLive.Index do
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .webp),
        max_entries: 10,
-       max_file_size: 10_000_000
+       max_file_size: 50_000_000
      )}
   end
 

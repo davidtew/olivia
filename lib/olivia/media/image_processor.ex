@@ -10,6 +10,9 @@ defmodule Olivia.Media.ImageProcessor do
 
   @thumbnail_size 400
   @medium_size 1200
+  @max_dimension 2400
+  @max_height 3000
+  @jpeg_quality 85
 
   @doc """
   Processes an uploaded image file and returns extracted data.
@@ -55,6 +58,60 @@ defmodule Olivia.Media.ImageProcessor do
   end
 
   @doc """
+  Optimizes an image file for web display.
+
+  Performs:
+  - Resizing to max 2400×3000px (maintains aspect ratio)
+  - EXIF stripping (removes camera data, keeps orientation)
+  - JPEG compression at 85% quality
+  - Color space conversion to sRGB
+
+  Returns {:ok, optimized_path, stats} where stats contains:
+  - :original_size - Original file size in bytes
+  - :optimized_size - New file size in bytes
+  - :savings_percent - Percentage reduction
+  - :original_dimensions - Original width×height
+  - :new_dimensions - New width×height
+  - :was_resized - Boolean indicating if resize occurred
+
+  The optimized file is written to a temporary location.
+  Caller is responsible for moving/uploading and cleaning up.
+  """
+  def optimize_for_web(file_path) do
+    original_size = File.stat!(file_path).size
+
+    with {:ok, image} <- Image.open(file_path),
+         {:ok, original_dims} <- get_dimensions(image),
+         {:ok, processed_image, was_resized} <- resize_if_needed(image, original_dims),
+         {:ok, optimized_image} <- prepare_for_web(processed_image),
+         {:ok, output_path} <- write_optimized(optimized_image, file_path) do
+
+      optimized_size = File.stat!(output_path).size
+      savings_percent = Float.round((1 - optimized_size / original_size) * 100, 1)
+
+      {:ok, new_dims} = get_dimensions(optimized_image)
+
+      stats = %{
+        original_size: original_size,
+        optimized_size: optimized_size,
+        savings_percent: savings_percent,
+        original_dimensions: "#{original_dims.width}×#{original_dims.height}",
+        new_dimensions: "#{new_dims.width}×#{new_dims.height}",
+        was_resized: was_resized
+      }
+
+      Logger.info("ImageProcessor: Optimized image - #{stats.original_dimensions} → #{stats.new_dimensions}, " <>
+                  "#{format_bytes(original_size)} → #{format_bytes(optimized_size)} (#{stats.savings_percent}% smaller)")
+
+      {:ok, output_path, stats}
+    else
+      {:error, reason} ->
+        Logger.error("ImageProcessor: Failed to optimize image: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  @doc """
   Calculates similarity between two perceptual hashes.
   Returns a float between 0 (different) and 1 (identical).
   """
@@ -77,10 +134,10 @@ defmodule Olivia.Media.ImageProcessor do
 
   defp get_dimensions(image) do
     case Image.shape(image) do
-      {:ok, {height, width, _bands}} ->
+      {height, width, _bands} ->
         {:ok, %{width: width, height: height}}
 
-      {:ok, {height, width}} ->
+      {height, width} ->
         {:ok, %{width: width, height: height}}
 
       error ->
@@ -202,6 +259,107 @@ defmodule Olivia.Media.ImageProcessor do
         Logger.warning("ImageProcessor: Phash calculation failed: #{inspect(error)}")
         {:ok, nil}
     end
+  end
+
+  # Optimization helper functions
+
+  defp resize_if_needed(image, %{width: width, height: height}) do
+    # Ensure dimensions are integers
+    width = if is_float(width), do: round(width), else: width
+    height = if is_float(height), do: round(height), else: height
+
+    cond do
+      width > @max_dimension or height > @max_height ->
+        # Calculate new dimensions maintaining aspect ratio
+        {new_width, new_height} =
+          if width > height do
+            # Landscape or square - limit by width
+            new_w = min(width, @max_dimension)
+            new_h = round(height * new_w / width)
+            # Check if height still exceeds limit
+            if new_h > @max_height do
+              {round(width * @max_height / height), @max_height}
+            else
+              {new_w, new_h}
+            end
+          else
+            # Portrait - limit by height
+            new_h = min(height, @max_height)
+            new_w = round(width * new_h / height)
+            # Check if width still exceeds limit
+            if new_w > @max_dimension do
+              {@max_dimension, round(height * @max_dimension / width)}
+            else
+              {new_w, new_h}
+            end
+          end
+
+        case Image.thumbnail(image, new_width, height: new_height) do
+          {:ok, resized} -> {:ok, resized, true}
+          error -> error
+        end
+
+      true ->
+        {:ok, image, false}
+    end
+  end
+
+  defp prepare_for_web(image) do
+    with {:ok, srgb_image} <- ensure_srgb(image),
+         {:ok, stripped_image} <- strip_exif(srgb_image) do
+      {:ok, stripped_image}
+    end
+  end
+
+  defp ensure_srgb(image) do
+    # Convert to sRGB color space if needed
+    case Image.to_colorspace(image, :srgb) do
+      {:ok, converted} -> {:ok, converted}
+      # If already in sRGB or conversion not possible, return original
+      _ -> {:ok, image}
+    end
+  end
+
+  defp strip_exif(image) do
+    # Remove EXIF data to reduce file size
+    # Note: Image library automatically handles orientation before stripping
+    case Image.remove_metadata(image) do
+      {:ok, stripped} -> {:ok, stripped}
+      # If metadata removal fails, continue with original
+      _ -> {:ok, image}
+    end
+  end
+
+  defp write_optimized(image, original_path) do
+    # Generate temp output path
+    ext = Path.extname(original_path)
+    # Default to .jpg if no extension
+    ext = if ext == "", do: ".jpg", else: ext
+
+    base = Path.basename(original_path, ext)
+    temp_dir = System.tmp_dir!()
+    output_path = Path.join(temp_dir, "#{base}_optimized_#{:rand.uniform(100_000)}#{ext}")
+
+    # Write with JPEG optimization if JPEG or no extension, otherwise use defaults
+    write_options =
+      if ext in [".jpg", ".jpeg", ".JPG", ".JPEG"] do
+        [quality: @jpeg_quality, strip_metadata: true]
+      else
+        [strip_metadata: true]
+      end
+
+    case Image.write(image, output_path, write_options) do
+      {:ok, _} -> {:ok, output_path}
+      error -> error
+    end
+  end
+
+  defp format_bytes(bytes) when bytes < 1024, do: "#{bytes}B"
+  defp format_bytes(bytes) when bytes < 1024 * 1024 do
+    "#{Float.round(bytes / 1024, 1)}KB"
+  end
+  defp format_bytes(bytes) do
+    "#{Float.round(bytes / (1024 * 1024), 1)}MB"
   end
 
   defp bits_to_hex(bits) do

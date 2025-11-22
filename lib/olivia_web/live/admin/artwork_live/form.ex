@@ -199,7 +199,7 @@ defmodule OliviaWeb.Admin.ArtworkLive.Form do
      |> assign(:show_media_picker, false)
      |> assign(:selected_media, nil)
      |> assign(:slug_manually_edited, false)
-     |> allow_upload(:image, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, max_file_size: 10_000_000)
+     |> allow_upload(:image, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, max_file_size: 50_000_000)
      |> apply_action(socket.assigns.live_action, params)}
   end
 

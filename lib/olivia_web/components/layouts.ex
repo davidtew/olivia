@@ -164,8 +164,30 @@ defmodule OliviaWeb.Layouts do
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between items-center">
           <div class="flex items-center">
-            <.link navigate={~p"/"} class="text-2xl font-bold text-gray-900 hover:text-gray-700">
-              Olivia Tew
+            <.link navigate={~p"/"} class="hover:opacity-80 transition-opacity">
+              <svg viewBox="0 65 500 75" class="h-12 w-auto" xmlns="http://www.w3.org/2000/svg">
+                <text x="20" y="105" font-family="'Brush Script MT', cursive" font-size="48" fill="#2c2c2c" letter-spacing="2">
+                  Olivia Tew
+                </text>
+                <defs>
+                  <linearGradient id="brushGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b7355;stop-opacity:0.6" />
+                    <stop offset="50%" style="stop-color:#6b5d54;stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:#8b7355;stop-opacity:0.6" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M 15 115 Q 50 110, 100 112 T 200 115 T 300 113 T 400 116 Q 430 117, 460 112"
+                  stroke="url(#brushGradient)"
+                  stroke-width="4"
+                  fill="none"
+                  stroke-linecap="round"
+                  opacity="0.7"
+                />
+                <text x="250" y="135" font-family="Arial, sans-serif" font-size="10" fill="#9a8a7a" text-anchor="middle" letter-spacing="3">
+                  oliviatew.co.uk
+                </text>
+              </svg>
             </.link>
           </div>
 

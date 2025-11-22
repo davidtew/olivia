@@ -610,7 +610,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .webp),
        max_entries: 10,
-       max_file_size: 10_000_000
+       max_file_size: 50_000_000
      )
      |> load_media()}
   end
@@ -750,10 +750,25 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
         Logger.info("  Generated filename: #{filename}")
         Logger.info("  S3 key: #{key}")
         Logger.info("  Content type: #{content_type}")
-        Logger.info("  File size: #{entry.client_size} bytes")
+        Logger.info("  Original file size: #{entry.client_size} bytes")
 
-        case Uploads.upload_file(path, key, content_type) do
+        # Optimize image for web display
+        {upload_path, optimized_size} = case Olivia.Media.ImageProcessor.optimize_for_web(path) do
+          {:ok, optimized_path, stats} ->
+            Logger.info("  ✓ Image optimized: #{stats.original_dimensions} → #{stats.new_dimensions}")
+            Logger.info("    Size reduction: #{stats.savings_percent}% (#{div(stats.original_size, 1024)}KB → #{div(stats.optimized_size, 1024)}KB)")
+            {optimized_path, stats.optimized_size}
+
+          {:error, reason} ->
+            Logger.warning("  Image optimization failed (#{inspect(reason)}), uploading original")
+            {path, entry.client_size}
+        end
+
+        case Uploads.upload_file(upload_path, key, content_type) do
           {:ok, url} ->
+            # Clean up temporary optimized file if it was created
+            if upload_path != path, do: File.rm(upload_path)
+
             Logger.info("  S3 upload successful: #{url}")
             alt_text = Map.get(socket.assigns.alt_texts, entry.ref, "")
 
@@ -761,7 +776,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
               filename: entry.client_name,
               url: url,
               content_type: content_type,
-              file_size: entry.client_size,
+              file_size: optimized_size,
               alt_text: if(alt_text != "", do: alt_text, else: nil),
               user_id: user_id
             }

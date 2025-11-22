@@ -948,7 +948,7 @@ defmodule OliviaWeb.HomeLive do
       |> allow_upload(:audio,
         accept: ~w(audio/*),
         max_entries: 1,
-        max_file_size: 10_000_000
+        max_file_size: 50_000_000
       )
       |> push_event("load_existing_notes", %{
         notes: Enum.map(existing_notes, &%{
