@@ -3,7 +3,9 @@ defmodule Olivia.Repo.Migrations.CreateVoiceNotes do
 
   def change do
     create table(:voice_notes) do
-      add :audio_url, :string, null: false
+      add :type, :string, null: false, default: "voice"
+      add :audio_url, :string
+      add :content, :map, default: %{}
 
       add :anchor_key, :string, null: false
       add :anchor_meta, :map, null: false, default: %{}

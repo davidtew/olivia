@@ -68,6 +68,19 @@ window.liveSocket = liveSocket
 // Initialize annotations system (workaround for hook initialization issues)
 initializeAnnotations()
 
+// Handle rich text content from contenteditable before form submission
+document.addEventListener('submit', (e) => {
+  const form = e.target
+  if (form.id === 'annotation-text-form') {
+    const contentDiv = form.querySelector('.annotation-textarea[contenteditable]')
+    const hiddenInput = form.querySelector('.annotation-html-content')
+    if (contentDiv && hiddenInput) {
+      hiddenInput.value = contentDiv.innerHTML
+      console.log('[RichText] Captured HTML content:', contentDiv.innerHTML)
+    }
+  }
+}, true)
+
 // The lines below enable quality of life phoenix_live_reload
 // development features:
 //

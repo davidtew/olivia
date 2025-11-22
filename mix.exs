@@ -74,6 +74,7 @@ defmodule Olivia.MixProject do
       {:hackney, "~> 1.20"},
       {:yaml_elixir, "~> 2.9"},
       {:image, "~> 0.54"},
+      {:html_sanitize_ex, "~> 1.4"},
       {:tidewave, "~> 0.5", only: :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]

@@ -2,7 +2,7 @@ defmodule Olivia.Annotations.VoiceNote do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "annotations" do
+  schema "voice_notes" do
     field :audio_url, :string
 
     # New fields for multi-modal annotation support

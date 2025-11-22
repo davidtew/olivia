@@ -480,7 +480,7 @@ export const AudioAnnotation = {
       e.preventDefault();
 
       if (isTextNote) {
-        this.showTextNote(content?.text || "No content", marker);
+        this.showTextNote(content?.html || content?.text || "No content", marker);
       } else {
         this.playAudio(audio_url, marker);
       }
@@ -495,7 +495,7 @@ export const AudioAnnotation = {
     element.appendChild(marker);
   },
 
-  showTextNote(text, marker) {
+  showTextNote(htmlContent, marker) {
     // Remove any existing viewer
     const existing = document.querySelector(".annotation-text-viewer");
     if (existing) existing.remove();
@@ -503,42 +503,75 @@ export const AudioAnnotation = {
     const viewer = document.createElement("div");
     viewer.className = "annotation-text-viewer";
     viewer.innerHTML = `
+      <style>
+        .text-note-content a {
+          color: #2563eb;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+        .text-note-content a:hover {
+          color: #1d4ed8;
+        }
+        .text-note-content h1, .text-note-content h2, .text-note-content h3 {
+          font-weight: bold;
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+        .text-note-content h1 { font-size: 1.5em; }
+        .text-note-content h2 { font-size: 1.3em; }
+        .text-note-content h3 { font-size: 1.1em; }
+        .text-note-content p {
+          margin-bottom: 12px;
+        }
+        .text-note-content ul, .text-note-content ol {
+          margin-left: 20px;
+          margin-bottom: 12px;
+        }
+        .text-note-content li {
+          margin-bottom: 4px;
+        }
+      </style>
       <div class="text-note-content" style="
-        max-width: 300px;
-        padding: 8px;
+        max-width: 400px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 12px;
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.6;
         color: #1f2937;
-      ">${text}</div>
+      ">${htmlContent}</div>
       <button class="close-viewer" style="
         background: #DC2626;
         color: white;
         border: none;
         border-radius: 4px;
-        padding: 4px 8px;
+        padding: 6px 12px;
         cursor: pointer;
-        font-size: 12px;
-        margin-top: 8px;
+        font-size: 13px;
+        margin-top: 12px;
+        width: 100%;
       ">Close</button>
     `;
 
     viewer.style.cssText = `
-      position: absolute;
-      top: 100%;
-      right: 0;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: white;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 100;
-      margin-top: 4px;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 10001;
+      max-width: 500px;
+      min-width: 300px;
     `;
 
     viewer.querySelector(".close-viewer").addEventListener("click", () => {
       viewer.remove();
     });
 
-    marker.parentElement.appendChild(viewer);
+    document.body.appendChild(viewer);
   },
 
   playAudio(url, marker) {

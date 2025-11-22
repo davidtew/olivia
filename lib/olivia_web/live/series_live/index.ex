@@ -340,11 +340,12 @@ defmodule OliviaWeb.SeriesLive.Index do
             <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
           </form>
 
-          <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation">
+          <form id="annotation-text-form" class="annotation-text-input hidden" phx-submit="save_text_annotation" style="position: fixed; bottom: 20px; right: 20px; background: white; padding: 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; max-width: 400px; min-width: 300px;">
             <input type="hidden" name="anchor_key" class="annotation-anchor-key" value="" />
             <input type="hidden" name="anchor_meta" class="annotation-anchor-meta" value="{}" />
-            <textarea name="text_content" class="annotation-textarea" placeholder="Type your note here..." rows="3"></textarea>
-            <button type="submit">💬 Save Note</button>
+            <input type="hidden" name="text_content" class="annotation-html-content" value="" />
+            <div contenteditable="true" class="annotation-textarea" data-placeholder="Type or paste your note here..." style="min-height: 4em; padding: 0.5em; border: 1px solid #ccc; border-radius: 4px; background: white; margin-bottom: 8px;"></div>
+            <button type="submit" style="width: 100%; padding: 8px; background: #4F46E5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">💬 Save Note</button>
           </form>
         </div>
       <% end %>
@@ -495,14 +496,28 @@ defmodule OliviaWeb.SeriesLive.Index do
 
   @impl true
   def handle_event("save_text_annotation", params, socket) do
-    %{"anchor_key" => anchor_key, "anchor_meta" => anchor_meta, "text_content" => text_content} = params
+    %{"anchor_key" => anchor_key, "anchor_meta" => anchor_meta_str, "text_content" => text_content} = params
     require Logger
 
     user = socket.assigns[:current_user]
 
+    # Parse anchor_meta from JSON string to map
+    anchor_meta = case Jason.decode(anchor_meta_str) do
+      {:ok, meta} -> meta
+      {:error, _} -> %{}
+    end
+
+    # Sanitize HTML content for security
+    sanitized_html = HtmlSanitizeEx.basic_html(text_content)
+
+    # Also store plain text version
+    plain_text = text_content
+    |> HtmlSanitizeEx.strip_tags()
+    |> String.trim()
+
     attrs = %{
       type: "text",
-      content: %{"text" => text_content},
+      content: %{"html" => sanitized_html, "text" => plain_text},
       anchor_key: anchor_key,
       anchor_meta: anchor_meta,
       page_path: socket.assigns.page_path,
