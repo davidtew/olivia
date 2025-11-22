@@ -287,6 +287,49 @@ defmodule OliviaWeb.SeriesLive.Index do
                 </.link>
               </.annotatable>
             </article>
+
+            <article class="grid lg:grid-cols-2 gap-8 items-center">
+              <.annotatable
+                anchor="series-index:embodiment:text"
+                class="order-2 lg:order-1"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "embodiment"})}
+              >
+                <div class="mb-2">
+                  <span class="text-xs text-gray-500 uppercase tracking-wide">4 artworks</span>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">
+                  <.link navigate={~p"/series/embodiment"} class="hover:text-gray-600">
+                    Embodiment
+                  </.link>
+                </h2>
+                <p class="text-sm text-gray-500 italic mb-4">Studies in Gesture and Form</p>
+                <p class="text-gray-600 leading-7 mb-6">
+                  An investigation of the human figure through gesture, colour, and mark-making—capturing how bodies inhabit space, move through daily life, and reveal form through paint.
+                </p>
+                <.link
+                  navigate={~p"/series/embodiment"}
+                  class="text-sm font-semibold text-gray-900 hover:text-gray-600"
+                >
+                  View series <span aria-hidden="true">→</span>
+                </.link>
+              </.annotatable>
+
+              <.annotatable
+                anchor="series-index:embodiment:image"
+                class="order-1 lg:order-2"
+                data-anchor-meta={Jason.encode!(%{"page" => "series-index", "series" => "embodiment"})}
+              >
+                <.link navigate={~p"/series/embodiment"} class="group block">
+                  <div class="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
+                    <img
+                      src={resolve_asset_url("/uploads/media/1763722108_d70e2e2341d3cccd.jpg")}
+                      alt="IN MOTION IV - Figure study"
+                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  </div>
+                </.link>
+              </.annotatable>
+            </article>
           </div>
         </div>
       </div>
@@ -336,7 +379,7 @@ defmodule OliviaWeb.SeriesLive.Index do
       |> allow_upload(:audio,
         accept: ~w(audio/*),
         max_entries: 1,
-        max_file_size: 10_000_000
+        max_file_size: 50_000_000
       )
       |> push_event("load_existing_notes", %{
         notes: Enum.map(existing_notes, &%{
