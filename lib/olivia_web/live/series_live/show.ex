@@ -711,13 +711,21 @@ defmodule OliviaWeb.SeriesLive.Show do
                   "series_slug" => "embodiment"
                 })}
               >
-                <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100 cursor-pointer" phx-click="open_lightbox" phx-value-artwork-id={artwork.id}>
+                <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100 cursor-pointer relative" phx-click="open_lightbox" phx-value-artwork-id={artwork.id}>
                   <%= if artwork.media_file && artwork.media_file.url do %>
                     <img
                       src={resolve_asset_url(artwork.media_file.url)}
                       alt={"#{artwork.title} - #{artwork.medium}"}
-                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                      class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-75"
                     />
+                    <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-full shadow-lg text-xs font-medium text-gray-900">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                        </svg>
+                        Click to enlarge
+                      </span>
+                    </div>
                   <% end %>
                 </div>
                 <div class="mt-4">
@@ -790,14 +798,14 @@ defmodule OliviaWeb.SeriesLive.Show do
         <!-- Lightbox Modal -->
         <%= if @lightbox_artwork do %>
           <div class="fixed inset-0 z-50 overflow-y-auto" phx-click="close_lightbox" phx-window-keydown="lightbox_keydown" phx-key="escape">
-            <div class="min-h-screen px-4 text-center">
-              <!-- Background overlay -->
-              <div class="fixed inset-0 bg-black bg-opacity-90 transition-opacity"></div>
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-black bg-opacity-90"></div>
 
+            <div class="relative min-h-screen px-4 text-center">
               <!-- Center content -->
               <span class="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
 
-              <div class="inline-block w-full max-w-6xl my-8 text-left align-middle transition-all transform" phx-click="stop_propagation">
+              <div class="inline-block w-full max-w-6xl my-8 text-left align-middle transition-all transform relative z-10" phx-click="stop_propagation">
                 <!-- Close button -->
                 <button
                   type="button"
