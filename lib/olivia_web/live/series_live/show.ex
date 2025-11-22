@@ -711,7 +711,7 @@ defmodule OliviaWeb.SeriesLive.Show do
                   "series_slug" => "embodiment"
                 })}
               >
-                <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100 cursor-pointer" phx-click="open_lightbox" phx-value-artwork-id={artwork.id}>
                   <%= if artwork.media_file && artwork.media_file.url do %>
                     <img
                       src={resolve_asset_url(artwork.media_file.url)}
@@ -786,6 +786,109 @@ defmodule OliviaWeb.SeriesLive.Show do
             </.link>
           </div>
         </div>
+
+        <!-- Lightbox Modal -->
+        <%= if @lightbox_artwork do %>
+          <div class="fixed inset-0 z-50 overflow-y-auto" phx-click="close_lightbox" phx-window-keydown="lightbox_keydown" phx-key="escape">
+            <div class="min-h-screen px-4 text-center">
+              <!-- Background overlay -->
+              <div class="fixed inset-0 bg-black bg-opacity-90 transition-opacity"></div>
+
+              <!-- Center content -->
+              <span class="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
+
+              <div class="inline-block w-full max-w-6xl my-8 text-left align-middle transition-all transform" phx-click="stop_propagation">
+                <!-- Close button -->
+                <button
+                  type="button"
+                  phx-click="close_lightbox"
+                  class="absolute top-4 right-4 z-10 text-white hover:text-gray-300 transition-colors"
+                >
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+
+                <!-- Navigation arrows -->
+                <%= if @lightbox_index > 0 do %>
+                  <button
+                    type="button"
+                    phx-click="lightbox_prev"
+                    phx-key="arrowleft"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors"
+                  >
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                  </button>
+                <% end %>
+
+                <%= if @lightbox_index < length(@artworks) - 1 do %>
+                  <button
+                    type="button"
+                    phx-click="lightbox_next"
+                    phx-key="arrowright"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors"
+                  >
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                <% end %>
+
+                <!-- Image and info -->
+                <div class="bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
+                  <div class="p-4">
+                    <%= if @lightbox_artwork.media_file && @lightbox_artwork.media_file.url do %>
+                      <img
+                        src={resolve_asset_url(@lightbox_artwork.media_file.url)}
+                        alt={"#{@lightbox_artwork.title} - #{@lightbox_artwork.medium}"}
+                        class="w-full h-auto"
+                      />
+                    <% end %>
+                  </div>
+
+                  <div class="px-6 pb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= @lightbox_artwork.title %></h2>
+                    <p class="text-gray-600 mb-4"><%= @lightbox_artwork.medium %></p>
+
+                    <%= if @lightbox_artwork.latest_analysis && @lightbox_artwork.latest_analysis.llm_response do %>
+                      <div class="mt-6 p-4 bg-gray-50 rounded-lg prose prose-sm max-w-none">
+                        <%= if @lightbox_artwork.latest_analysis.llm_response["interpretation"] do %>
+                          <h4 class="text-sm font-semibold text-gray-900 mt-0">Interpretation</h4>
+                          <p class="text-sm text-gray-700 leading-relaxed"><%= @lightbox_artwork.latest_analysis.llm_response["interpretation"] %></p>
+                        <% end %>
+
+                        <%= if @lightbox_artwork.latest_analysis.llm_response["technical_details"] do %>
+                          <% technical = @lightbox_artwork.latest_analysis.llm_response["technical_details"] %>
+                          <h4 class="text-sm font-semibold text-gray-900 mt-4">Technical Details</h4>
+                          <ul class="text-sm text-gray-700 mt-2 space-y-1">
+                            <%= if technical["colour_palette"] do %>
+                              <li>
+                                <strong>Palette:</strong>
+                                <%= if is_list(technical["colour_palette"]) do %>
+                                  <%= Enum.join(Enum.map(technical["colour_palette"], &String.replace(&1, "_", " ")), ", ") %>
+                                <% else %>
+                                  <%= technical["colour_palette"] %>
+                                <% end %>
+                              </li>
+                            <% end %>
+                            <%= if technical["composition"] do %>
+                              <li><strong>Composition:</strong> <%= technical["composition"] %></li>
+                            <% end %>
+                            <%= if technical["style"] do %>
+                              <li><strong>Style:</strong> <%= technical["style"] %></li>
+                            <% end %>
+                          </ul>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
 
         <!-- Annotation recorder hook -->
         <%= if @annotations_enabled do %>
@@ -916,6 +1019,8 @@ defmodule OliviaWeb.SeriesLive.Show do
       |> assign(:series, %{title: title, summary: "", body_md: nil})
       |> assign(:artworks, artworks_with_analyses)
       |> assign(:expanded_insights, %{})
+      |> assign(:lightbox_artwork, nil)
+      |> assign(:lightbox_index, 0)
     else
       series = Content.get_series_by_slug!(slug, published: true)
       artworks = Content.list_artworks(series_id: series.id, published: true)
@@ -925,6 +1030,9 @@ defmodule OliviaWeb.SeriesLive.Show do
       |> assign(:slug, slug)
       |> assign(:series, series)
       |> assign(:artworks, artworks)
+      |> assign(:expanded_insights, %{})
+      |> assign(:lightbox_artwork, nil)
+      |> assign(:lightbox_index, 0)
     end
 
     # Set annotations_enabled for all themes
@@ -969,6 +1077,61 @@ defmodule OliviaWeb.SeriesLive.Show do
     current_expanded = Map.get(socket.assigns.expanded_insights, artwork_id, false)
 
     {:noreply, assign(socket, :expanded_insights, Map.put(socket.assigns.expanded_insights, artwork_id, !current_expanded))}
+  end
+
+  @impl true
+  def handle_event("open_lightbox", %{"artwork-id" => artwork_id}, socket) do
+    artwork_id = String.to_integer(artwork_id)
+    index = Enum.find_index(socket.assigns.artworks, fn a -> a.id == artwork_id end) || 0
+    artwork = Enum.at(socket.assigns.artworks, index)
+
+    {:noreply, socket |> assign(:lightbox_artwork, artwork) |> assign(:lightbox_index, index)}
+  end
+
+  @impl true
+  def handle_event("close_lightbox", _params, socket) do
+    {:noreply, socket |> assign(:lightbox_artwork, nil)}
+  end
+
+  @impl true
+  def handle_event("stop_propagation", _params, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("lightbox_prev", _params, socket) do
+    new_index = max(0, socket.assigns.lightbox_index - 1)
+    artwork = Enum.at(socket.assigns.artworks, new_index)
+
+    {:noreply, socket |> assign(:lightbox_artwork, artwork) |> assign(:lightbox_index, new_index)}
+  end
+
+  @impl true
+  def handle_event("lightbox_next", _params, socket) do
+    new_index = min(length(socket.assigns.artworks) - 1, socket.assigns.lightbox_index + 1)
+    artwork = Enum.at(socket.assigns.artworks, new_index)
+
+    {:noreply, socket |> assign(:lightbox_artwork, artwork) |> assign(:lightbox_index, new_index)}
+  end
+
+  @impl true
+  def handle_event("lightbox_keydown", %{"key" => "ArrowLeft"}, socket) do
+    handle_event("lightbox_prev", %{}, socket)
+  end
+
+  @impl true
+  def handle_event("lightbox_keydown", %{"key" => "ArrowRight"}, socket) do
+    handle_event("lightbox_next", %{}, socket)
+  end
+
+  @impl true
+  def handle_event("lightbox_keydown", %{"key" => "Escape"}, socket) do
+    handle_event("close_lightbox", %{}, socket)
+  end
+
+  @impl true
+  def handle_event("lightbox_keydown", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
