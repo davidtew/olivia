@@ -695,97 +695,80 @@ defmodule OliviaWeb.SeriesLive.Show do
             Works in this Series
           </h2>
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4" id="embodiment-artworks-grid">
-            <!-- IN MOTION III -->
-            <div
-              id="artwork-in-motion-iii"
-              class="group"
-              {annotation_attrs(@annotations_enabled, "artwork:in-motion-iii", %{
-                "anchor_type" => "artwork",
-                "artwork_title" => "IN MOTION III",
-                "series_slug" => "embodiment"
-              })}
-            >
-              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763722109_e4982724359e6940.jpg")}
-                  alt="IN MOTION III - Classical contrapposto figure study"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <div class="mt-4">
-                <h3 class="text-lg font-semibold text-gray-900">IN MOTION III</h3>
-                <p class="text-sm text-gray-500">Oil on prepared ochre ground</p>
-              </div>
-            </div>
+            <%= for artwork <- @artworks do %>
+              <div
+                id={"artwork-#{artwork.slug}"}
+                class="group"
+                {annotation_attrs(@annotations_enabled, "artwork:#{artwork.slug}", %{
+                  "anchor_type" => "artwork",
+                  "artwork_title" => artwork.title,
+                  "series_slug" => "embodiment"
+                })}
+              >
+                <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
+                  <%= if artwork.media_file && artwork.media_file.url do %>
+                    <img
+                      src={resolve_asset_url(artwork.media_file.url)}
+                      alt={"#{artwork.title} - #{artwork.medium}"}
+                      class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  <% end %>
+                </div>
+                <div class="mt-4">
+                  <h3 class="text-lg font-semibold text-gray-900"><%= artwork.title %></h3>
+                  <p class="text-sm text-gray-500"><%= artwork.medium %></p>
 
-            <!-- IN MOTION IV -->
-            <div
-              id="artwork-in-motion-iv"
-              class="group"
-              {annotation_attrs(@annotations_enabled, "artwork:in-motion-iv", %{
-                "anchor_type" => "artwork",
-                "artwork_title" => "IN MOTION IV",
-                "series_slug" => "embodiment"
-              })}
-            >
-              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763722108_d70e2e2341d3cccd.jpg")}
-                  alt="IN MOTION IV - Figure on magenta ground"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <div class="mt-4">
-                <h3 class="text-lg font-semibold text-gray-900">IN MOTION IV</h3>
-                <p class="text-sm text-gray-500">Oil on canvas</p>
-              </div>
-            </div>
+                  <%= if artwork.latest_analysis && artwork.latest_analysis.llm_response do %>
+                    <div class="mt-4">
+                      <button
+                        type="button"
+                        phx-click="toggle_insights"
+                        phx-value-artwork-id={artwork.id}
+                        class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        <%= if Map.get(@expanded_insights, artwork.id, false) do %>
+                          Hide Insights ←
+                        <% else %>
+                          View Curator's Insights →
+                        <% end %>
+                      </button>
 
-            <!-- IN MOTION V -->
-            <div
-              id="artwork-in-motion-v"
-              class="group"
-              {annotation_attrs(@annotations_enabled, "artwork:in-motion-v", %{
-                "anchor_type" => "artwork",
-                "artwork_title" => "IN MOTION V",
-                "series_slug" => "embodiment"
-              })}
-            >
-              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763722108_e75261efc20f18a5.jpg")}
-                  alt="IN MOTION V - Woman bending forward"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
-              </div>
-              <div class="mt-4">
-                <h3 class="text-lg font-semibold text-gray-900">IN MOTION V</h3>
-                <p class="text-sm text-gray-500">Oil on canvas with prepared pink-mauve ground</p>
-              </div>
-            </div>
+                      <%= if Map.get(@expanded_insights, artwork.id, false) do %>
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg prose prose-sm max-w-none">
+                          <%= if artwork.latest_analysis.llm_response["interpretation"] do %>
+                            <h4 class="text-sm font-semibold text-gray-900 mt-0">Interpretation</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed"><%= artwork.latest_analysis.llm_response["interpretation"] %></p>
+                          <% end %>
 
-            <!-- She Lays Down -->
-            <div
-              id="artwork-she-lays-down"
-              class="group"
-              {annotation_attrs(@annotations_enabled, "artwork:she-lays-down", %{
-                "anchor_type" => "artwork",
-                "artwork_title" => "She Lays Down",
-                "series_slug" => "embodiment"
-              })}
-            >
-              <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
-                <img
-                  src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
-                  alt="She Lays Down - Reclining figure study"
-                  class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                />
+                          <%= if artwork.latest_analysis.llm_response["technical_details"] do %>
+                            <% technical = artwork.latest_analysis.llm_response["technical_details"] %>
+                            <h4 class="text-sm font-semibold text-gray-900 mt-4">Technical Details</h4>
+                            <ul class="text-sm text-gray-700 mt-2 space-y-1">
+                              <%= if technical["colour_palette"] do %>
+                                <li>
+                                  <strong>Palette:</strong>
+                                  <%= if is_list(technical["colour_palette"]) do %>
+                                    <%= Enum.join(Enum.map(technical["colour_palette"], &String.replace(&1, "_", " ")), ", ") %>
+                                  <% else %>
+                                    <%= technical["colour_palette"] %>
+                                  <% end %>
+                                </li>
+                              <% end %>
+                              <%= if technical["composition"] do %>
+                                <li><strong>Composition:</strong> <%= technical["composition"] %></li>
+                              <% end %>
+                              <%= if technical["style"] do %>
+                                <li><strong>Style:</strong> <%= technical["style"] %></li>
+                              <% end %>
+                            </ul>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
               </div>
-              <div class="mt-4">
-                <h3 class="text-lg font-semibold text-gray-900">She Lays Down</h3>
-                <p class="text-sm text-gray-500">Oil on canvas</p>
-              </div>
-            </div>
+            <% end %>
           </div>
         </div>
 
@@ -899,6 +882,9 @@ defmodule OliviaWeb.SeriesLive.Show do
         series = Content.get_series_by_slug!("embodiment", published: true)
         artworks = Content.list_artworks(series_id: series.id, published: true)
 
+        # Preload media_file association
+        artworks = Olivia.Repo.preload(artworks, :media_file)
+
         # Fetch analyses for each artwork's media file
         Enum.map(artworks, fn artwork ->
           analysis = if artwork.media_file_id do
@@ -923,6 +909,7 @@ defmodule OliviaWeb.SeriesLive.Show do
       |> assign(:slug, slug)
       |> assign(:series, %{title: title, summary: "", body_md: nil})
       |> assign(:artworks, artworks_with_analyses)
+      |> assign(:expanded_insights, %{})
     else
       series = Content.get_series_by_slug!(slug, published: true)
       artworks = Content.list_artworks(series_id: series.id, published: true)
@@ -969,6 +956,14 @@ defmodule OliviaWeb.SeriesLive.Show do
 
   @impl true
   def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_insights", %{"artwork-id" => artwork_id}, socket) do
+    artwork_id = String.to_integer(artwork_id)
+    current_expanded = Map.get(socket.assigns.expanded_insights, artwork_id, false)
+
+    {:noreply, assign(socket, :expanded_insights, Map.put(socket.assigns.expanded_insights, artwork_id, !current_expanded))}
+  end
 
   @impl true
   def handle_event("toggle_mode", _, socket) do
