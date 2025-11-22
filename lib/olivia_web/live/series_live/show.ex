@@ -1033,11 +1033,30 @@ defmodule OliviaWeb.SeriesLive.Show do
       series = Content.get_series_by_slug!(slug, published: true)
       artworks = Content.list_artworks(series_id: series.id, published: true)
 
+      # Preload media_file association
+      artworks = Olivia.Repo.preload(artworks, :media_file)
+
+      # Fetch analyses for each artwork's media file
+      artworks_with_analyses = Enum.map(artworks, fn artwork ->
+        analysis = if artwork.media_file_id do
+          Olivia.Repo.one(
+            from a in Olivia.Media.Analysis,
+            where: a.media_file_id == ^artwork.media_file_id,
+            order_by: [desc: a.iteration],
+            limit: 1
+          )
+        else
+          nil
+        end
+
+        Map.put(artwork, :latest_analysis, analysis)
+      end)
+
       socket
       |> assign(:page_title, "#{series.title} - Olivia Tew")
       |> assign(:slug, slug)
       |> assign(:series, series)
-      |> assign(:artworks, artworks)
+      |> assign(:artworks, artworks_with_analyses)
       |> assign(:expanded_insights, %{})
       |> assign(:lightbox_artwork, nil)
       |> assign(:lightbox_index, 0)
