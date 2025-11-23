@@ -43,7 +43,14 @@ defmodule OliviaWeb.SeriesLive.Show do
   defp render_cottage(assigns) do
     ~H"""
     <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 1rem;">
-      <div style="text-align: center; margin-bottom: 4rem;">
+      <div
+        id={"series-#{@slug}-header"}
+        style="text-align: center; margin-bottom: 4rem;"
+        {annotation_attrs(@annotations_enabled, "series:#{@slug}:header", %{
+          "anchor_type" => "header",
+          "series_slug" => @slug
+        })}
+      >
         <h1 class="cottage-heading" style="font-size: 3rem; margin-bottom: 1rem;">
           <%= @series.title %>
         </h1>
@@ -84,9 +91,17 @@ defmodule OliviaWeb.SeriesLive.Show do
       <% end %>
 
       <div style="margin-top: 4rem;">
-        <h2 class="cottage-heading" style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">
-          Works in this Collection
-        </h2>
+        <div
+          id={"series-#{@slug}-works-heading"}
+          {annotation_attrs(@annotations_enabled, "series:#{@slug}:works-heading", %{
+            "anchor_type" => "section-heading",
+            "series_slug" => @slug
+          })}
+        >
+          <h2 class="cottage-heading" style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">
+            Works in this Collection
+          </h2>
+        </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
           <div
             :for={artwork <- @artworks}
@@ -450,7 +465,13 @@ defmodule OliviaWeb.SeriesLive.Show do
 
         <!-- Description -->
         <div class="mx-auto max-w-3xl px-6 lg:px-8 py-16">
-          <div class="prose prose-lg prose-gray text-gray-900">
+          <div
+            class="prose prose-lg prose-gray text-gray-900"
+            {annotation_attrs(@annotations_enabled, "series:abundance:description", %{
+              "anchor_type" => "description",
+              "series_slug" => "abundance"
+            })}
+          >
             <p>
               These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous. Working with saturated grounds—coral reds, golden ochres—Olivia creates paintings that function almost as interior design elements while retaining the unpredictable energy of expressionism.
             </p>
@@ -467,7 +488,14 @@ defmodule OliviaWeb.SeriesLive.Show do
           </h2>
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <!-- Ecstatic -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:ecstatic", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "ecstatic"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -482,7 +510,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- Marilyn -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:marilyn", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "marilyn"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
@@ -497,7 +532,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- I Love Three Times -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:i-love-three-times", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "i-love-three-times"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -512,7 +554,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- Red Ground -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:red-ground", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "red-ground"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
@@ -527,7 +576,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- Coral Ground -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:coral-ground", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "coral-ground"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
@@ -542,7 +598,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             </div>
 
             <!-- I Love Three Times Detail -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:abundance:artwork:i-love-three-times-detail", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "abundance",
+                "artwork_name" => "i-love-three-times-detail"
+              })}
+            >
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
@@ -589,7 +652,13 @@ defmodule OliviaWeb.SeriesLive.Show do
 
         <!-- Description -->
         <div class="mx-auto max-w-3xl px-6 lg:px-8 py-16">
-          <div class="prose prose-lg prose-gray">
+          <div
+            class="prose prose-lg prose-gray"
+            {annotation_attrs(@annotations_enabled, "series:shifting:description", %{
+              "anchor_type" => "description",
+              "series_slug" => "shifting"
+            })}
+          >
             <p>
               The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata, creating surfaces that function almost as relief sculpture. These aren't landscapes observed; they're landscapes experienced through the body.
             </p>
@@ -606,7 +675,14 @@ defmodule OliviaWeb.SeriesLive.Show do
           </h2>
           <div class="grid grid-cols-1 gap-8">
             <!-- Shifting Diptych - Full Width -->
-            <div class="group">
+            <div
+              class="group"
+              {annotation_attrs(@annotations_enabled, "series:shifting:artwork:diptych", %{
+                "anchor_type" => "artwork",
+                "series_slug" => "shifting",
+                "artwork_name" => "shifting-diptych"
+              })}
+            >
               <div class="aspect-[21/9] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -623,7 +699,14 @@ defmodule OliviaWeb.SeriesLive.Show do
             <!-- Individual panels -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <!-- Shifting Part 1 -->
-              <div class="group">
+              <div
+                class="group"
+                {annotation_attrs(@annotations_enabled, "series:shifting:artwork:part-1", %{
+                  "anchor_type" => "artwork",
+                  "series_slug" => "shifting",
+                  "artwork_name" => "shifting-part-1"
+                })}
+              >
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
                     src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
@@ -638,7 +721,14 @@ defmodule OliviaWeb.SeriesLive.Show do
               </div>
 
               <!-- Shifting Part 2 -->
-              <div class="group">
+              <div
+                class="group"
+                {annotation_attrs(@annotations_enabled, "series:shifting:artwork:part-2", %{
+                  "anchor_type" => "artwork",
+                  "series_slug" => "shifting",
+                  "artwork_name" => "shifting-part-2"
+                })}
+              >
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
                     src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}

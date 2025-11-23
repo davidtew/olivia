@@ -124,3 +124,41 @@
   background-color: rgba(79, 70, 229, 0.08) !important;
   border-radius: 4px;
 }
+
+/* Rich Text Content Editable Styles */
+.annotation-textarea[contenteditable="true"]:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+  font-style: italic;
+}
+
+.annotation-textarea[contenteditable="true"]:focus {
+  outline: 2px solid rgba(79, 70, 229, 0.4);
+  outline-offset: 1px;
+}
+
+.annotation-textarea[contenteditable="true"] p {
+  margin: 0.5em 0;
+}
+
+.annotation-textarea[contenteditable="true"] p:first-child {
+  margin-top: 0;
+}
+
+.annotation-textarea[contenteditable="true"] p:last-child {
+  margin-bottom: 0;
+}
+
+.annotation-textarea[contenteditable="true"] strong {
+  font-weight: 600;
+}
+
+.annotation-textarea[contenteditable="true"] em {
+  font-style: italic;
+}
+
+.annotation-textarea[contenteditable="true"] ul,
+.annotation-textarea[contenteditable="true"] ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}

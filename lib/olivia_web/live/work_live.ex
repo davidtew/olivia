@@ -3,6 +3,9 @@ defmodule OliviaWeb.WorkLive do
 
   import OliviaWeb.AssetHelpers, only: [resolve_asset_url: 1]
 
+  alias Olivia.Annotations
+  alias Olivia.Uploads
+
   @impl true
   def render(assigns) do
     cond do
@@ -13,37 +16,56 @@ defmodule OliviaWeb.WorkLive do
     end
   end
 
+  # Helper to conditionally add annotation attributes
+  defp annotation_attrs(enabled, anchor_key, anchor_meta) do
+    if enabled do
+      %{
+        "data-note-anchor" => anchor_key,
+        "data-anchor-meta" => Jason.encode!(anchor_meta),
+        "phx-hook" => "AnnotatableElement"
+      }
+    else
+      %{}
+    end
+  end
+
   defp render_gallery(assigns) do
     ~H"""
     <!-- Page Header -->
     <section style="padding: 5rem 1.5rem 3rem; text-align: center; background: linear-gradient(to bottom, #faf8f5, #fff);">
-      <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
-        The Work
-      </h1>
-      <div style="width: 60px; height: 1px; background: #c4b5a0; margin: 0 auto 2rem;"></div>
-      <p style="color: #6b5d54; max-width: 600px; margin: 0 auto; line-height: 1.8;">
-        Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
-      </p>
+      <div {annotation_attrs(@annotations_enabled, "work:header", %{"page" => "work", "theme" => "gallery"})}>
+        <h1 class="gallery-heading" style="font-size: 2.5rem; color: #2c2416; margin-bottom: 1rem;">
+          The Work
+        </h1>
+        <div style="width: 60px; height: 1px; background: #c4b5a0; margin: 0 auto 2rem;"></div>
+        <p style="color: #6b5d54; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+          Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+      </div>
     </section>
 
     <!-- Becoming - Figure Works -->
     <section id="becoming" style="padding: 5rem 1.5rem; background: #fff;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
-            Becoming
-          </h2>
-          <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
-            Figure Works
-          </p>
-          <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
-            Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:header", %{"section" => "becoming"})}>
+            <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
+              Becoming
+            </h2>
+            <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
+              Figure Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:description", %{"section" => "becoming"})}>
+            <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
+              Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
           <!-- A Becoming -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:a-becoming", %{"artwork" => "A Becoming", "section" => "becoming"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
@@ -56,7 +78,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Changes -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:changes", %{"artwork" => "Changes", "section" => "becoming"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
@@ -69,7 +91,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- She Lays Down -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:she-lays-down", %{"artwork" => "She Lays Down", "section" => "becoming"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
@@ -88,20 +110,24 @@ defmodule OliviaWeb.WorkLive do
     <section id="abundance" style="padding: 5rem 1.5rem; background: #f5f3f0;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
-            Abundance
-          </h2>
-          <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
-            Floral Works
-          </p>
-          <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
-            Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:header", %{"section" => "abundance"})}>
+            <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
+              Abundance
+            </h2>
+            <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
+              Floral Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:description", %{"section" => "abundance"})}>
+            <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
+              Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
           <!-- Marilyn -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn", %{"artwork" => "Marilyn", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
@@ -114,7 +140,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Ecstatic -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:ecstatic", %{"artwork" => "Ecstatic", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -127,7 +153,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Red Ground Floral -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:red-ground", %{"artwork" => "Untitled (Red Ground)", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
@@ -140,7 +166,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Red Ground Detail -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:coral-ground", %{"artwork" => "Coral Ground (Detail)", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
@@ -153,7 +179,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Marilyn Indoor -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn-studio", %{"artwork" => "Marilyn (Studio)", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
@@ -166,7 +192,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- I Love Three Times -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times", %{"artwork" => "I Love Three Times", "section" => "abundance"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -185,19 +211,23 @@ defmodule OliviaWeb.WorkLive do
     <section id="shifting" style="padding: 5rem 1.5rem; background: #fff;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
-            Shifting
-          </h2>
-          <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
-            Landscape Works
-          </p>
-          <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
-            Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:header", %{"section" => "shifting"})}>
+            <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; margin-bottom: 0.5rem;">
+              Shifting
+            </h2>
+            <p class="gallery-script" style="font-size: 1rem; color: #8b7355; margin-bottom: 1.5rem; font-style: italic;">
+              Landscape Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:description", %{"section" => "shifting"})}>
+            <p style="color: #6b5d54; max-width: 600px; line-height: 1.8;">
+              Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
+            </p>
+          </div>
         </div>
 
         <!-- Diptych - Full Width -->
-        <div style="margin-bottom: 3rem;">
+        <div style="margin-bottom: 3rem;" {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-diptych", %{"artwork" => "Shifting", "section" => "shifting"})}>
           <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
             <img
               src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -212,7 +242,7 @@ defmodule OliviaWeb.WorkLive do
         <!-- Individual Panels -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
           <!-- Part 1 -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-1", %{"artwork" => "Shifting Part 1", "section" => "shifting"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
@@ -225,7 +255,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Part 2 -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-2", %{"artwork" => "Shifting Part 2", "section" => "shifting"})}>
             <div style="border: 6px solid #fff; box-shadow: 0 2px 12px rgba(44, 36, 22, 0.08); margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
@@ -242,7 +272,7 @@ defmodule OliviaWeb.WorkLive do
 
     <!-- Contact CTA -->
     <section style="padding: 5rem 1.5rem; background: #2c2416; text-align: center;">
-      <div style="max-width: 500px; margin: 0 auto;">
+      <div style="max-width: 500px; margin: 0 auto;" {annotation_attrs(@annotations_enabled, "work:contact-cta", %{"section" => "contact"})}>
         <h3 class="gallery-heading" style="font-size: 1.5rem; color: #faf8f5; margin-bottom: 1rem;">
           Interested in a piece?
         </h3>
@@ -266,6 +296,15 @@ defmodule OliviaWeb.WorkLive do
         </a>
       </div>
     </div>
+
+    <!-- Annotation recorder hook -->
+    <%= if @annotations_enabled do %>
+      <div id="annotation-recorder-container">
+        <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+          <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+        </form>
+      </div>
+    <% end %>
     """
   end
 
@@ -273,33 +312,39 @@ defmodule OliviaWeb.WorkLive do
     ~H"""
     <!-- Page Header -->
     <section style="padding: 5rem 1rem 3rem; text-align: center; background: var(--cottage-cream);">
-      <h1 class="cottage-heading" style="font-size: 2.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
-        The Work
-      </h1>
-      <div class="cottage-divider"></div>
-      <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; margin: 2rem auto 0; line-height: 1.8;">
-        Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
-      </p>
+      <div {annotation_attrs(@annotations_enabled, "work:header", %{"page" => "work", "theme" => "cottage"})}>
+        <h1 class="cottage-heading" style="font-size: 2.5rem; color: var(--cottage-text-dark); margin-bottom: 1rem;">
+          The Work
+        </h1>
+        <div class="cottage-divider"></div>
+        <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; margin: 2rem auto 0; line-height: 1.8;">
+          Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+      </div>
     </section>
 
     <!-- Becoming - Figure Works -->
     <section id="becoming" style="padding: 5rem 1rem; background: white;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
-            Becoming
-          </h2>
-          <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
-            Figure Works
-          </p>
-          <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
-            Expressionistic figure studies that capture the human form in moments of profound introspection. These paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:header", %{"section" => "becoming"})}>
+            <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Becoming
+            </h2>
+            <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
+              Figure Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:description", %{"section" => "becoming"})}>
+            <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
+              Expressionistic figure studies that capture the human form in moments of profound introspection. These paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
           <!-- A Becoming -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:a-becoming", %{"artwork" => "A Becoming", "section" => "becoming"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
@@ -312,7 +357,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Changes -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:changes", %{"artwork" => "Changes", "section" => "becoming"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
@@ -325,7 +370,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- She Lays Down -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:she-lays-down", %{"artwork" => "She Lays Down", "section" => "becoming"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
@@ -344,20 +389,24 @@ defmodule OliviaWeb.WorkLive do
     <section id="abundance" style="padding: 5rem 1rem; background: var(--cottage-beige);">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
-            Abundance
-          </h2>
-          <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
-            Floral Works
-          </p>
-          <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
-            Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:header", %{"section" => "abundance"})}>
+            <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Abundance
+            </h2>
+            <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
+              Floral Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:description", %{"section" => "abundance"})}>
+            <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
+              Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
           <!-- Marilyn -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn", %{"artwork" => "Marilyn", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
@@ -370,7 +419,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Red Ground Floral -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:red-ground", %{"artwork" => "Untitled (Red Ground)", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
@@ -383,7 +432,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Ecstatic -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:ecstatic", %{"artwork" => "Ecstatic", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -396,7 +445,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- On The Kitchen Table -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:on-the-kitchen-table", %{"artwork" => "On The Kitchen Table", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_9f4cf777abd53640.jpg")}
@@ -409,7 +458,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Marilyn Studio -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn-studio", %{"artwork" => "Marilyn (Studio)", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
@@ -422,7 +471,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- I Love Three Times -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times", %{"artwork" => "I Love Three Times", "section" => "abundance"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -441,19 +490,23 @@ defmodule OliviaWeb.WorkLive do
     <section id="shifting" style="padding: 5rem 1rem; background: white;">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
-            Shifting
-          </h2>
-          <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
-            Landscape Works
-          </p>
-          <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
-            Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:header", %{"section" => "shifting"})}>
+            <h2 class="cottage-heading" style="font-size: 2rem; color: var(--cottage-text-dark); margin-bottom: 0.5rem;">
+              Shifting
+            </h2>
+            <p class="cottage-accent" style="font-size: 1rem; color: var(--cottage-wisteria); margin-bottom: 1.5rem;">
+              Landscape Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:description", %{"section" => "shifting"})}>
+            <p class="cottage-body" style="color: var(--cottage-text-medium); max-width: 600px; line-height: 1.8;">
+              Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
+            </p>
+          </div>
         </div>
 
         <!-- Diptych - Full Width -->
-        <div style="margin-bottom: 3rem;">
+        <div style="margin-bottom: 3rem;" {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-diptych", %{"artwork" => "Shifting", "section" => "shifting"})}>
           <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
             <img
               src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -468,7 +521,7 @@ defmodule OliviaWeb.WorkLive do
         <!-- Individual Panels -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
           <!-- Part 1 -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-1", %{"artwork" => "Shifting Part 1", "section" => "shifting"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
@@ -481,7 +534,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Part 2 -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-2", %{"artwork" => "Shifting Part 2", "section" => "shifting"})}>
             <div style="border: 1px solid var(--cottage-taupe); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(200, 167, 216, 0.08);">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
@@ -498,7 +551,7 @@ defmodule OliviaWeb.WorkLive do
 
     <!-- Contact CTA -->
     <section style="padding: 5rem 1rem; background: var(--cottage-wisteria-deep); text-align: center;">
-      <div style="max-width: 500px; margin: 0 auto;">
+      <div style="max-width: 500px; margin: 0 auto;" {annotation_attrs(@annotations_enabled, "work:contact-cta", %{"section" => "contact"})}>
         <h3 class="cottage-heading" style="font-size: 1.5rem; color: white; margin-bottom: 1rem;">
           Interested in a piece?
         </h3>
@@ -519,6 +572,15 @@ defmodule OliviaWeb.WorkLive do
         </a>
       </div>
     </div>
+
+    <!-- Annotation recorder hook -->
+    <%= if @annotations_enabled do %>
+      <div id="annotation-recorder-container">
+        <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+          <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+        </form>
+      </div>
+    <% end %>
     """
   end
 
@@ -526,32 +588,38 @@ defmodule OliviaWeb.WorkLive do
     ~H"""
     <!-- Page Header -->
     <section style="padding: 4rem 2rem 2rem; text-align: center;">
-      <h1 class="curator-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
-        The Work
-      </h1>
-      <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px; margin: 0 auto;">
-        Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
-      </p>
+      <div {annotation_attrs(@annotations_enabled, "work:header", %{"page" => "work", "theme" => "curator"})}>
+        <h1 class="curator-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+          The Work
+        </h1>
+        <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px; margin: 0 auto;">
+          Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+      </div>
     </section>
 
     <!-- Becoming - Figure Works -->
     <section id="becoming" style="padding: 4rem 2rem; background: var(--curator-bg);">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
-            Becoming
-          </h2>
-          <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
-            Figure Works
-          </p>
-          <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
-            Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:header", %{"section" => "becoming"})}>
+            <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
+              Becoming
+            </h2>
+            <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
+              Figure Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:description", %{"section" => "becoming"})}>
+            <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
+              Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
           <!-- A BECOMING -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:a-becoming", %{"artwork" => "A Becoming", "section" => "becoming"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
@@ -564,7 +632,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Changes -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:changes", %{"artwork" => "Changes", "section" => "becoming"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
@@ -577,7 +645,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- A Becoming Background (Process) -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:a-becoming-process", %{"artwork" => "A Becoming (Process)", "section" => "becoming"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
@@ -590,7 +658,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Exhibition Shot -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:exhibition-view", %{"artwork" => "Exhibition View", "section" => "becoming"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -609,20 +677,24 @@ defmodule OliviaWeb.WorkLive do
     <section id="abundance" style="padding: 4rem 2rem; background: var(--curator-bg-warm);">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
-            Abundance
-          </h2>
-          <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
-            Floral Works
-          </p>
-          <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
-            Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:header", %{"section" => "abundance"})}>
+            <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
+              Abundance
+            </h2>
+            <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
+              Floral Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:description", %{"section" => "abundance"})}>
+            <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
+              Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
           <!-- Ecstatic -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:ecstatic", %{"artwork" => "Ecstatic", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -635,7 +707,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- I Love Three Times (Full) -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times", %{"artwork" => "I Love Three Times", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -648,7 +720,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Marilyn -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn", %{"artwork" => "Marilyn", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
@@ -661,7 +733,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Red Ground Floral -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:red-ground", %{"artwork" => "Untitled (Red Ground)", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
@@ -674,7 +746,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Marilyn Indoor -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn-studio", %{"artwork" => "Marilyn (Studio)", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
@@ -687,7 +759,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- I Love Three Times Alt -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times-detail", %{"artwork" => "I Love Three Times (Detail)", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
@@ -700,7 +772,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- Detail Red Ground -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:red-ground-ii", %{"artwork" => "Untitled (Red Ground II)", "section" => "abundance"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
@@ -719,20 +791,24 @@ defmodule OliviaWeb.WorkLive do
     <section id="shifting" style="padding: 4rem 2rem; background: var(--curator-bg);">
       <div style="max-width: 1200px; margin: 0 auto;">
         <div style="margin-bottom: 3rem;">
-          <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
-            Shifting
-          </h2>
-          <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
-            Landscape Works
-          </p>
-          <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
-            Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
-          </p>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:header", %{"section" => "shifting"})}>
+            <h2 class="curator-heading" style="font-size: 2rem; margin-bottom: 0.5rem;">
+              Shifting
+            </h2>
+            <p class="curator-heading-italic" style="font-size: 1rem; color: var(--curator-text-muted); margin-bottom: 1rem;">
+              Landscape Works
+            </p>
+          </div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:description", %{"section" => "shifting"})}>
+            <p class="curator-body" style="color: var(--curator-text-muted); max-width: 600px;">
+              Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
+            </p>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
           <!-- SHIFTING Diptych -->
-          <div style="grid-column: span 2;">
+          <div style="grid-column: span 2;" {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-diptych", %{"artwork" => "Shifting", "section" => "shifting"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -745,7 +821,7 @@ defmodule OliviaWeb.WorkLive do
           </div>
 
           <!-- SHIFTING Part 1 -->
-          <div>
+          <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-1", %{"artwork" => "Shifting Part 1", "section" => "shifting"})}>
             <div class="curator-artwork-card" style="margin-bottom: 1rem;">
               <img
                 src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
@@ -762,7 +838,7 @@ defmodule OliviaWeb.WorkLive do
 
     <!-- Contact CTA -->
     <section style="padding: 4rem 2rem; text-align: center;">
-      <div style="max-width: 500px; margin: 0 auto;">
+      <div style="max-width: 500px; margin: 0 auto;" {annotation_attrs(@annotations_enabled, "work:contact-cta", %{"section" => "contact"})}>
         <h3 class="curator-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
           Interested in a piece?
         </h3>
@@ -774,6 +850,15 @@ defmodule OliviaWeb.WorkLive do
         </a>
       </div>
     </section>
+
+    <!-- Annotation recorder hook -->
+    <%= if @annotations_enabled do %>
+      <div id="annotation-recorder-container">
+        <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+          <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+        </form>
+      </div>
+    <% end %>
     """
   end
 
@@ -783,7 +868,7 @@ defmodule OliviaWeb.WorkLive do
       <!-- Page Header -->
       <div class="bg-gray-50 py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
-          <div class="mx-auto max-w-2xl text-center">
+          <div class="mx-auto max-w-2xl text-center" {annotation_attrs(@annotations_enabled, "work:header", %{"page" => "work", "theme" => "default"})}>
             <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
               The Work
             </h1>
@@ -798,20 +883,24 @@ defmodule OliviaWeb.WorkLive do
       <section id="becoming" class="py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mb-12">
-            <h2 class="text-3xl font-bold tracking-tight text-gray-900">
-              Becoming
-            </h2>
-            <p class="mt-1 text-lg text-gray-500 italic">
-              Figure Works
-            </p>
-            <p class="mt-4 max-w-2xl text-gray-600 leading-7">
-              Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
-            </p>
+            <div {annotation_attrs(@annotations_enabled, "work:becoming:header", %{"section" => "becoming"})}>
+              <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                Becoming
+              </h2>
+              <p class="mt-1 text-lg text-gray-500 italic">
+                Figure Works
+              </p>
+            </div>
+            <div {annotation_attrs(@annotations_enabled, "work:becoming:description", %{"section" => "becoming"})}>
+              <p class="mt-4 max-w-2xl text-gray-600 leading-7">
+                Expressionistic figure studies that capture the human form in moments of profound introspection. The paintings ask us to witness without intruding—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience.
+              </p>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- A BECOMING -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:a-becoming", %{"artwork" => "A Becoming", "section" => "becoming"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
@@ -824,7 +913,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- Changes -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:changes", %{"artwork" => "Changes", "section" => "becoming"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
@@ -837,7 +926,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- She Lays Down -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:becoming:artwork:she-lays-down", %{"artwork" => "She Lays Down", "section" => "becoming"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
@@ -856,20 +945,24 @@ defmodule OliviaWeb.WorkLive do
       <section id="abundance" class="py-16 sm:py-24 bg-gray-50">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mb-12">
-            <h2 class="text-3xl font-bold tracking-tight text-gray-900">
-              Abundance
-            </h2>
-            <p class="mt-1 text-lg text-gray-500 italic">
-              Floral Works
-            </p>
-            <p class="mt-4 max-w-2xl text-gray-600 leading-7">
-              Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
-            </p>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:header", %{"section" => "abundance"})}>
+              <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                Abundance
+              </h2>
+              <p class="mt-1 text-lg text-gray-500 italic">
+                Floral Works
+              </p>
+            </div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:description", %{"section" => "abundance"})}>
+              <p class="mt-4 max-w-2xl text-gray-600 leading-7">
+                Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion. These works demand attention, project outward, and perform their beauty with confidence—both natural and constructed, genuine and glamorous.
+              </p>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Ecstatic -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:ecstatic", %{"artwork" => "Ecstatic", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
@@ -882,7 +975,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- Marilyn -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:marilyn", %{"artwork" => "Marilyn", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
@@ -895,7 +988,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- I Love Three Times -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times", %{"artwork" => "I Love Three Times", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
@@ -908,7 +1001,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- Red Ground Floral -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:red-ground", %{"artwork" => "Untitled (Red Ground)", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
@@ -921,7 +1014,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- Coral Ground Detail -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:coral-ground", %{"artwork" => "Untitled (Coral Ground)", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_c9cd48fa716cf037.jpg")}
@@ -934,7 +1027,7 @@ defmodule OliviaWeb.WorkLive do
             </div>
 
             <!-- I Love Three Times Detail -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:abundance:artwork:i-love-three-times-detail", %{"artwork" => "I Love Three Times (Detail)", "section" => "abundance"})}>
               <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763542139_3fcf4d765e5a5eeb.jpg")}
@@ -953,20 +1046,24 @@ defmodule OliviaWeb.WorkLive do
       <section id="shifting" class="py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mb-12">
-            <h2 class="text-3xl font-bold tracking-tight text-gray-900">
-              Shifting
-            </h2>
-            <p class="mt-1 text-lg text-gray-500 italic">
-              Landscape Works
-            </p>
-            <p class="mt-4 max-w-2xl text-gray-600 leading-7">
-              Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
-            </p>
+            <div {annotation_attrs(@annotations_enabled, "work:shifting:header", %{"section" => "shifting"})}>
+              <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                Shifting
+              </h2>
+              <p class="mt-1 text-lg text-gray-500 italic">
+                Landscape Works
+              </p>
+            </div>
+            <div {annotation_attrs(@annotations_enabled, "work:shifting:description", %{"section" => "shifting"})}>
+              <p class="mt-4 max-w-2xl text-gray-600 leading-7">
+                Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata. The canvas becomes a physical analogue for the terrain it depicts.
+              </p>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 gap-8">
             <!-- SHIFTING Diptych - Full Width -->
-            <div>
+            <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-diptych", %{"artwork" => "Shifting", "section" => "shifting"})}>
               <div class="aspect-[21/9] overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
@@ -981,7 +1078,7 @@ defmodule OliviaWeb.WorkLive do
             <!-- Individual panels -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <!-- SHIFTING Part 1 -->
-              <div>
+              <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-1", %{"artwork" => "Shifting Part 1", "section" => "shifting"})}>
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
                     src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
@@ -994,7 +1091,7 @@ defmodule OliviaWeb.WorkLive do
               </div>
 
               <!-- SHIFTING Part 2 -->
-              <div>
+              <div {annotation_attrs(@annotations_enabled, "work:shifting:artwork:shifting-part-2", %{"artwork" => "Shifting Part 2", "section" => "shifting"})}>
                 <div class="aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                   <img
                     src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
@@ -1012,7 +1109,7 @@ defmodule OliviaWeb.WorkLive do
 
       <!-- Contact CTA -->
       <div class="bg-gray-900 py-16">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center" {annotation_attrs(@annotations_enabled, "work:contact-cta", %{"section" => "contact"})}>
           <h2 class="text-2xl font-bold text-white">
             Interested in a piece?
           </h2>
@@ -1038,14 +1135,157 @@ defmodule OliviaWeb.WorkLive do
           </.link>
         </div>
       </div>
+
+      <!-- Annotation recorder hook -->
+      <%= if @annotations_enabled do %>
+        <div id="annotation-recorder-container">
+          <form id="annotation-upload-form" phx-change="noop" phx-submit="noop" phx-hook="AudioAnnotation">
+            <.live_file_input upload={@uploads.audio} id="annotation-audio-input" class="hidden" />
+          </form>
+        </div>
+      <% end %>
     </div>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
+    theme = socket.assigns[:theme]
+    page_path = "/work"
+    annotations_enabled = theme == "reviewer"
+
+    socket =
+      socket
+      |> assign(:page_title, "Work")
+      |> assign(:annotations_enabled, annotations_enabled)
+
+    # Add annotation support when enabled
+    socket = if annotations_enabled do
+      existing_notes = Annotations.list_voice_notes(page_path, "reviewer")
+
+      socket
+      |> assign(:annotation_mode, false)
+      |> assign(:current_anchor, nil)
+      |> assign(:page_path, page_path)
+      |> assign(:existing_notes, existing_notes)
+      |> allow_upload(:audio,
+        accept: ~w(audio/*),
+        max_entries: 1,
+        max_file_size: 50_000_000
+      )
+      |> push_event("load_existing_notes", %{
+        notes: Enum.map(existing_notes, &%{
+          id: &1.id,
+          anchor_key: &1.anchor_key,
+          audio_url: &1.audio_url
+        })
+      })
+    else
+      socket
+    end
+
+    {:ok, socket}
+  end
+
+  # Annotation event handlers
+
+  @impl true
+  def handle_event("noop", _, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("toggle_mode", _, socket) do
+    enabled = !socket.assigns.annotation_mode
+
+    {:noreply,
      socket
-     |> assign(:page_title, "Work")}
+     |> assign(:annotation_mode, enabled)
+     |> push_event("annotation_mode_changed", %{enabled: enabled})}
+  end
+
+  @impl true
+  def handle_event("start_annotation", params, socket) do
+    anchor = %{
+      key: params["anchor_key"],
+      meta: params["anchor_meta"] || %{}
+    }
+
+    {:noreply, assign(socket, :current_anchor, anchor)}
+  end
+
+  @impl true
+  def handle_event("save_audio_blob", %{"blob" => blob_data, "mime_type" => mime_type, "filename" => filename}, socket) do
+    require Logger
+    anchor = socket.assigns.current_anchor
+
+    if !anchor do
+      {:noreply, put_flash(socket, :error, "No annotation target selected")}
+    else
+      case Base.decode64(blob_data) do
+        {:ok, binary_data} ->
+          # Write to temp file first (same as SeriesLive.Show)
+          temp_path = Path.join(System.tmp_dir!(), filename)
+
+          case File.write(temp_path, binary_data) do
+            :ok ->
+              # Generate proper S3 key with path prefix
+              clean_filename = Uploads.generate_filename(filename)
+              key = "voice_notes/#{clean_filename}"
+
+              case Uploads.upload_file(temp_path, key, mime_type) do
+                {:ok, url} ->
+                  # Clean up temp file
+                  File.rm(temp_path)
+
+                  case Annotations.create_voice_note(%{
+                    audio_url: url,
+                    anchor_key: anchor.key,
+                    anchor_meta: anchor.meta,
+                    page_path: socket.assigns.page_path,
+                    theme: "reviewer"
+                  }) do
+                    {:ok, voice_note} ->
+                      {:noreply,
+                       socket
+                       |> put_flash(:info, "Annotation saved successfully")
+                       |> assign(:current_anchor, nil)
+                       |> push_event("note_created", %{
+                         id: voice_note.id,
+                         anchor_key: voice_note.anchor_key,
+                         audio_url: voice_note.audio_url
+                       })}
+
+                    {:error, _changeset} ->
+                      {:noreply, put_flash(socket, :error, "Failed to save annotation")}
+                  end
+
+                {:error, _reason} ->
+                  File.rm(temp_path)
+                  {:noreply, put_flash(socket, :error, "Failed to upload audio")}
+              end
+
+            {:error, _reason} ->
+              {:noreply, put_flash(socket, :error, "Failed to write temp file")}
+          end
+
+        :error ->
+          {:noreply, put_flash(socket, :error, "Invalid audio data")}
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("delete_annotation", %{"id" => id}, socket) do
+    voice_note = Annotations.get_voice_note!(id)
+
+    case Annotations.delete_voice_note(voice_note) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Annotation deleted")
+         |> push_event("annotation_deleted", %{id: id})}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete annotation")}
+    end
   end
 end

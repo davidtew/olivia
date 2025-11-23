@@ -225,9 +225,9 @@ defmodule OliviaWeb.ProcessLive do
       <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24">
         <div
           class="text-center mb-16"
-          {annotation_attrs(@annotations_enabled, "about:header", %{"page" => "about"})}
+          {annotation_attrs(@annotations_enabled, "process:header", %{"page" => "process"})}
         >
-          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">About</h1>
+          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Process</h1>
           <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
             Behind the finished work—the testing, the iterations, the domestic rituals of making.
           </p>
@@ -235,7 +235,7 @@ defmodule OliviaWeb.ProcessLive do
 
         <div
           class="prose prose-lg prose-gray mx-auto"
-          {annotation_attrs(@annotations_enabled, "about:content", %{"page" => "about"})}
+          {annotation_attrs(@annotations_enabled, "process:content", %{"page" => "process"})}
         >
           <p>
             Working primarily in oil, Olivia builds surfaces through heavy impasto that gives form weight and permanence.
