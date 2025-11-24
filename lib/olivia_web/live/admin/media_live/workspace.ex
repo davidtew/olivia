@@ -38,6 +38,13 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
           </div>
           <div class="flex gap-2">
             <a
+              href="/admin/media/insights"
+              class="inline-flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500"
+            >
+              <.icon name="hero-light-bulb" class="w-4 h-4 mr-2" />
+              Analysis Insights
+            </a>
+            <a
               href="/admin/media/spatial"
               class="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
@@ -82,6 +89,19 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
               <option value="approved" selected={@status_filter == "approved"}>Approved</option>
               <option value="archived" selected={@status_filter == "archived"}>Archived</option>
             </select>
+
+            <form phx-change="filter_analysis">
+              <select
+                name="analysis_filter"
+                class="rounded-md border-gray-300 text-sm"
+              >
+                <option value="all" selected={@analysis_filter == "all"}>All Images</option>
+                <option value="analysed" selected={@analysis_filter == "analysed"}>Analysed</option>
+                <option value="not_analysed" selected={@analysis_filter == "not_analysed"}>
+                  Not Analysed
+                </option>
+              </select>
+            </form>
 
             <select name="sort_by" phx-change="sort" class="rounded-md border-gray-300 text-sm">
               <option value="newest" selected={@sort_by == "newest"}>Newest First</option>
@@ -592,6 +612,7 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
      |> assign(:page_title, "Media Workspace")
      |> assign(:search_query, "")
      |> assign(:status_filter, "all")
+     |> assign(:analysis_filter, "all")
      |> assign(:sort_by, "newest")
      |> assign(:page, 1)
      |> assign(:per_page, 50)
@@ -629,6 +650,15 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
     {:noreply,
      socket
      |> assign(:status_filter, status)
+     |> assign(:page, 1)
+     |> load_media()}
+  end
+
+  @impl true
+  def handle_event("filter_analysis", %{"analysis_filter" => analysis_filter}, socket) do
+    {:noreply,
+     socket
+     |> assign(:analysis_filter, analysis_filter)
      |> assign(:page, 1)
      |> load_media()}
   end
@@ -967,6 +997,13 @@ defmodule OliviaWeb.Admin.MediaLive.Workspace do
     opts =
       if assigns.status_filter != "all" do
         Keyword.put(opts, :status, assigns.status_filter)
+      else
+        opts
+      end
+
+    opts =
+      if assigns.analysis_filter != "all" do
+        Keyword.put(opts, :analysis_filter, assigns.analysis_filter)
       else
         opts
       end

@@ -24,6 +24,7 @@ defmodule Olivia.Media do
     query
     |> maybe_filter_by_status(opts[:status])
     |> maybe_filter_by_tags(opts[:tags])
+    |> maybe_filter_by_analysis(opts[:analysis_filter])
     |> apply_ordering(opts[:order_by])
     |> apply_pagination(opts[:limit], opts[:offset])
     |> maybe_preload(opts[:preload])
@@ -111,6 +112,19 @@ defmodule Olivia.Media do
   defp maybe_filter_by_tags(query, tags) when is_list(tags) do
     from m in query,
       where: fragment("? && ?", m.tags, ^tags)
+  end
+
+  defp maybe_filter_by_analysis(query, nil), do: query
+  defp maybe_filter_by_analysis(query, "all"), do: query
+  defp maybe_filter_by_analysis(query, "analysed") do
+    from m in query,
+      join: a in assoc(m, :analyses),
+      distinct: m.id
+  end
+  defp maybe_filter_by_analysis(query, "not_analysed") do
+    from m in query,
+      left_join: a in assoc(m, :analyses),
+      where: is_nil(a.id)
   end
 
   defp apply_ordering(query, nil), do: from(m in query, order_by: [desc: m.inserted_at])
@@ -364,5 +378,267 @@ defmodule Olivia.Media do
     # Use Tidewave Claude by default (no API key required)
     # Fall back to regular Claude if Tidewave not available
     Application.get_env(:olivia, :vision_analyzer, Olivia.Media.VisionAnalyzers.TidewaveClaude)
+  end
+
+  # Analysis search and aggregation functions
+
+  @doc """
+  Searches media by artistic movements/connections mentioned in analyses.
+  Returns media files with analyses that reference the given artist or movement.
+  """
+  def search_by_artistic_connection(search_term) when is_binary(search_term) do
+    search_pattern = "%#{String.downcase(search_term)}%"
+
+    from(m in MediaFile,
+      join: a in assoc(m, :analyses),
+      where:
+        fragment(
+          "EXISTS (SELECT 1 FROM jsonb_array_elements(?) elem WHERE lower(elem->>'artist_or_movement') LIKE ? OR lower(elem::text) LIKE ?)",
+          a.llm_response["artistic_connections"],
+          ^search_pattern,
+          ^search_pattern
+        ),
+      distinct: m.id,
+      order_by: [desc: m.inserted_at],
+      preload: [:analyses]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Searches media by contextual frameworks mentioned in analyses.
+  E.g., "Portfolio Centrepiece", "Exhibition", "Series"
+  """
+  def search_by_context(search_term) when is_binary(search_term) do
+    search_pattern = "%#{String.downcase(search_term)}%"
+
+    from(m in MediaFile,
+      join: a in assoc(m, :analyses),
+      where:
+        fragment(
+          "EXISTS (SELECT 1 FROM jsonb_array_elements(?) elem WHERE lower(elem->>'title') LIKE ? OR lower(elem->>'name') LIKE ?)",
+          a.llm_response["contexts"],
+          ^search_pattern,
+          ^search_pattern
+        ),
+      distinct: m.id,
+      order_by: [desc: m.inserted_at],
+      preload: [:analyses]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Finds all works identified as part of series.
+  Returns a map grouped by series relationships.
+  """
+  def list_series_works do
+    media_with_series_context =
+      from(m in MediaFile,
+        join: a in assoc(m, :analyses),
+        where:
+          fragment(
+            "EXISTS (SELECT 1 FROM jsonb_array_elements(?) elem WHERE lower(elem->>'title') LIKE '%series%' OR lower(elem->>'title') LIKE '%companion%' OR lower(elem->>'title') LIKE '%diptych%' OR lower(elem->>'title') LIKE '%triptych%' OR lower(elem->>'name') LIKE '%series%')",
+            a.llm_response["contexts"]
+          ) or
+            fragment("lower(?) LIKE '%series%' OR lower(?) LIKE '%set%' OR lower(?) LIKE '%suite%'",
+              a.user_context,
+              a.user_context,
+              a.user_context
+            ),
+        distinct: m.id,
+        order_by: [desc: m.inserted_at],
+        preload: [:analyses]
+      )
+      |> Repo.all()
+
+    # Group by detected series names
+    media_with_series_context
+    |> Enum.group_by(fn media ->
+      # Try to extract series name from filename or context
+      cond do
+        String.contains?(media.filename, "SHIFTING") -> "SHIFTING Series"
+        String.contains?(media.filename, "Marilyn") -> "Marilyn Series"
+        String.contains?(media.filename, "IN MOTION") -> "IN MOTION Series"
+        String.contains?(media.filename, "Mum") -> "Memorial Series"
+        String.contains?(media.filename, "PXL_20250411") -> "Red Ground Florals"
+        true -> extract_series_name_from_analyses(media)
+      end
+    end)
+  end
+
+  defp extract_series_name_from_analyses(media) do
+    latest_analysis = List.first(media.analyses || [])
+
+    if latest_analysis && latest_analysis.user_context do
+      latest_analysis.user_context
+      |> String.slice(0..50)
+    else
+      "Untitled Series"
+    end
+  end
+
+  @doc """
+  Finds works by thematic content (memorial, garden, travel, etc.)
+  """
+  def search_by_theme(theme) when is_binary(theme) do
+    search_pattern = "%#{String.downcase(theme)}%"
+
+    from(m in MediaFile,
+      join: a in assoc(m, :analyses),
+      where:
+        fragment("lower(?->>'interpretation') LIKE ?", a.llm_response, ^search_pattern),
+      distinct: m.id,
+      order_by: [desc: m.inserted_at],
+      preload: [:analyses]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets provocations (critical questions) for a media file.
+  Useful for studio practice and reflection.
+  """
+  def get_provocations(media_id) do
+    latest_analysis = get_latest_analysis(media_id)
+
+    if latest_analysis do
+      provocations = latest_analysis.llm_response["provocations"] || []
+
+      provocations
+      |> Enum.map(fn prov ->
+        case prov do
+          %{"question" => q} -> q
+          q when is_binary(q) -> q
+          _ -> nil
+        end
+      end)
+      |> Enum.filter(& &1)
+    else
+      []
+    end
+  end
+
+  @doc """
+  Generates aggregated statistics about all analyses.
+  """
+  def get_analysis_stats do
+    analyses = Repo.all(from a in Analysis, preload: [:media_file])
+
+    %{
+      total_analyses: length(analyses),
+      total_media_analyzed: analyses |> Enum.map(& &1.media_file_id) |> Enum.uniq() |> length(),
+      top_movements: get_top_artistic_connections(5),
+      top_contexts: get_top_contexts(5),
+      themes: %{
+        memorial: length(search_by_theme("memorial")),
+        garden: length(search_by_theme("garden")),
+        travel: length(search_by_theme("travel")),
+        portrait: length(search_by_theme("portrait"))
+      }
+    }
+  end
+
+  @doc """
+  Gets most frequently mentioned artistic connections across all analyses.
+  """
+  def get_top_artistic_connections(limit \\ 10) do
+    query = """
+    SELECT
+      COALESCE(elem->>'artist_or_movement', elem::text) as connection,
+      COUNT(*) as frequency
+    FROM media_analyses,
+         jsonb_array_elements(llm_response->'artistic_connections') elem
+    WHERE llm_response->'artistic_connections' IS NOT NULL
+    GROUP BY COALESCE(elem->>'artist_or_movement', elem::text)
+    ORDER BY frequency DESC
+    LIMIT $1
+    """
+
+    case Repo.query(query, [limit]) do
+      {:ok, %{rows: rows}} ->
+        Enum.map(rows, fn [connection, frequency] ->
+          %{connection: connection, frequency: frequency}
+        end)
+
+      _ ->
+        []
+    end
+  end
+
+  @doc """
+  Gets most frequently used contextual frameworks across all analyses.
+  """
+  def get_top_contexts(limit \\ 10) do
+    query = """
+    SELECT
+      COALESCE(elem->>'title', elem->>'name', 'Unknown') as context,
+      COUNT(*) as frequency
+    FROM media_analyses,
+         jsonb_array_elements(llm_response->'contexts') elem
+    WHERE llm_response->'contexts' IS NOT NULL
+    GROUP BY COALESCE(elem->>'title', elem->>'name', 'Unknown')
+    ORDER BY frequency DESC
+    LIMIT $1
+    """
+
+    case Repo.query(query, [limit]) do
+      {:ok, %{rows: rows}} ->
+        Enum.map(rows, fn [context, frequency] ->
+          %{context: context, frequency: frequency}
+        end)
+
+      _ ->
+        []
+    end
+  end
+
+  @doc """
+  Exports exhibition-ready text for a media file.
+  Returns formatted text suitable for gallery walls, catalogues, or website.
+  """
+  def export_exhibition_text(media_id, format \\ :long) do
+    media = get_media!(media_id) |> Repo.preload(:analyses)
+    latest_analysis = get_latest_analysis(media_id)
+
+    if latest_analysis do
+      interpretation = latest_analysis.llm_response["interpretation"] || ""
+      technical = latest_analysis.llm_response["technical_details"] || %{}
+      classification = latest_analysis.llm_response["classification"] || %{}
+
+      case format do
+        :short ->
+          # 100-150 words for wall labels
+          interpretation
+          |> String.split(".")
+          |> Enum.take(3)
+          |> Enum.join(". ")
+          |> Kernel.<>(".")
+
+        :medium ->
+          # First paragraph for web/catalogue
+          interpretation
+          |> String.split("\n\n")
+          |> List.first()
+
+        :long ->
+          # Full interpretation
+          interpretation
+
+        :technical ->
+          # Technical details only
+          format_technical_details(technical, classification)
+      end
+    else
+      nil
+    end
+  end
+
+  defp format_technical_details(technical, classification) do
+    medium = technical["medium"] || classification["medium"] || "Unknown"
+    dimensions = technical["dimensions"] || "Dimensions TBC"
+    year = technical["year"] || "2024"
+
+    "#{medium}\n#{dimensions}\n#{year}"
   end
 end

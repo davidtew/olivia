@@ -97,6 +97,7 @@ defmodule OliviaWeb.Router do
       live "/enquiries/:id", EnquiryLive.Show, :show
 
       live "/media", MediaLive.Workspace, :index
+      live "/media/insights", MediaLive.Insights, :index
       live "/media/spatial", MediaLive.Spatial, :index
       live "/media/:id/edit", MediaLive.Edit, :edit
 
