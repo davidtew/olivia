@@ -13,6 +13,7 @@ defmodule OliviaWeb.HomeLive do
       assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       true -> render_default(assigns)
     end
   end
@@ -597,6 +598,254 @@ defmodule OliviaWeb.HomeLive do
           style="display: inline-block; padding: 0.75rem 2rem; border: 1px solid #faf8f5; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; color: #faf8f5; transition: all 0.3s;"
         >
           Contact
+        </a>
+      </div>
+    </section>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <section class="atelier-section" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 2rem; position: relative;">
+      <div class="atelier-glow" style="max-width: 600px; width: 100%; margin-bottom: 4rem;">
+        <div class="atelier-artwork-frame" style="border-radius: 4px; overflow: hidden;">
+          <img
+            src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+            alt="A BECOMING - Expressionist figure painting emerging from gestural brushwork"
+            style="width: 100%; height: auto; display: block;"
+          />
+        </div>
+      </div>
+
+      <div style="text-align: center; max-width: 700px; position: relative; z-index: 2;">
+        <p class="atelier-heading-accent" style="font-size: 1.25rem; margin-bottom: 0.5rem; letter-spacing: 0.1em;">
+          Welcome to the
+        </p>
+        <h1 class="atelier-heading" style="font-size: 4rem; margin-bottom: 1rem; color: var(--atelier-text-light); line-height: 1;">
+          Studio
+        </h1>
+        <p class="atelier-body" style="font-size: 1.125rem; color: var(--atelier-text-muted); line-height: 1.8; margin-bottom: 2.5rem;">
+          Contemporary expressionist work exploring transformation, vulnerability, and the emergence of form from paint itself. Bold colour, gestural mark-making, heavy impasto surfaces.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/series" class="atelier-button atelier-button-solid">
+            Explore Collections
+          </a>
+          <a href="/about" class="atelier-button">
+            About the Artist
+          </a>
+        </div>
+      </div>
+
+      <div style="position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); opacity: 0.4;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--atelier-ochre)" stroke-width="1">
+          <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 8rem 2rem; background: linear-gradient(180deg, transparent 0%, rgba(36, 43, 61, 0.4) 100%);">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 5rem;">
+          <p class="atelier-heading-accent" style="font-size: 1.125rem; margin-bottom: 0.5rem;">Discover</p>
+          <h2 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+            The Collection
+          </h2>
+          <div class="atelier-divider"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;">
+          <a href="/series/becoming" style="text-decoration: none; display: block;">
+            <div class="atelier-card" style="padding: 0; border-radius: 8px; overflow: hidden;">
+              <div class="atelier-artwork-frame" style="aspect-ratio: 4/5;">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
+                  alt="Changes - expressionistic figure study"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
+              </div>
+              <div style="padding: 1.5rem 1.75rem; position: relative; z-index: 2;">
+                <h3 class="atelier-heading" style="font-size: 1.5rem; color: var(--atelier-text-light); margin-bottom: 0.5rem;">
+                  Becoming
+                </h3>
+                <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted);">
+                  Figure works exploring emergence and transformation
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/series/abundance" style="text-decoration: none; display: block;">
+            <div class="atelier-card" style="padding: 0; border-radius: 8px; overflow: hidden;">
+              <div class="atelier-artwork-frame" style="aspect-ratio: 4/5;">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
+                  alt="Ecstatic - floral still life in Georgian setting"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
+              </div>
+              <div style="padding: 1.5rem 1.75rem; position: relative; z-index: 2;">
+                <h3 class="atelier-heading" style="font-size: 1.5rem; color: var(--atelier-text-light); margin-bottom: 0.5rem;">
+                  Abundance
+                </h3>
+                <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted);">
+                  Floral celebrations of colour and joy
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/series/shifting" style="text-decoration: none; display: block;">
+            <div class="atelier-card" style="padding: 0; border-radius: 8px; overflow: hidden;">
+              <div class="atelier-artwork-frame" style="aspect-ratio: 4/5;">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
+                  alt="SHIFTING - expressionist landscape diptych"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
+              </div>
+              <div style="padding: 1.5rem 1.75rem; position: relative; z-index: 2;">
+                <h3 class="atelier-heading" style="font-size: 1.5rem; color: var(--atelier-text-light); margin-bottom: 0.5rem;">
+                  Shifting
+                </h3>
+                <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted);">
+                  Landscapes in perpetual transformation
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 8rem 2rem;">
+      <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <blockquote class="atelier-quote" style="text-align: left; margin-bottom: 3rem;">
+          Each painting asks us to witness without intruding—the universal experience of weathering change, of the body as vessel for emotional experience.
+        </blockquote>
+        <div class="atelier-divider"></div>
+        <p class="atelier-body" style="margin-top: 3rem; color: var(--atelier-text-muted); max-width: 600px; margin-left: auto; margin-right: auto;">
+          Working primarily in oil, Olivia builds surfaces through heavy impasto that gives form weight and permanence. Her gestural brushwork refuses prettiness—each stroke visible, urgent, yet the cumulative effect is deeply tender.
+        </p>
+        <div style="margin-top: 2.5rem;">
+          <a href="/about" class="atelier-button">
+            About the Artist
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 6rem 2rem; background: rgba(36, 43, 61, 0.5);">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem;">
+          <h2 class="atelier-heading" style="font-size: 1.75rem;">
+            Selected Works
+          </h2>
+          <a href="/series" style="color: var(--atelier-ochre); text-decoration: none; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem;">
+            View All
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+          <div class="atelier-artwork-frame" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
+              alt="She Lays Down - reclining figure in warm flesh tones"
+              style="width: 100%; height: 100%; object-fit: cover;"
+            />
+          </div>
+          <div class="atelier-artwork-frame" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
+              alt="Ecstatic - floral still life above Georgian fireplace"
+              style="width: 100%; height: 100%; object-fit: cover;"
+            />
+          </div>
+          <div class="atelier-artwork-frame" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
+              alt="Shifting - expressionist landscape diptych"
+              style="width: 100%; height: 100%; object-fit: cover;"
+            />
+          </div>
+          <div class="atelier-artwork-frame" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+              alt="A Becoming - figure emerging from gestural brushwork"
+              style="width: 100%; height: 100%; object-fit: cover;"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 6rem 2rem;">
+      <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+        <div>
+          <p class="atelier-heading-accent" style="font-size: 1rem; margin-bottom: 0.5rem;">For Professionals</p>
+          <h2 class="atelier-heading" style="font-size: 2rem; margin-bottom: 1.5rem;">
+            Hotels & Designers
+          </h2>
+          <p class="atelier-body" style="font-size: 1rem; color: var(--atelier-text-muted); margin-bottom: 1.5rem;">
+            Olivia works with interior designers, hotels, and private collectors on commissions and art consultancy. Her paintings bring warmth, energy, and emotional depth to residential and hospitality spaces.
+          </p>
+          <a href="/hotels-designers" style="color: var(--atelier-ochre); text-decoration: none; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--atelier-ochre); padding-bottom: 0.25rem;">
+            Learn More
+          </a>
+        </div>
+        <div class="atelier-artwork-frame" style="border-radius: 8px; overflow: hidden;">
+          <img
+            src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
+            alt="I Love Three Times triptych installed in domestic interior"
+            style="width: 100%; display: block;"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 6rem 2rem; background: rgba(36, 43, 61, 0.3);">
+      <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+        <p class="atelier-heading-accent" style="font-size: 1rem; margin-bottom: 0.5rem;">Stay Connected</p>
+        <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 1rem;">
+          Studio Updates
+        </h2>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 2rem;">
+          Subscribe for news about new work, exhibitions, and studio updates.
+        </p>
+        <form phx-submit="subscribe" style="display: flex; gap: 0.75rem; flex-direction: column;">
+          <input
+            id="email-address"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            class="atelier-input"
+            placeholder="Your email address"
+            style="text-align: center;"
+          />
+          <button
+            type="submit"
+            class="atelier-button atelier-button-solid"
+            style="width: 100%;"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="atelier-section" style="padding: 5rem 2rem; background: linear-gradient(135deg, var(--atelier-ochre) 0%, #b8903d 100%); text-align: center;">
+      <div style="max-width: 600px; margin: 0 auto;">
+        <h3 class="atelier-heading" style="font-size: 2rem; color: var(--atelier-midnight); margin-bottom: 1rem;">
+          Interested in a piece?
+        </h3>
+        <p style="color: rgba(26, 31, 46, 0.7); margin-bottom: 2rem; font-size: 1.125rem;">
+          Get in touch for availability, pricing, and commissions.
+        </p>
+        <a href="/contact" style="display: inline-block; padding: 1rem 2.5rem; border: 2px solid var(--atelier-midnight); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; color: var(--atelier-midnight); transition: all 0.3s; background: transparent;">
+          Get in Touch
         </a>
       </div>
     </section>

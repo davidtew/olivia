@@ -17,12 +17,14 @@ defmodule OliviaWeb.SeriesLive.Show do
       assigns[:theme] == "reviewer" -> "default"
       assigns[:theme] == "cottage" -> "cottage"
       assigns[:theme] == "gallery" -> "gallery"
+      assigns[:theme] == "atelier" -> "atelier"
       true -> "default"
     end
 
     case visual_theme do
       "cottage" -> render_cottage(assigns)
       "gallery" -> render_gallery(assigns)
+      "atelier" -> render_atelier(assigns)
       _ -> render_default(assigns)
     end
   end
@@ -102,7 +104,21 @@ defmodule OliviaWeb.SeriesLive.Show do
             Works in this Collection
           </h2>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+
+        <!-- Empty state for collections in progress -->
+        <div :if={length(@artworks) == 0} style="text-align: center; padding: 3rem 2rem;">
+          <div style="display: inline-block; padding: 2.5rem 3rem; background: var(--cottage-beige); border-radius: 8px; border: 1px solid var(--cottage-taupe);">
+            <p class="cottage-heading" style="font-size: 1.25rem; color: var(--cottage-wisteria); margin-bottom: 0.5rem;">In the Studio</p>
+            <p class="cottage-body" style="color: var(--cottage-text-medium); margin-bottom: 1rem;">
+              New paintings are currently in progress for this collection.
+            </p>
+            <p class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">
+              Check back soon to see the finished works.
+            </p>
+          </div>
+        </div>
+
+        <div :if={length(@artworks) > 0} style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
           <div
             :for={artwork <- @artworks}
             id={"artwork-#{artwork.slug}"}
@@ -123,9 +139,10 @@ defmodule OliviaWeb.SeriesLive.Show do
               </div>
               <div
                 :if={!artwork.image_url}
-                style="aspect-ratio: 4/5; background: var(--cottage-beige); display: flex; align-items: center; justify-content: center;"
+                style="aspect-ratio: 4/5; background: var(--cottage-beige); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;"
               >
-                <span class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">No image</span>
+                <span class="cottage-heading" style="font-size: 1rem; color: var(--cottage-wisteria);">In Progress</span>
+                <span class="cottage-body" style="font-size: 0.75rem; color: var(--cottage-text-light);">Image coming soon</span>
               </div>
             </.link>
             <div style="padding: 1.5rem; text-align: center;">
@@ -212,7 +229,21 @@ defmodule OliviaWeb.SeriesLive.Show do
       <h2 class="gallery-heading" style="font-size: 2rem; color: #2c2416; text-align: center; margin-bottom: 3rem;">
         Works in this Collection
       </h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 3rem; max-width: 80rem; margin: 0 auto;">
+
+      <!-- Empty state for collections in progress -->
+      <div :if={length(@artworks) == 0} style="text-align: center; padding: 3rem 2rem;">
+        <div style="display: inline-block; padding: 2.5rem 3rem; background: #fafafa; border-radius: 8px; border: 1px solid #e8e6e3;">
+          <p class="gallery-script" style="font-size: 1.25rem; color: #8b7355; margin-bottom: 0.5rem;">In the Studio</p>
+          <p style="color: #6b5d54; margin-bottom: 1rem;">
+            New paintings are currently in progress for this collection.
+          </p>
+          <p style="font-size: 0.875rem; color: #9a8a7a;">
+            Check back soon to see the finished works.
+          </p>
+        </div>
+      </div>
+
+      <div :if={length(@artworks) > 0} style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 3rem; max-width: 80rem; margin: 0 auto;">
         <div
           :for={artwork <- @artworks}
           id={"artwork-#{artwork.slug}"}
@@ -234,9 +265,10 @@ defmodule OliviaWeb.SeriesLive.Show do
             <div
               :if={!artwork.image_url}
               class="elegant-border"
-              style="aspect-ratio: 4/5; background: #fafafa; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;"
+              style="aspect-ratio: 4/5; background: #fafafa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;"
             >
-              <span style="font-size: 0.875rem; color: #999;">No image</span>
+              <span class="gallery-script" style="font-size: 1rem; color: #8b7355;">In Progress</span>
+              <span style="font-size: 0.75rem; color: #999;">Image coming soon</span>
             </div>
           </.link>
           <div style="text-align: center;">
@@ -299,6 +331,122 @@ defmodule OliviaWeb.SeriesLive.Show do
         <button type="submit" style="width: 100%; padding: 8px; background: #4F46E5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">💬 Save Note</button>
       </form>
     <% end %>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <div class="atelier-section" style="max-width: 1200px; margin: 0 auto; padding: 4rem 2rem;">
+      <!-- Hero -->
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <p class="atelier-heading-accent" style="font-size: 1rem; margin-bottom: 0.5rem;">Collection</p>
+        <h1 class="atelier-heading" style="font-size: 3rem; margin-bottom: 1rem; color: var(--atelier-text-light);">
+          <%= @series.title %>
+        </h1>
+        <p class="atelier-body" style="font-size: 1.25rem; color: var(--atelier-text-muted); max-width: 48rem; margin: 0 auto;">
+          <%= @series.summary %>
+        </p>
+        <div class="atelier-divider"></div>
+      </div>
+
+      <!-- Description -->
+      <div :if={@series.body_md} style="max-width: 48rem; margin: 0 auto; margin-bottom: 4rem;">
+        <div
+          id={"series-#{@slug}-description"}
+          class="atelier-body"
+          style="font-size: 1.125rem; line-height: 1.8; color: var(--atelier-silver);"
+        >
+          <%= raw(Earmark.as_html!(@series.body_md)) %>
+        </div>
+      </div>
+
+      <!-- Artworks Grid -->
+      <div style="margin-bottom: 4rem;">
+        <h2 class="atelier-heading" style="font-size: 1.5rem; color: var(--atelier-text-light); text-align: center; margin-bottom: 3rem;">
+          Works in this Collection
+        </h2>
+
+        <!-- Empty state for collections in progress -->
+        <div :if={length(@artworks) == 0} style="text-align: center; padding: 4rem 2rem;">
+          <div class="atelier-glass-card" style="display: inline-block; padding: 3rem 4rem;">
+            <p class="atelier-heading-accent" style="font-size: 1.5rem; margin-bottom: 0.5rem;">In the Studio</p>
+            <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 1.5rem;">
+              New paintings are currently in progress for this collection.
+            </p>
+            <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-dim);">
+              Check back soon to see the finished works.
+            </p>
+          </div>
+        </div>
+
+        <div :if={length(@artworks) > 0} style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem;">
+          <div
+            :for={artwork <- @artworks}
+            id={"artwork-#{artwork.slug}"}
+          >
+            <.link navigate={~p"/artworks/#{artwork.slug}"} style="display: block; text-decoration: none;">
+              <div class="atelier-card" style="padding: 0; border-radius: 8px; overflow: hidden;">
+                <div :if={artwork.image_url} class="atelier-artwork-frame" style="aspect-ratio: 4/5;">
+                  <img
+                    src={Olivia.Content.Artwork.resolved_image_url(artwork)}
+                    alt={artwork.title}
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                  />
+                </div>
+                <div
+                  :if={!artwork.image_url}
+                  style="aspect-ratio: 4/5; background: linear-gradient(135deg, var(--atelier-slate) 0%, var(--atelier-deep) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;"
+                >
+                  <span class="atelier-heading-accent" style="font-size: 1rem;">In Progress</span>
+                  <span style="font-size: 0.75rem; color: var(--atelier-text-muted);">Image coming soon</span>
+                </div>
+                <div style="padding: 1.25rem 1.5rem; position: relative; z-index: 2;">
+                  <h3 class="atelier-heading" style="font-size: 1.125rem; color: var(--atelier-text-light); margin-bottom: 0.5rem;">
+                    <%= artwork.title %>
+                  </h3>
+                  <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted); margin: 0;">
+                    <%= artwork.year %> · <%= artwork.medium %>
+                  </p>
+                  <p :if={artwork.dimensions} class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-dim); margin-top: 0.25rem;">
+                    <%= artwork.dimensions %>
+                  </p>
+                  <div style="margin-top: 0.75rem;">
+                    <span
+                      :if={artwork.status == "available"}
+                      style="display: inline-block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-viridian); padding: 0.25rem 0.625rem; border: 1px solid var(--atelier-viridian); border-radius: 4px;"
+                    >
+                      Available
+                    </span>
+                    <span
+                      :if={artwork.status == "sold"}
+                      style="display: inline-block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-vermillion); padding: 0.25rem 0.625rem; border: 1px solid var(--atelier-vermillion); border-radius: 4px;"
+                    >
+                      Sold
+                    </span>
+                    <span
+                      :if={artwork.status == "reserved"}
+                      style="display: inline-block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); padding: 0.25rem 0.625rem; border: 1px solid var(--atelier-ochre); border-radius: 4px;"
+                    >
+                      Reserved
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </.link>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back link -->
+      <div style="text-align: center; padding: 2rem 0;">
+        <.link navigate={~p"/series"} style="color: var(--atelier-ochre); text-decoration: none; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 0.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back to all collections
+        </.link>
+      </div>
+    </div>
     """
   end
 

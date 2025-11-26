@@ -12,6 +12,7 @@ defmodule OliviaWeb.WorkLive do
       assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       true -> render_default(assigns)
     end
   end
@@ -859,6 +860,209 @@ defmodule OliviaWeb.WorkLive do
         </form>
       </div>
     <% end %>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <div style="min-height: 100vh; padding: 4rem 1rem;">
+      <!-- Page Header -->
+      <section style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+          The Work
+        </h1>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px; margin: 0 auto;">
+          Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+      </section>
+
+      <!-- Becoming - Figure Works -->
+      <section id="becoming" style="max-width: 1200px; margin: 0 auto 4rem;">
+        <div style="margin-bottom: 2rem;">
+          <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            Becoming
+          </h2>
+          <p class="atelier-script" style="font-size: 1rem; color: var(--atelier-ochre); margin-bottom: 1rem;">
+            Figure Works
+          </p>
+          <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px;">
+            Expressionistic figure studies that capture the human form in moments of profound introspection.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+              alt="A Becoming - Expressionist figure painting"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">A Becoming</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_22309219aa56fb95.jpg")}
+              alt="Changes - expressionistic figure study"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Changes</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_a84d8a1756abb807.JPG")}
+              alt="She Lays Down - reclining figure"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">She Lays Down</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Abundance - Florals -->
+      <section id="abundance" style="max-width: 1200px; margin: 0 auto 4rem;">
+        <div style="margin-bottom: 2rem;">
+          <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            Abundance
+          </h2>
+          <p class="atelier-script" style="font-size: 1rem; color: var(--atelier-ochre); margin-bottom: 1rem;">
+            Floral Works
+          </p>
+          <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px;">
+            Exuberant floral still lifes that celebrate colour, pattern, and the tension between order and organic profusion.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
+              alt="Marilyn - golden floral"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Marilyn</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_f6add8cef5e11b3a.jpg")}
+              alt="Ecstatic - floral still life"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Ecstatic</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_62762e1c677b1d02.jpg")}
+              alt="Floral with red ground"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Untitled (Red Ground)</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_5a2e8259c48f9c2c.JPG")}
+              alt="I Love Three Times - triptych"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">I Love Three Times</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas, triptych</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shifting - Landscapes -->
+      <section id="shifting" style="max-width: 1200px; margin: 0 auto 4rem;">
+        <div style="margin-bottom: 2rem;">
+          <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            Shifting
+          </h2>
+          <p class="atelier-script" style="font-size: 1rem; color: var(--atelier-ochre); margin-bottom: 1rem;">
+            Landscape Works
+          </p>
+          <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px;">
+            Landscapes in perpetual transformation. The impasto application is extraordinary in its physicality.
+          </p>
+        </div>
+
+        <!-- Diptych - Full Width -->
+        <div class="atelier-glass-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+          <img
+            src={resolve_asset_url("/uploads/media/1763483281_14d2d6ab6485926c.jpg")}
+            alt="Shifting - expressionist landscape diptych"
+            style="width: 100%; display: block;"
+          />
+          <div style="padding: 1rem;">
+            <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Shifting</h3>
+            <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas, diptych</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_ebd1913da6ebeabd.jpg")}
+              alt="Shifting Part 1"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Shifting Part 1</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763483281_a7b4acd750ac636c.jpg")}
+              alt="Shifting Part 2"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1rem; margin-bottom: 0.25rem;">Shifting Part 2</h3>
+              <p class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted); margin: 0;">Oil on canvas</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact CTA -->
+      <section style="max-width: 500px; margin: 0 auto; text-align: center;">
+        <div class="atelier-glass-card" style="padding: 2rem;">
+          <h3 class="atelier-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+            Interested in a piece?
+          </h3>
+          <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 2rem;">
+            Contact for availability, pricing, and commission enquiries.
+          </p>
+          <a href="/contact" class="atelier-button" style="text-decoration: none;">
+            Enquire
+          </a>
+        </div>
+      </section>
+    </div>
     """
   end
 

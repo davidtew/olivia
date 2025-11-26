@@ -12,6 +12,7 @@ defmodule OliviaWeb.SeriesLive.Index do
     cond do
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       true -> render_default(assigns)
     end
   end
@@ -44,17 +45,20 @@ defmodule OliviaWeb.SeriesLive.Index do
             </div>
             <div
               :if={!Olivia.Content.Series.resolved_cover_image_url(series)}
-              style="aspect-ratio: 16/9; background: var(--cottage-beige); display: flex; align-items: center; justify-content: center;"
+              style="aspect-ratio: 16/9; background: var(--cottage-beige); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;"
             >
-              <span class="cottage-body" style="font-size: 0.875rem; color: var(--cottage-text-light);">No image</span>
+              <span class="cottage-heading" style="font-size: 1.125rem; color: var(--cottage-wisteria);">In the Studio</span>
+              <span class="cottage-body" style="font-size: 0.75rem; color: var(--cottage-text-light);">Paintings in progress...</span>
             </div>
           </.link>
           <div style="padding: 2rem;">
             <div style="margin-bottom: 0.75rem;">
               <span class="cottage-body" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cottage-text-light);">
-                <%= length(series.artworks) %> <%= if length(series.artworks) == 1,
-                  do: "artwork",
-                  else: "artworks" %>
+                <%= if length(series.artworks) == 0 do %>
+                  Coming soon
+                <% else %>
+                  <%= length(series.artworks) %> <%= if length(series.artworks) == 1, do: "artwork", else: "artworks" %>
+                <% end %>
               </span>
             </div>
             <h3 class="cottage-heading" style="font-size: 1.75rem; margin-bottom: 0.75rem;">
@@ -106,17 +110,20 @@ defmodule OliviaWeb.SeriesLive.Index do
             <div
               :if={!Olivia.Content.Series.resolved_cover_image_url(series)}
               class="elegant-border"
-              style="aspect-ratio: 16/9; background: #fafafa; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;"
+              style="aspect-ratio: 16/9; background: #fafafa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;"
             >
-              <span style="font-size: 0.875rem; color: #999;">No image</span>
+              <span class="gallery-script" style="font-size: 1.125rem; color: #8b7355;">In the Studio</span>
+              <span style="font-size: 0.75rem; color: #999;">Paintings in progress...</span>
             </div>
           </.link>
           <div>
             <div style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a8a7a;">
-                <%= length(series.artworks) %> <%= if length(series.artworks) == 1,
-                  do: "artwork",
-                  else: "artworks" %>
+                <%= if length(series.artworks) == 0 do %>
+                  Coming soon
+                <% else %>
+                  <%= length(series.artworks) %> <%= if length(series.artworks) == 1, do: "artwork", else: "artworks" %>
+                <% end %>
               </span>
             </div>
             <h3 class="gallery-heading" style="font-size: 1.5rem; color: #2c2416; margin-bottom: 0.75rem;">
@@ -132,6 +139,75 @@ defmodule OliviaWeb.SeriesLive.Index do
               style="display: inline-block; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8b7355; text-decoration: none; border-bottom: 1px solid #c4b5a0; padding-bottom: 0.25rem;"
             >
               View Collection →
+            </.link>
+          </div>
+        </article>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <div class="atelier-section" style="max-width: 1200px; margin: 0 auto; padding: 4rem 2rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <p class="atelier-heading-accent" style="font-size: 1rem; margin-bottom: 0.5rem;">Explore</p>
+        <h1 class="atelier-heading" style="font-size: 3rem; margin-bottom: 1rem; color: var(--atelier-text-light);">
+          Collections
+        </h1>
+        <p class="atelier-body" style="font-size: 1.125rem; color: var(--atelier-text-muted); max-width: 42rem; margin: 0 auto;">
+          Three distinct bodies of work united by bold colour, gestural mark-making, and an unflinching approach to emotional truth.
+        </p>
+        <div class="atelier-divider"></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
+        <article :for={series <- @series_list} class="atelier-card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 8px; overflow: hidden;">
+          <.link navigate={~p"/series/#{series.slug}"} style="display: block; text-decoration: none;">
+            <div :if={Olivia.Content.Series.resolved_cover_image_url(series)} class="atelier-artwork-frame" style="height: 100%;">
+              <.artwork_image
+                src={Olivia.Content.Series.resolved_cover_image_url(series)}
+                alt={series.title}
+                aspect="aspect-[16/9]"
+                style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div
+              :if={!Olivia.Content.Series.resolved_cover_image_url(series)}
+              style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--atelier-slate) 0%, var(--atelier-deep) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;"
+            >
+              <span class="atelier-heading-accent" style="font-size: 1.25rem;">In the Studio</span>
+              <span class="atelier-body" style="font-size: 0.75rem; color: var(--atelier-text-muted);">Paintings in progress...</span>
+            </div>
+          </.link>
+          <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: center;">
+            <div style="margin-bottom: 0.75rem;">
+              <span class="atelier-body" style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--atelier-ochre);">
+                <%= if length(series.artworks) == 0 do %>
+                  Coming soon
+                <% else %>
+                  <%= length(series.artworks) %> <%= if length(series.artworks) == 1, do: "artwork", else: "artworks" %>
+                <% end %>
+              </span>
+            </div>
+            <h3 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--atelier-text-light);">
+              <.link navigate={~p"/series/#{series.slug}"} style="text-decoration: none; color: inherit;">
+                <%= series.title %>
+              </.link>
+            </h3>
+            <p class="atelier-body" style="font-size: 1rem; color: var(--atelier-text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+              <%= series.summary %>
+            </p>
+            <.link
+              navigate={~p"/series/#{series.slug}"}
+              class="atelier-view-collection-link"
+              style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--atelier-ochre); text-decoration: none; transition: all 0.3s ease; position: relative; z-index: 10;"
+            >
+              View Collection
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
             </.link>
           </div>
         </article>
@@ -364,6 +440,10 @@ defmodule OliviaWeb.SeriesLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     series_list = Content.list_series(published: true, preload: [:artworks])
+    # Sort so collections without cover images appear at the bottom
+    series_list = Enum.sort_by(series_list, fn series ->
+      if Olivia.Content.Series.resolved_cover_image_url(series), do: 0, else: 1
+    end)
 
     theme = socket.assigns[:theme]
     page_path = "/series"

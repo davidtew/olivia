@@ -1178,6 +1178,576 @@
     </footer>
   </body>
 </html>
+<% assigns[:theme] == "atelier" -> %>
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Olivia Tew">
+      <%= assigns[:page_title] || "Olivia Tew - Contemporary Artist" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;500&display=swap');
+
+      :root {
+        --atelier-midnight: #1a1f2e;
+        --atelier-deep: #242b3d;
+        --atelier-slate: #3d4559;
+        --atelier-mist: #6b7a94;
+        --atelier-silver: #a8b4c8;
+        --atelier-cream: #f8f6f3;
+        --atelier-warm: #faf8f5;
+
+        --atelier-ochre: #d4a853;
+        --atelier-ochre-soft: #e8c97a;
+        --atelier-vermillion: #c94d3a;
+        --atelier-ultramarine: #3d5a99;
+        --atelier-viridian: #4a8b7c;
+
+        --atelier-text-light: #f8f6f3;
+        --atelier-text-muted: #8b96a8;
+        --atelier-text-dim: #5a6577;
+      }
+
+      @keyframes drift {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(1deg); }
+      }
+
+      @keyframes shimmer {
+        0% { opacity: 0.3; }
+        50% { opacity: 0.6; }
+        100% { opacity: 0.3; }
+      }
+
+      @keyframes float-particle {
+        0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+      }
+
+      .atelier-layout {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        background: linear-gradient(135deg, var(--atelier-midnight) 0%, var(--atelier-deep) 50%, var(--atelier-slate) 100%);
+        color: var(--atelier-text-light);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      .atelier-canvas-texture {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0.03;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+        z-index: 0;
+      }
+
+      .atelier-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .atelier-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--atelier-ochre);
+        border-radius: 50%;
+        opacity: 0;
+        animation: float-particle 15s infinite linear;
+      }
+
+      .atelier-particle:nth-child(1) { left: 10%; animation-delay: 0s; background: var(--atelier-ochre); }
+      .atelier-particle:nth-child(2) { left: 20%; animation-delay: 2s; background: var(--atelier-vermillion); }
+      .atelier-particle:nth-child(3) { left: 35%; animation-delay: 4s; background: var(--atelier-ultramarine); }
+      .atelier-particle:nth-child(4) { left: 50%; animation-delay: 1s; background: var(--atelier-viridian); }
+      .atelier-particle:nth-child(5) { left: 65%; animation-delay: 3s; background: var(--atelier-ochre-soft); }
+      .atelier-particle:nth-child(6) { left: 80%; animation-delay: 5s; background: var(--atelier-vermillion); }
+      .atelier-particle:nth-child(7) { left: 90%; animation-delay: 2.5s; background: var(--atelier-ultramarine); }
+
+      .atelier-heading {
+        font-family: 'Crimson Pro', Georgia, serif;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+      }
+
+      .atelier-heading-accent {
+        font-family: 'Caveat', cursive;
+        font-weight: 400;
+        color: var(--atelier-ochre);
+      }
+
+      .atelier-body {
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 300;
+        line-height: 1.8;
+        letter-spacing: 0.01em;
+      }
+
+      .atelier-nav-link {
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 400;
+        font-size: 0.8125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--atelier-silver);
+        text-decoration: none;
+        padding: 0.5rem 0;
+        position: relative;
+        transition: color 0.3s ease;
+      }
+
+      .atelier-nav-link::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--atelier-ochre), transparent);
+        transition: all 0.4s ease;
+        transform: translateX(-50%);
+      }
+
+      .atelier-nav-link:hover {
+        color: var(--atelier-text-light);
+      }
+
+      .atelier-nav-link:hover::before {
+        width: 100%;
+      }
+
+      .atelier-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        text-decoration: none;
+        border: 1px solid var(--atelier-ochre);
+        color: var(--atelier-ochre);
+        background: transparent;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .atelier-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--atelier-ochre), transparent);
+        transition: left 0.4s ease;
+        opacity: 0.2;
+      }
+
+      .atelier-button:hover {
+        background: var(--atelier-ochre);
+        color: var(--atelier-midnight);
+        box-shadow: 0 0 30px rgba(212, 168, 83, 0.3);
+      }
+
+      .atelier-button:hover::before {
+        left: 100%;
+      }
+
+      .atelier-button-solid {
+        background: var(--atelier-ochre);
+        color: var(--atelier-midnight);
+      }
+
+      .atelier-button-solid:hover {
+        background: var(--atelier-ochre-soft);
+        border-color: var(--atelier-ochre-soft);
+      }
+
+      .atelier-card {
+        background: rgba(36, 43, 61, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(168, 180, 200, 0.1);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .atelier-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(212, 168, 83, 0.05) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+      }
+
+      .atelier-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(212, 168, 83, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(212, 168, 83, 0.1);
+      }
+
+      .atelier-card:hover::before {
+        opacity: 1;
+      }
+
+      .atelier-artwork-frame {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .atelier-artwork-frame img {
+        transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .atelier-artwork-frame:hover img {
+        transform: scale(1.05);
+      }
+
+      .atelier-artwork-frame::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 70%, rgba(26, 31, 46, 0.8) 100%);
+        pointer-events: none;
+      }
+
+      .atelier-glow {
+        position: relative;
+      }
+
+      .atelier-glow::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(212, 168, 83, 0.1) 0%, transparent 50%);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        animation: shimmer 4s infinite ease-in-out;
+      }
+
+      .atelier-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, var(--atelier-ochre) 50%, transparent 100%);
+        margin: 3rem auto;
+        max-width: 200px;
+        position: relative;
+      }
+
+      .atelier-divider::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background: var(--atelier-ochre);
+        border-radius: 50%;
+      }
+
+      .atelier-quote {
+        font-family: 'Crimson Pro', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+        font-size: 1.5rem;
+        line-height: 1.6;
+        color: var(--atelier-silver);
+        position: relative;
+        padding-left: 2rem;
+      }
+
+      .atelier-quote::before {
+        content: '"';
+        font-family: 'Caveat', cursive;
+        font-size: 4rem;
+        color: var(--atelier-ochre);
+        position: absolute;
+        left: -0.5rem;
+        top: -1rem;
+        opacity: 0.5;
+      }
+
+      .atelier-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .atelier-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 160px;
+        background: var(--atelier-deep);
+        border: 1px solid rgba(168, 180, 200, 0.2);
+        z-index: 50;
+        padding: 0.5rem 0;
+        backdrop-filter: blur(10px);
+      }
+
+      .atelier-dropdown:hover .atelier-dropdown-content {
+        display: block;
+      }
+
+      .atelier-dropdown-item {
+        display: block;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--atelier-silver);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .atelier-dropdown-item:hover {
+        background: rgba(212, 168, 83, 0.1);
+        color: var(--atelier-ochre);
+      }
+
+      .atelier-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: rgba(36, 43, 61, 0.6);
+        border: 1px solid rgba(168, 180, 200, 0.2);
+        color: var(--atelier-text-light);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9375rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+
+      .atelier-input:focus {
+        outline: none;
+        border-color: var(--atelier-ochre);
+        box-shadow: 0 0 20px rgba(212, 168, 83, 0.15);
+      }
+
+      .atelier-input::placeholder {
+        color: var(--atelier-text-dim);
+      }
+
+      .atelier-label {
+        display: block;
+        font-size: 0.6875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--atelier-text-muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .atelier-section {
+        position: relative;
+        z-index: 2;
+      }
+
+      #atelier-mobile-nav {
+        display: none;
+      }
+
+      #atelier-mobile-nav:not(.hidden) {
+        display: block;
+      }
+
+      .atelier-desktop-nav {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .atelier-mobile-menu {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .atelier-desktop-nav {
+          display: none !important;
+        }
+        .atelier-mobile-menu {
+          display: block;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .atelier-view-collection-link:hover {
+        background: var(--atelier-ochre);
+        color: var(--atelier-midnight);
+        box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+      }
+
+      .atelier-glass-card {
+        background: rgba(36, 43, 61, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(168, 180, 200, 0.1);
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body class="atelier-layout">
+    <div class="atelier-canvas-texture"></div>
+
+    <div class="atelier-particles">
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+      <div class="atelier-particle"></div>
+    </div>
+
+    <header style="padding: 1.5rem 2rem; border-bottom: 1px solid rgba(168, 180, 200, 0.1); position: relative; z-index: 10;">
+      <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: baseline; gap: 0.75rem;">
+          <span class="atelier-heading" style="font-size: 1.75rem; color: var(--atelier-text-light);">
+            Olivia Tew
+          </span>
+          <span class="atelier-heading-accent" style="font-size: 1.25rem;">Studio</span>
+        </a>
+
+        <nav class="atelier-desktop-nav">
+          <a href="/" class="atelier-nav-link">Home</a>
+          <a href="/series" class="atelier-nav-link">Collections</a>
+          <a href="/about" class="atelier-nav-link">About</a>
+          <a href="/process" class="atelier-nav-link">Process</a>
+          <a href="/contact" class="atelier-nav-link">Contact</a>
+
+          <div class="atelier-dropdown">
+            <button class="atelier-nav-link" style="background: none; border: none; cursor: pointer;">
+              Theme
+            </button>
+            <div class="atelier-dropdown-content">
+              <a href="/set-theme/atelier" class="atelier-dropdown-item" style="color: var(--atelier-ochre);">Atelier</a>
+              <a href="/set-theme/curator" class="atelier-dropdown-item">Curator</a>
+              <a href="/set-theme/gallery" class="atelier-dropdown-item">Gallery</a>
+              <a href="/set-theme/cottage" class="atelier-dropdown-item">Cottage</a>
+              <a href="/set-theme/original" class="atelier-dropdown-item">Original</a>
+            </div>
+          </div>
+        </nav>
+
+        <button class="atelier-mobile-menu" onclick="document.getElementById('atelier-mobile-nav').classList.toggle('hidden')" style="background: none; border: none; color: var(--atelier-silver); padding: 0.5rem; cursor: pointer;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="atelier-mobile-nav" class="hidden" style="padding: 1.5rem 0; border-top: 1px solid rgba(168, 180, 200, 0.1); margin-top: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <a href="/" class="atelier-nav-link" onclick="document.getElementById('atelier-mobile-nav').classList.add('hidden')">Home</a>
+          <a href="/series" class="atelier-nav-link" onclick="document.getElementById('atelier-mobile-nav').classList.add('hidden')">Collections</a>
+          <a href="/about" class="atelier-nav-link" onclick="document.getElementById('atelier-mobile-nav').classList.add('hidden')">About</a>
+          <a href="/process" class="atelier-nav-link" onclick="document.getElementById('atelier-mobile-nav').classList.add('hidden')">Process</a>
+          <a href="/contact" class="atelier-nav-link" onclick="document.getElementById('atelier-mobile-nav').classList.add('hidden')">Contact</a>
+          <div style="padding-top: 1rem; border-top: 1px solid rgba(168, 180, 200, 0.1); margin-top: 0.5rem;">
+            <span class="atelier-label">Theme</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem;">
+              <a href="/set-theme/atelier" class="atelier-nav-link" style="font-size: 0.6875rem; color: var(--atelier-ochre);">Atelier</a>
+              <a href="/set-theme/curator" class="atelier-nav-link" style="font-size: 0.6875rem;">Curator</a>
+              <a href="/set-theme/gallery" class="atelier-nav-link" style="font-size: 0.6875rem;">Gallery</a>
+              <a href="/set-theme/cottage" class="atelier-nav-link" style="font-size: 0.6875rem;">Cottage</a>
+              <a href="/set-theme/original" class="atelier-nav-link" style="font-size: 0.6875rem;">Original</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main style="flex: 1; position: relative; z-index: 2;">
+      {@inner_content}
+    </main>
+
+    <footer style="padding: 4rem 2rem 2rem; border-top: 1px solid rgba(168, 180, 200, 0.1); position: relative; z-index: 2;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1rem;">
+              <h3 class="atelier-heading" style="font-size: 1.25rem;">Olivia Tew</h3>
+              <span class="atelier-heading-accent" style="font-size: 1rem;">Studio</span>
+            </div>
+            <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted);">
+              Contemporary expressionist art from the heart of Devon. Bold colour, emotional truth, and the joy of paint.
+            </p>
+          </div>
+
+          <div>
+            <h4 style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; color: var(--atelier-ochre);">
+              Explore
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <a href="/series" style="color: var(--atelier-silver); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='var(--atelier-text-light)'" onmouseout="this.style.color='var(--atelier-silver)'">Collections</a>
+              <a href="/about" style="color: var(--atelier-silver); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='var(--atelier-text-light)'" onmouseout="this.style.color='var(--atelier-silver)'">About</a>
+              <a href="/process" style="color: var(--atelier-silver); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='var(--atelier-text-light)'" onmouseout="this.style.color='var(--atelier-silver)'">Process</a>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; color: var(--atelier-ochre);">
+              Connect
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+              <a href="https://instagram.com/oliviatewstudio" target="_blank" rel="noopener noreferrer" style="color: var(--atelier-silver); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='var(--atelier-text-light)'" onmouseout="this.style.color='var(--atelier-silver)'">Instagram</a>
+              <a href="mailto:olivia.tew@gmail.com" style="color: var(--atelier-silver); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='var(--atelier-text-light)'" onmouseout="this.style.color='var(--atelier-silver)'">Email</a>
+            </div>
+            <a href="/contact" class="atelier-button" style="font-size: 0.6875rem; padding: 0.625rem 1.25rem;">
+              Enquire
+            </a>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(168, 180, 200, 0.1); padding-top: 2rem; text-align: center;">
+          <p style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-text-dim);">
+            © <%= DateTime.utc_now().year %> Olivia Tew. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
 <% true -> %>
 <!DOCTYPE html>
 <html lang="en">

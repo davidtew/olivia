@@ -12,6 +12,7 @@ defmodule OliviaWeb.ContactLive do
       assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       true -> render_default(assigns)
     end
   end
@@ -301,6 +302,110 @@ defmodule OliviaWeb.ContactLive do
         <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
           ← Back to home
         </a>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <div style="min-height: 100vh; padding: 4rem 1rem;">
+      <!-- Page Header -->
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+          Get in Touch
+        </h1>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 500px; margin: 0 auto;">
+          Whether you're interested in purchasing artwork, commissioning a piece, or have a project in mind, I'd love to hear from you.
+        </p>
+      </div>
+
+      <!-- Contact Form -->
+      <div style="max-width: 500px; margin: 0 auto;">
+        <div class="atelier-glass-card" style="padding: 2rem;">
+          <.form
+            for={@form}
+            id="contact-form"
+            phx-change="validate"
+            phx-submit="submit"
+          >
+            <div style="display: grid; gap: 1.5rem;">
+              <div>
+                <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); margin-bottom: 0.5rem;">
+                  I'm interested in
+                </label>
+                <select
+                  name={@form[:type].name}
+                  style="width: 100%; padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none;"
+                >
+                  <option value="artwork" selected={@form[:type].value == "artwork"}>Purchasing artwork</option>
+                  <option value="commission" selected={@form[:type].value == "commission"}>Commissioning a piece</option>
+                  <option value="project" selected={@form[:type].value == "project"}>A project collaboration</option>
+                  <option value="general" selected={@form[:type].value == "general"}>General enquiry</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); margin-bottom: 0.5rem;">
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  name={@form[:name].name}
+                  value={@form[:name].value}
+                  required
+                  style="width: 100%; padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none;"
+                />
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); margin-bottom: 0.5rem;">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  name={@form[:email].name}
+                  value={@form[:email].value}
+                  required
+                  style="width: 100%; padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none;"
+                />
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); margin-bottom: 0.5rem;">
+                  Message
+                </label>
+                <textarea
+                  name={@form[:message].name}
+                  rows="6"
+                  required
+                  placeholder="Tell me about your enquiry..."
+                  style="width: 100%; padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none; resize: vertical;"
+                ><%= @form[:message].value %></textarea>
+              </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+              <button
+                type="submit"
+                phx-disable-with="Sending..."
+                class="atelier-button"
+                style="width: 100%; padding: 1rem 2rem;"
+              >
+                Send Message
+              </button>
+            </div>
+          </.form>
+        </div>
+
+        <div style="margin-top: 3rem; text-align: center;">
+          <.link
+            navigate={~p"/"}
+            style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); text-decoration: none; border-bottom: 1px solid var(--atelier-ochre); padding-bottom: 0.25rem;"
+          >
+            ← Back to home
+          </.link>
+        </div>
       </div>
     </div>
     """

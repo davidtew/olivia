@@ -13,6 +13,7 @@ defmodule OliviaWeb.PageLive do
       assigns[:theme] == "curator" -> render_curator(assigns)
       assigns[:theme] == "cottage" -> render_cottage(assigns)
       assigns[:theme] == "gallery" -> render_gallery(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       true -> render_default(assigns)
     end
   end
@@ -501,6 +502,199 @@ defmodule OliviaWeb.PageLive do
           <a href="/" style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b7355; text-decoration: none;">
             ← Back to home
           </a>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <%= if @page.slug == "about" do %>
+      <div style="min-height: 100vh; padding: 4rem 1rem;">
+        <section style="max-width: 1200px; margin: 0 auto;">
+          <style>
+            @media (min-width: 768px) {
+              .atelier-about-hero { grid-template-columns: 1fr 1.2fr !important; gap: 4rem !important; }
+              .atelier-about-practice { grid-template-columns: 1.2fr 1fr !important; gap: 4rem !important; }
+              .atelier-about-studio { grid-template-columns: repeat(2, 1fr) !important; }
+            }
+          </style>
+          <div class="atelier-about-hero" style="display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; margin-bottom: 4rem;">
+            <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+              <img
+                src={resolve_asset_url("/uploads/media/1763542139_ff497b70635865b6.jpg")}
+                alt="Olivia Tew standing beside her expressionistic figure painting"
+                style="width: 100%; display: block;"
+              />
+            </div>
+
+            <div>
+              <h1 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+                About the Artist
+              </h1>
+              <div class="atelier-body" style="color: var(--atelier-text-light); line-height: 1.9; font-size: 1rem;">
+                <p style="margin-bottom: 1.5rem;">
+                  Olivia Tew is a contemporary expressionist painter working primarily in oil from her cottage garden studio in Devon. Her practice spans figure studies, floral still lifes, and landscapes—all united by bold colour, gestural mark-making, and heavy impasto surfaces that give form weight and permanence.
+                </p>
+                <p style="margin-bottom: 1.5rem;">
+                  Her figure work captures moments of profound introspection—the universal experience of sitting with difficulty, of weathering change, of the body as vessel for emotional experience. The gestural brushwork refuses prettiness or idealisation; each stroke is visible, urgent, yet the cumulative effect is deeply tender.
+                </p>
+                <p>
+                  Her floral still lifes are maximalist celebrations of colour and abundance. Working with saturated grounds—coral reds, golden ochres—she creates paintings that demand attention, project outward, and perform their beauty with confidence.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="atelier-about-practice" style="display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; margin-bottom: 4rem;">
+            <div>
+              <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 1.5rem;">
+                The Practice
+              </h2>
+              <div class="atelier-body" style="color: var(--atelier-text-light); line-height: 1.9; font-size: 1rem;">
+                <p style="margin-bottom: 1.5rem;">
+                  Her landscape works, including the SHIFTING series, present terrain in perpetual transformation. The impasto application is extraordinary in its physicality—paint applied in thick, directional strokes that mimic geological strata, creating surfaces that function almost as relief sculpture.
+                </p>
+                <p>
+                  Each painting asks us to witness without intruding. The work explores emergence and transformation—the universal experience of becoming.
+                </p>
+              </div>
+              <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(212, 168, 83, 0.2);">
+                <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--atelier-ochre); margin-bottom: 0.75rem;">
+                  Artistic Connections
+                </h3>
+                <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted);">
+                  Lucian Freud, Frank Auerbach, Jenny Saville, Leon Kossoff, Emil Nolde, Joan Eardley
+                </p>
+              </div>
+            </div>
+            <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+              <img
+                src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+                alt="A Becoming - Expressionist figure painting"
+                style="width: 100%; display: block;"
+              />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4rem;">
+            <h2 class="atelier-heading" style="font-size: 1.5rem; margin-bottom: 2rem;">
+              Studio & Process
+            </h2>
+            <div class="atelier-about-studio" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+              <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
+                  alt="Works in progress on outdoor deck"
+                  style="width: 100%; display: block;"
+                />
+              </div>
+              <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+                <img
+                  src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
+                  alt="Marilyn in studio light"
+                  style="width: 100%; display: block;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+            <div class="atelier-glass-card" style="padding: 2rem;">
+              <h2 class="atelier-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                Stay in Touch
+              </h2>
+              <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 2rem;">
+                Subscribe to hear about new work and exhibitions.
+              </p>
+              <form phx-submit="subscribe" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  style="padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none;"
+                  placeholder="Your email"
+                />
+                <button
+                  type="submit"
+                  class="atelier-button"
+                  style="padding: 0.75rem 1.5rem; width: 100%;"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div style="margin-top: 3rem; text-align: center;">
+            <a href="/" style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); text-decoration: none;">
+              ← Back to home
+            </a>
+          </div>
+        </section>
+      </div>
+
+    <% else %>
+      <div style="min-height: 100vh; padding: 4rem 1rem;">
+        <div style="max-width: 800px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 4rem;">
+            <h1 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+              <%= @page.title %>
+            </h1>
+          </div>
+
+          <div :for={section <- @sections} style="margin-top: 3rem; first:margin-top: 0;">
+            <div class="atelier-body" style="font-size: 1.125rem; line-height: 1.75; color: var(--atelier-text-light);">
+              <%= raw(Earmark.as_html!(section.content_md || "")) %>
+            </div>
+          </div>
+
+          <div
+            :if={@page.slug in ["collect"]}
+            style="margin-top: 4rem;"
+          >
+            <div class="atelier-glass-card" style="padding: 2rem; text-align: center;">
+              <h2 class="atelier-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                Stay in Touch
+              </h2>
+              <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 2rem;">
+                Subscribe to hear about new work and exhibitions.
+              </p>
+              <form
+                phx-submit="subscribe"
+                style="max-width: 28rem; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;"
+              >
+                <input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  style="padding: 0.75rem 1rem; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(26, 31, 46, 0.5); color: var(--atelier-text-light); font-size: 1rem; outline: none;"
+                  placeholder="Your email"
+                />
+                <button
+                  type="submit"
+                  class="atelier-button"
+                  style="padding: 0.75rem 1.5rem; width: 100%;"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div style="margin-top: 4rem; text-align: center;">
+            <.link
+              navigate={~p"/"}
+              style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--atelier-ochre); text-decoration: none; border-bottom: 1px solid var(--atelier-ochre); padding-bottom: 0.25rem;"
+            >
+              ← Back to home
+            </.link>
+          </div>
         </div>
       </div>
     <% end %>

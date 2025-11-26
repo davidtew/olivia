@@ -13,6 +13,7 @@ defmodule OliviaWeb.ThemeComponents do
     %{id: "curator", label: "Curator", description: "Gallery-inspired dark theme"},
     %{id: "gallery", label: "Gallery", description: "Elegant warm tones"},
     %{id: "cottage", label: "Cottage", description: "Soft wisteria garden"},
+    %{id: "atelier", label: "Atelier", description: "Immersive studio experience"},
     %{id: "reviewer", label: "Reviewer", description: "Private review mode with annotations"},
     %{id: "original", label: "Original", description: "Clean and modern"}
   ]

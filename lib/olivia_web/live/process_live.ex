@@ -10,6 +10,7 @@ defmodule OliviaWeb.ProcessLive do
   def render(assigns) do
     cond do
       assigns[:theme] == "curator" -> render_curator(assigns)
+      assigns[:theme] == "atelier" -> render_atelier(assigns)
       assigns[:theme] == "cottage" -> render_default(assigns)
       assigns[:theme] == "gallery" -> render_default(assigns)
       true -> render_default(assigns)
@@ -216,6 +217,122 @@ defmodule OliviaWeb.ProcessLive do
         </a>
       </div>
     </section>
+    """
+  end
+
+  defp render_atelier(assigns) do
+    ~H"""
+    <div style="min-height: 100vh; padding: 4rem 1rem;">
+      <!-- Page Header -->
+      <section style="text-align: center; margin-bottom: 4rem;">
+        <h1 class="atelier-heading" style="font-size: 2.5rem; margin-bottom: 1rem;">
+          Process
+        </h1>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px; margin: 0 auto;">
+          Behind the finished work—the testing, the iterations, the domestic rituals of making.
+        </p>
+      </section>
+
+      <!-- Process Introduction -->
+      <section style="max-width: 800px; margin: 0 auto 4rem;">
+        <div class="atelier-glass-card" style="padding: 2rem; text-align: center;">
+          <blockquote class="atelier-script" style="font-size: 1.25rem; line-height: 1.6; color: var(--atelier-text-light); margin: 0;">
+            "There's something testing and ceremonial about viewing paintings outside in natural light—it's where the artist sees colour relationships without artificial interference, where decisions get made about what works and what doesn't."
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- From Nascent to Becoming -->
+      <section style="max-width: 1200px; margin: 0 auto 4rem;">
+        <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 1rem;">
+          From Nascent to Becoming
+        </h2>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px; margin-bottom: 2rem;">
+          This process documentation captures 'A BECOMING' in its nascent state—before the figure fully resolved from the gestural ground.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_ba6e66be3929fdcd.jpg")}
+              alt="A Becoming in progress on outdoor easel"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted); margin: 0;">
+                <strong style="color: var(--atelier-ochre);">Nascent stage</strong> — The figure has not yet fully resolved from the gestural ground.
+              </p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_3020310155b8abcf.jpg")}
+              alt="A BECOMING - finished work"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted); margin: 0;">
+                <strong style="color: var(--atelier-ochre);">Resolved</strong> — The figure emerges from and dissolves into the painterly ground.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Light Studies -->
+      <section style="max-width: 1200px; margin: 0 auto 4rem;">
+        <h2 class="atelier-heading" style="font-size: 1.75rem; margin-bottom: 1rem;">
+          Natural Light Testing
+        </h2>
+        <p class="atelier-body" style="color: var(--atelier-text-muted); max-width: 600px; margin-bottom: 2rem;">
+          Viewing work in different lighting conditions reveals different truths.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_1225c3b883e0ce02.jpg")}
+              alt="Marilyn in natural garden light"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted); margin: 0;">
+                <strong style="color: var(--atelier-ochre);">Natural light</strong> — The golden ground positively glows.
+              </p>
+            </div>
+          </div>
+
+          <div class="atelier-glass-card" style="padding: 0; overflow: hidden;">
+            <img
+              src={resolve_asset_url("/uploads/media/1763542139_e7e47b872f6b7223.JPG")}
+              alt="Marilyn in studio lighting"
+              style="width: 100%; display: block;"
+            />
+            <div style="padding: 1rem;">
+              <p class="atelier-body" style="font-size: 0.875rem; color: var(--atelier-text-muted); margin: 0;">
+                <strong style="color: var(--atelier-ochre);">Studio light</strong> — More controlled, revealing structural relationships.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section style="max-width: 500px; margin: 0 auto; text-align: center;">
+        <div class="atelier-glass-card" style="padding: 2rem;">
+          <h3 class="atelier-heading" style="font-size: 1.5rem; margin-bottom: 1rem;">
+            View the Collection
+          </h3>
+          <p class="atelier-body" style="color: var(--atelier-text-muted); margin-bottom: 2rem;">
+            Explore the finished works across all three bodies of work.
+          </p>
+          <a href="/work" class="atelier-button" style="text-decoration: none;">
+            View Work
+          </a>
+        </div>
+      </section>
+    </div>
     """
   end
 

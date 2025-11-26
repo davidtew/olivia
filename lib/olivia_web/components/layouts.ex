@@ -254,6 +254,9 @@ defmodule OliviaWeb.Layouts do
                   id="theme-dropdown-menu"
                   class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
                 >
+                  <a href="/set-theme/atelier" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
+                    Atelier
+                  </a>
                   <a href="/set-theme/curator" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-200">
                     Curator
                   </a>
@@ -347,6 +350,12 @@ defmodule OliviaWeb.Layouts do
             <div class="px-3 py-2">
               <div class="text-sm font-semibold text-gray-500 mb-2">Theme</div>
               <div class="space-y-1">
+                <a
+                  href="/set-theme/atelier"
+                  class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Atelier
+                </a>
                 <a
                   href="/set-theme/curator"
                   class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
