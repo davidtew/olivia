@@ -32,6 +32,11 @@ config :olivia, :emails,
   from_name: System.get_env("FROM_NAME") || "Olivia Tew",
   admin_email: System.get_env("ADMIN_EMAIL") || "admin@olivia.art"
 
+# Configure Swell e-commerce API
+config :olivia, Olivia.Swell,
+  store_id: System.get_env("SWELL_STORE_ID"),
+  secret_key: System.get_env("SWELL_SECRET_KEY")
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server

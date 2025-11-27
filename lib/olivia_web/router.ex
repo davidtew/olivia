@@ -40,6 +40,9 @@ defmodule OliviaWeb.Router do
 
       live "/contact", ContactLive, :index
 
+      # Shop / E-commerce (Swell integration)
+      live "/shop", ShopLive, :index
+
       # Archived pages - accessible but not linked from navigation
       live "/archive/work", WorkLive, :index
       live "/archive/collect", PageLive, :show, as: :archive_collect
@@ -124,6 +127,9 @@ defmodule OliviaWeb.Router do
 
       live_dashboard "/dashboard", metrics: OliviaWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      # Brain health monitoring (dev only)
+      live "/brain", OliviaWeb.BrainAlertLive, :index
     end
   end
 

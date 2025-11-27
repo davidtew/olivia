@@ -210,6 +210,12 @@ defmodule OliviaWeb.Layouts do
               Collections
             </.link>
             <.link
+              navigate={~p"/shop"}
+              class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            >
+              Shop
+            </.link>
+            <.link
               navigate={~p"/about"}
               class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
             >
@@ -307,6 +313,13 @@ defmodule OliviaWeb.Layouts do
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           >
             Collections
+          </a>
+          <a
+            href="/shop"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+          >
+            Shop
           </a>
           <a
             href="/about"
